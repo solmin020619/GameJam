@@ -8,8 +8,51 @@ using UnityEngine;
 public static class BattleVfx
 {
     static Sprite _circle;
+    static Sprite _arrowWood, _arrowIron, _arrowFire, _arrowMagic;
+    static bool _arrowsLoaded;
 
-    /// <summary>활/마법탄 — from 위치에서 to 위치로 짧은 라인 표시</summary>
+    static void LoadArrows()
+    {
+        if (_arrowsLoaded) return;
+        _arrowsLoaded = true;
+        _arrowWood = UnityEditor_LoadSprite("Assets/04.Images/Effects/Arrows/arrow_wood.png");
+        _arrowIron = UnityEditor_LoadSprite("Assets/04.Images/Effects/Arrows/arrow_iron.png");
+        _arrowFire = UnityEditor_LoadSprite("Assets/04.Images/Effects/Arrows/arrow_fire.png");
+        _arrowMagic = UnityEditor_LoadSprite("Assets/04.Images/Effects/Arrows/arrow_magic.png");
+    }
+
+    static Sprite UnityEditor_LoadSprite(string path)
+    {
+#if UNITY_EDITOR
+        return UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(path);
+#else
+        return Resources.Load<Sprite>(path);
+#endif
+    }
+
+    /// <summary>실제 화살 sprite 가 날아가는 발사체 (Marksman 용)</summary>
+    public static void SpawnArrowProjectile(Vector3 from, Vector3 to, bool isMagic = false, float duration = 0.18f)
+    {
+        LoadArrows();
+        var sprite = isMagic ? _arrowMagic : _arrowIron;
+        if (sprite == null) { SpawnProjectileLine(from, to, isMagic ? new Color(1f, 0.4f, 1f) : new Color(1f, 1f, 0.6f), duration); return; }
+
+        var go = new GameObject("Arrow_Projectile");
+        var sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 70;
+        go.transform.position = from;
+        go.transform.localScale = Vector3.one * 0.5f;
+        // 화살 방향: 우측을 기본으로 가정. to-from 벡터를 향하게 회전.
+        Vector3 dir = (to - from).normalized;
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        go.transform.rotation = Quaternion.Euler(0, 0, angle);
+
+        var helper = go.AddComponent<ArrowProjectileHelper>();
+        helper.Init(from, to, duration);
+    }
+
+    /// <summary>활/마법탄 — from 위치에서 to 위치로 짧은 라인 표시 (fallback)</summary>
     public static void SpawnProjectileLine(Vector3 from, Vector3 to, Color color, float lifetime = 0.12f)
     {
         var go = new GameObject("Projectile_Line");
@@ -44,6 +87,54 @@ public static class BattleVfx
     public static void SpawnAoePulse(Vector3 worldPos, Color color, float radius = 2f, float duration = 0.4f)
         => SpawnRingPulse(worldPos, color, duration, radius);
 
+    /// <summary>잔상 이펙트 — 출발 위치에 현재 sprite 복사본 페이드 (순간이동 표현)</summary>
+    public static void SpawnAfterImage(GameObject source, Color tint, float duration = 0.18f)
+    {
+        if (source == null) return;
+        var srcRenderers = source.GetComponentsInChildren<SpriteRenderer>();
+        if (srcRenderers.Length == 0) return;
+
+        var go = new GameObject("AfterImage");
+        go.transform.position = source.transform.position;
+        go.transform.rotation = source.transform.rotation;
+        go.transform.localScale = source.transform.localScale;
+
+        // 현재 모든 sprite renderer 복제
+        foreach (var sr in srcRenderers)
+        {
+            if (sr == null || sr.sprite == null) continue;
+            var child = new GameObject(sr.gameObject.name + "_ghost");
+            child.transform.SetParent(go.transform, false);
+            child.transform.localPosition = source.transform.InverseTransformPoint(sr.transform.position);
+            child.transform.localRotation = Quaternion.Inverse(source.transform.rotation) * sr.transform.rotation;
+            child.transform.localScale = sr.transform.lossyScale;
+
+            var ghostSr = child.AddComponent<SpriteRenderer>();
+            ghostSr.sprite = sr.sprite;
+            ghostSr.color = tint;
+            ghostSr.sortingOrder = sr.sortingOrder - 1;
+            ghostSr.flipX = sr.flipX;
+            ghostSr.flipY = sr.flipY;
+        }
+
+        var helper = go.AddComponent<AfterImageHelper>();
+        helper.Init(duration, tint);
+    }
+
+    /// <summary>넉백 — 대상에게 force 적용 + 일시 root</summary>
+    public static void ApplyKnockback(ChampionUnit target, Vector3 sourcePos, float force = 6f, float rootDuration = 0.5f)
+    {
+        if (target == null || target.IsDead) return;
+        var rb = target.GetComponent<Rigidbody2D>();
+        if (rb == null) return;
+
+        Vector2 dir = ((Vector2)target.transform.position - (Vector2)sourcePos).normalized;
+        if (dir.sqrMagnitude < 0.01f) dir = Vector2.right;
+        rb.linearVelocity = Vector2.zero;
+        rb.AddForce(dir * force, ForceMode2D.Impulse);
+        target.ApplyRoot(rootDuration);
+    }
+
     static Sprite GetCircleSprite()
     {
         if (_circle != null) return _circle;
@@ -63,6 +154,53 @@ public static class BattleVfx
         tex.Apply();
         _circle = Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 100f);
         return _circle;
+    }
+}
+
+class AfterImageHelper : MonoBehaviour
+{
+    float _duration, _elapsed;
+    Color _tint;
+    SpriteRenderer[] _renderers;
+
+    public void Init(float duration, Color tint)
+    {
+        _duration = duration;
+        _tint = tint;
+        _renderers = GetComponentsInChildren<SpriteRenderer>();
+    }
+
+    void Update()
+    {
+        _elapsed += Time.deltaTime;
+        float t = _elapsed / _duration;
+        if (t >= 1f) { Destroy(gameObject); return; }
+        float a = _tint.a * (1f - t);
+        foreach (var r in _renderers)
+        {
+            if (r == null) continue;
+            var c = _tint; c.a = a;
+            r.color = c;
+        }
+    }
+}
+
+class ArrowProjectileHelper : MonoBehaviour
+{
+    Vector3 _from, _to;
+    float _duration, _elapsed;
+
+    public void Init(Vector3 from, Vector3 to, float duration)
+    {
+        _from = from; _to = to; _duration = duration;
+    }
+
+    void Update()
+    {
+        _elapsed += Time.deltaTime;
+        float t = _elapsed / _duration;
+        if (t >= 1f) { Destroy(gameObject); return; }
+        transform.position = Vector3.Lerp(_from, _to, t);
     }
 }
 

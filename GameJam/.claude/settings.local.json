@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(grep -c \"prefab$\")"
+      "Bash(grep -c \"prefab$\")",
+      "Bash(ls \"/c/Users/user/OneDrive - 신구대학교/바탕 화면/요소들\" 2>&1 | head -50; echo \"---git status---\"; git log --oneline -5 2>&1; git status 2>&1 | head -15)",
+      "Bash(cp '/c/Users/user/OneDrive - 신구대학교/바탕 화면/VFX,오브젝트 모음/skill_icons/*.png' Assets/04.Images/Icons/Skills/)",
+      "Bash(cp '/c/Users/user/OneDrive - 신구대학교/바탕 화면/VFX,오브젝트 모음/buffs/*.png' Assets/04.Images/Icons/Buffs/)",
+      "Bash(cp '/c/Users/user/OneDrive - 신구대학교/바탕 화면/VFX,오브젝트 모음/arrows/*.png' Assets/04.Images/Effects/Arrows/)",
+      "Bash(cp '/c/Users/user/OneDrive - 신구대학교/바탕 화면/VFX,오브젝트 모음/vfx/*.png' Assets/04.Images/Effects/VFX/)"
     ]
   }
 }

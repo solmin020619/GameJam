@@ -236,13 +236,57 @@ public class BattleManager : MonoBehaviour
 
     public void SpawnDamageText(Vector3 worldPos, float amount, bool isHeal)
     {
+        SpawnDamageText(worldPos, amount, isHeal ? DamageType.Heal : DamageType.Basic);
+    }
+
+    public void SpawnDamageText(Vector3 worldPos, float amount, DamageType type)
+    {
         if (DamageTextPrefab == null || WorldCanvas == null) return;
 
         var go = Instantiate(DamageTextPrefab, WorldCanvas.transform);
         var tmp = go.GetComponent<TextMeshProUGUI>();
 
-        tmp.text = isHeal ? $"+{Mathf.RoundToInt(amount)}" : $"{Mathf.RoundToInt(amount)}";
-        tmp.color = isHeal ? Color.green : Color.white;
+        // 기획서 기반 색상/크기/굵기 분기
+        string text;
+        Color color;
+        float fontSize;
+        FontStyles style = FontStyles.Normal;
+        switch (type)
+        {
+            case DamageType.Heal:
+                text = $"+{Mathf.RoundToInt(amount)}";
+                color = new Color(0.45f, 1f, 0.5f);
+                fontSize = 28;
+                break;
+            case DamageType.Skill:
+                text = $"{Mathf.RoundToInt(amount)}";
+                color = new Color(1f, 0.4f, 0.4f);
+                fontSize = 36;
+                style = FontStyles.Bold;
+                break;
+            case DamageType.Ultimate:
+                text = $"{Mathf.RoundToInt(amount)}";
+                color = new Color(1f, 0.65f, 0.2f);
+                fontSize = 44;
+                style = FontStyles.Bold;
+                break;
+            case DamageType.Miss:
+                text = "MISS";
+                color = new Color(0.65f, 0.65f, 0.65f);
+                fontSize = 24;
+                break;
+            case DamageType.Basic:
+            default:
+                text = $"{Mathf.RoundToInt(amount)}";
+                color = Color.white;
+                fontSize = 28;
+                break;
+        }
+
+        tmp.text = text;
+        tmp.color = color;
+        tmp.fontSize = fontSize;
+        tmp.fontStyle = style;
 
         Vector2 screenPos = Camera.main.WorldToScreenPoint(worldPos);
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
@@ -250,6 +294,8 @@ public class BattleManager : MonoBehaviour
             screenPos, WorldCanvas.worldCamera,
             out Vector2 localPos);
 
+        // 같은 위치 겹침 방지: X 축 ±10px 랜덤 오프셋
+        localPos.x += Random.Range(-10f, 10f);
         go.GetComponent<RectTransform>().localPosition = localPos;
 
         StartCoroutine(FloatAndFade(go, tmp));

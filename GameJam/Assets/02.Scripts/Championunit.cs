@@ -33,6 +33,9 @@ public partial class ChampionUnit : MonoBehaviour
     // 상태이상
     private float _stunTimer;          // > 0 이면 모든 행동 정지
     private float _rootTimer;          // > 0 이면 이동만 정지 (공격은 OK)
+    private float _backAttackTimer;    // > 0 이면 닌자 배후 상태 (평타 1.3배)
+    public bool IsBackAttacking => _backAttackTimer > 0f;
+    public void ApplyBackAttack(float duration) { _backAttackTimer = Mathf.Max(_backAttackTimer, duration); }
 
     // 버프 (남은 시간 + 배수)
     private float _atkSpeedBuffEnd;  private float _atkSpeedBuffPct;
@@ -105,6 +108,7 @@ public partial class ChampionUnit : MonoBehaviour
         _ultCd -= Time.deltaTime;
         _stunTimer -= Time.deltaTime;
         _rootTimer -= Time.deltaTime;
+        _backAttackTimer -= Time.deltaTime;
 
         UpdateInfoUI();
 
@@ -353,7 +357,8 @@ public partial class ChampionUnit : MonoBehaviour
 
         SpawnRangedVfx();
 
-        float dmg = CalcDamage(Data.AttackDamage, _currentTarget.GetEffectiveDefense());
+        float atkMul = IsBackAttacking ? 1.3f : 1f;   // 닌자 배후 상태 평타 +30%
+        float dmg = CalcDamage(Data.AttackDamage * atkMul, _currentTarget.GetEffectiveDefense());
         _currentTarget.TakeDamage(dmg);
     }
 
@@ -363,25 +368,27 @@ public partial class ChampionUnit : MonoBehaviour
         if (_attackTimer > 0f) return;
         _attackTimer = 1f / GetEffectiveAttackSpeed();
         SpawnRangedVfx();
-        float dmg = CalcDamage(Data.AttackDamage, _currentTarget.GetEffectiveDefense());
+        float atkMul = IsBackAttacking ? 1.3f : 1f;
+        float dmg = CalcDamage(Data.AttackDamage * atkMul, _currentTarget.GetEffectiveDefense());
         _currentTarget.TakeDamage(dmg);
     }
 
     void SpawnRangedVfx()
     {
         if (_currentTarget == null) return;
-        // 원거리 챔프는 발사체 라인 VFX
         if (Data.Role == ChampionRole.Marksman)
         {
-            BattleVfx.SpawnProjectileLine(transform.position + Vector3.up * 0.7f,
+            BattleVfx.SpawnArrowProjectile(
+                transform.position + Vector3.up * 0.7f,
                 _currentTarget.transform.position + Vector3.up * 0.7f,
-                new Color(1f, 1f, 0.6f, 1f));  // 노란 화살 트레일
+                isMagic: false);
         }
         else if (Data.Role == ChampionRole.Mage)
         {
-            BattleVfx.SpawnProjectileLine(transform.position + Vector3.up * 0.7f,
+            BattleVfx.SpawnArrowProjectile(
+                transform.position + Vector3.up * 0.7f,
                 _currentTarget.transform.position + Vector3.up * 0.7f,
-                new Color(1f, 0.4f, 1f, 1f));  // 마젠타 마법 트레일
+                isMagic: true);
         }
     }
 
@@ -389,12 +396,12 @@ public partial class ChampionUnit : MonoBehaviour
     float CalcDamage(float atk, float def)
         => atk * (100f / (100f + def * 1.8f));
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount, DamageType type = DamageType.Basic)
     {
         if (IsDead) return;
 
         CurrentHp -= amount;
-        BattleManager.Instance.SpawnDamageText(transform.position, amount, isHeal: false);
+        BattleManager.Instance.SpawnDamageText(transform.position, amount, type);
 
         // 큰 피해(HP 20% 이상)는 작은 셰이크
         if (Data != null && amount >= Data.MaxHp * 0.2f && CameraShake.Instance != null)
@@ -525,13 +532,19 @@ public partial class ChampionUnit : MonoBehaviour
                                        new Color(0.35f, 0.7f, 1f));
 
         // ============== 필살기 아이콘 + 이름 ==============
-        // 필살기 박스 (왼쪽)
-        _ultSlotImage = MakeUIImage("UltSlot", _infoUiRoot.transform, new Vector2(18, 18),
-                                    new Vector3(-46, -4, 0), new Color(0.3f, 0.3f, 0.3f, 0.95f));
-        // 필살기 게이지 (CD 진행 표시)
-        _ultSlotFill = MakeFilledImage("UltSlotFill", _infoUiRoot.transform, new Vector2(16, 16),
+        // 필살기 박스 (왼쪽). 실제 아이콘 있으면 sprite 로, 없으면 회색 박스.
+        _ultSlotImage = MakeUIImage("UltSlot", _infoUiRoot.transform, new Vector2(20, 20),
+                                    new Vector3(-46, -4, 0), Color.white);
+        if (Data.UltimateIcon != null) _ultSlotImage.sprite = Data.UltimateIcon;
+        else _ultSlotImage.color = new Color(0.3f, 0.3f, 0.3f, 0.95f);
+
+        // 어두운 오버레이 (CD 안 찬 만큼 가림 — 다 차면 사라짐)
+        _ultSlotFill = MakeFilledImage("UltCdOverlay", _infoUiRoot.transform, new Vector2(20, 20),
                                        new Vector3(-46, -4, 0),
-                                       new Color(1f, 0.85f, 0.3f, 0.9f));
+                                       new Color(0, 0, 0, 0.75f));
+        _ultSlotFill.fillMethod = Image.FillMethod.Radial360;
+        _ultSlotFill.fillOrigin = (int)Image.Origin360.Top;
+        _ultSlotFill.fillClockwise = false;
 
         // 이름 라벨 (오른쪽)
         var nameGo = new GameObject("Name");
@@ -598,14 +611,19 @@ public partial class ChampionUnit : MonoBehaviour
         {
             float cdMax = Data.UltimateCooldown;
             float cdRemaining = Mathf.Max(0f, _ultCd);
-            float ratio = cdMax > 0f ? 1f - (cdRemaining / cdMax) : 1f;
-            _ultSlotFill.fillAmount = Mathf.Clamp01(ratio);
-            if (_ultCd <= 0f)
+            // 어두운 오버레이가 CD 남은 만큼 채움 → 다 차면 0 으로 사라져서 아이콘 컬러풀
+            _ultSlotFill.fillAmount = cdMax > 0f ? cdRemaining / cdMax : 0f;
+
+            // 다 차면 아이콘 가장자리 빛나는 효과
+            if (_ultCd <= 0f && _ultSlotImage != null)
             {
                 float pulse = (Mathf.Sin(Time.time * 6f) + 1f) * 0.5f;
-                _ultSlotFill.color = Color.Lerp(new Color(1f, 0.85f, 0.3f), new Color(1f, 1f, 0.7f), pulse);
+                _ultSlotImage.color = Color.Lerp(Color.white, new Color(1f, 1f, 0.6f), pulse * 0.5f);
             }
-            else _ultSlotFill.color = new Color(1f, 0.85f, 0.3f, 0.9f);
+            else if (_ultSlotImage != null && Data.UltimateIcon != null)
+            {
+                _ultSlotImage.color = Color.white;
+            }
         }
     }
 
@@ -626,6 +644,7 @@ public partial class ChampionUnit : MonoBehaviour
             ChampionRole.Disruptor  => CastEarthquake(),
             ChampionRole.Skirmisher => CastLanceCharge(),
             ChampionRole.Duelist    => CastSwiftBlade(),
+            ChampionRole.Assassin   => CastBackstab(),
             _ => false
         };
         if (casted) _basicCd = Data.BasicSkillCooldown;
@@ -646,6 +665,7 @@ public partial class ChampionUnit : MonoBehaviour
             ChampionRole.Disruptor  => CastUltCrushingBlow(),
             ChampionRole.Skirmisher => CastUltTrampling(),
             ChampionRole.Duelist    => CastUltFiveStrike(),
+            ChampionRole.Assassin   => CastUltShadowDance(),
             _ => false
         };
         if (casted) _ultCd = Data.UltimateCooldown;

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99bd45a2ac914f04bb0850afbec47e19, type: 3}
+  m_Name: Champion_Duelist_01
+  m_EditorClassIdentifier: Assembly-CSharp::ChampionData
+  championId: duelist_01
+  displayName: "\uAC80\uC0AC 1"
+  role: 7
+  portrait: {fileID: 0}
+  themeColor: {r: 0.85, g: 0.85, b: 0.95, a: 1}
+  description: 
+  maxHealth: 420
+  attackDamage: 58
+  attackSpeed: 1.1
+  attackRange: 1.4
+  defense: 12
+  moveSpeed: 4.2
+  unitPrefab: {fileID: 8499609824770538013, guid: f04b72e28c1919d429e1d138377567fc, type: 3}
+  basicSkillName: "\uCF8C\uAC80"
+  basicSkillCooldown: 5
+  basicSkillIcon: {fileID: 21300000, guid: 2475e19682b65694a9efd026f67ca6c1, type: 3}
+  ultimateName: "\uC5F0\uCC38"
+  ultimateCooldown: 20
+  ultimateIcon: {fileID: 21300000, guid: 595728169e5e88545951ad460f8c6805, type: 3}

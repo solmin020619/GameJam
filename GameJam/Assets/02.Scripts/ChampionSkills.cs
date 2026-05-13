@@ -75,8 +75,9 @@ public partial class ChampionUnit
         FaceTarget(target.transform.position);
         PlayAnim(PlayerState.ATTACK);
         float dmg = CalcDamage(Data.AttackDamage * 1.2f, target.GetEffectiveDefense());
-        target.TakeDamage(dmg);
+        target.TakeDamage(dmg, DamageType.Skill);
         target.ApplyStun(1f);
+        BattleVfx.ApplyKnockback(target, transform.position, 2f, 0.2f);  // 소형 넉백
         BattleVfx.SpawnRingPulse(target.transform.position, new Color(0.4f, 0.7f, 1f, 0.8f), 0.4f, 0.7f);
         if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.1f, 0.08f);
         return true;
@@ -92,7 +93,7 @@ public partial class ChampionUnit
         foreach (var e in hits)
         {
             float dmg = CalcDamage(Data.AttackDamage * 1.5f, e.GetEffectiveDefense());
-            e.TakeDamage(dmg);
+            e.TakeDamage(dmg, DamageType.Skill);
         }
         BattleVfx.SpawnRingPulse(transform.position, new Color(1f, 0.4f, 0.3f, 0.7f), 0.4f, 1.5f);
         if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.12f, 0.1f);
@@ -116,12 +117,12 @@ public partial class ChampionUnit
         for (int i = 0; i < 3; i++)
         {
             if (target == null || target.IsDead || IsDead) yield break;
-            BattleVfx.SpawnProjectileLine(
+            BattleVfx.SpawnArrowProjectile(
                 transform.position + Vector3.up * 0.7f,
                 target.transform.position + Vector3.up * 0.7f,
-                new Color(1f, 1f, 0.5f, 1f), 0.1f);
+                isMagic: false, duration: 0.15f);
             float dmg = CalcDamage(Data.AttackDamage * 0.7f, target.GetEffectiveDefense());
-            target.TakeDamage(dmg);
+            target.TakeDamage(dmg, DamageType.Skill);
             yield return new WaitForSeconds(0.2f);
         }
     }
@@ -135,12 +136,12 @@ public partial class ChampionUnit
 
         FaceTarget(target.transform.position);
         PlayAnim(PlayerState.ATTACK);
-        BattleVfx.SpawnProjectileLine(
+        BattleVfx.SpawnArrowProjectile(
             transform.position + Vector3.up * 0.7f,
             target.transform.position + Vector3.up * 0.7f,
-            new Color(1f, 0.4f, 1f, 1f), 0.2f);
+            isMagic: true, duration: 0.2f);
         float dmg = CalcDamage(Data.AttackDamage * 1.8f, target.GetEffectiveDefense());
-        target.TakeDamage(dmg);
+        target.TakeDamage(dmg, DamageType.Skill);
         BattleVfx.SpawnRingPulse(target.transform.position, new Color(1f, 0.4f, 1f, 0.7f), 0.4f, 0.8f);
         if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.12f, 0.08f);
         return true;
@@ -172,7 +173,7 @@ public partial class ChampionUnit
         foreach (var e in hits)
         {
             float dmg = CalcDamage(Data.AttackDamage * 1.3f, e.GetEffectiveDefense());
-            e.TakeDamage(dmg);
+            e.TakeDamage(dmg, DamageType.Skill);
             e.ApplyRoot(0.8f);
         }
         BattleVfx.SpawnRingPulse(transform.position, new Color(0.8f, 0.5f, 0.2f, 0.8f), 0.6f, 1.8f);
@@ -192,16 +193,90 @@ public partial class ChampionUnit
         if (dir.sqrMagnitude < 0.01f) dir = Vector3.right;
         Vector3 dest = target.transform.position - dir.normalized * 0.5f;
 
+        // 잔상 — 출발 위치에 자기 sprite 잔상 (이동 직전)
+        BattleVfx.SpawnAfterImage(gameObject, new Color(0.85f, 0.95f, 1f, 0.45f), 0.15f);
         BattleVfx.SpawnProjectileLine(origPos, dest, new Color(0.85f, 0.95f, 1f, 1f), 0.15f);
         transform.position = dest;
 
         FaceTarget(target.transform.position);
         PlayAnim(PlayerState.ATTACK);
         float dmg = CalcDamage(Data.AttackDamage * 1.6f, target.GetEffectiveDefense());
-        target.TakeDamage(dmg);
+        target.TakeDamage(dmg, DamageType.Skill);
 
         if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.12f, 0.1f);
         return true;
+    }
+
+    // ============== 닌자 스킬 ==============
+
+    /// <summary>배후습격 — 타겟 뒤로 순간이동 + 180% + 2s 배후 상태</summary>
+    bool CastBackstab()
+    {
+        var target = _currentTarget;
+        if (target == null || target.IsDead) return false;
+
+        // 배후 위치 = 적 너머 1.0 unit
+        Vector3 dirFromNinjaToTarget = (target.transform.position - transform.position).normalized;
+        if (dirFromNinjaToTarget.sqrMagnitude < 0.01f) dirFromNinjaToTarget = Vector3.right;
+        Vector3 backPos = target.transform.position + dirFromNinjaToTarget * 1.0f;
+
+        // 잔상 (출발지)
+        BattleVfx.SpawnAfterImage(gameObject, new Color(0.6f, 0.6f, 0.6f, 0.4f), 0.2f);
+        transform.position = backPos;
+        FaceTarget(target.transform.position);
+        PlayAnim(PlayerState.ATTACK);
+
+        float dmg = CalcDamage(Data.AttackDamage * 1.8f, target.GetEffectiveDefense());
+        target.TakeDamage(dmg, DamageType.Skill);
+
+        // 2초간 배후 상태 (평타 +30%)
+        ApplyBackAttack(2f);
+
+        if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.12f, 0.1f);
+        return true;
+    }
+
+    /// <summary>잔영난무 — 모든 적 순차 배후이동 + 각 120%, 시작 위치 귀환</summary>
+    bool CastUltShadowDance()
+    {
+        if (AliveEnemies().Count == 0) return false;
+        StartCoroutine(ShadowDanceRoutine());
+        return true;
+    }
+
+    IEnumerator ShadowDanceRoutine()
+    {
+        Vector3 startPos = transform.position;
+        var enemies = AliveEnemies();
+
+        foreach (var e in enemies)
+        {
+            if (e == null || e.IsDead || IsDead) continue;
+
+            // 출발지 잔상
+            BattleVfx.SpawnAfterImage(gameObject, new Color(0.6f, 0.6f, 0.6f, 0.4f), 0.2f);
+
+            // 적 뒤로 순간이동
+            Vector3 dirToEnemy = (e.transform.position - transform.position).normalized;
+            if (dirToEnemy.sqrMagnitude < 0.01f) dirToEnemy = Vector3.right;
+            transform.position = e.transform.position + dirToEnemy * 1.0f;
+            FaceTarget(e.transform.position);
+            PlayAnim(PlayerState.ATTACK);
+
+            float dmg = CalcDamage(Data.AttackDamage * 1.2f, e.GetEffectiveDefense());
+            e.TakeDamage(dmg, DamageType.Ultimate);
+
+            if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.1f, 0.08f);
+            yield return new WaitForSeconds(0.18f);
+        }
+
+        // 시작 위치 귀환 (잔상 + 순간이동)
+        if (!IsDead)
+        {
+            BattleVfx.SpawnAfterImage(gameObject, new Color(0.6f, 0.6f, 0.6f, 0.4f), 0.2f);
+            transform.position = startPos;
+            PlayAnim(PlayerState.IDLE);
+        }
     }
 
     /// <summary>돌격창 — 전방 3유닛 직선 돌진, 경로 전체 140% 관통</summary>
@@ -231,7 +306,7 @@ public partial class ChampionUnit
         foreach (var e in hits)
         {
             float dmg = CalcDamage(Data.AttackDamage * 1.4f, e.GetEffectiveDefense());
-            e.TakeDamage(dmg);
+            e.TakeDamage(dmg, DamageType.Skill);
         }
         // 시각 라인 + 자신 약간 전진
         BattleVfx.SpawnProjectileLine(
@@ -286,12 +361,12 @@ public partial class ChampionUnit
         yield return new WaitForSeconds(0.5f);
         foreach (var e in AliveEnemies())
         {
-            BattleVfx.SpawnProjectileLine(
+            BattleVfx.SpawnArrowProjectile(
                 e.transform.position + Vector3.up * 4f,
                 e.transform.position,
-                new Color(1f, 1f, 0.5f, 1f), 0.2f);
+                isMagic: false, duration: 0.25f);
             float dmg = CalcDamage(Data.AttackDamage * 1.3f, e.GetEffectiveDefense());
-            e.TakeDamage(dmg);
+            e.TakeDamage(dmg, DamageType.Ultimate);
         }
         if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.3f, 0.2f);
     }
@@ -318,7 +393,7 @@ public partial class ChampionUnit
         foreach (var e in AliveEnemies())
         {
             float dmg = CalcDamage(Data.AttackDamage * 2.5f, e.GetEffectiveDefense());
-            e.TakeDamage(dmg);
+            e.TakeDamage(dmg, DamageType.Ultimate);
             BattleVfx.SpawnRingPulse(e.transform.position,
                 new Color(1f, 0.4f, 1f, 0.9f), 0.5f, 1.2f);
         }
@@ -388,7 +463,7 @@ public partial class ChampionUnit
 
         PlayAnim(PlayerState.ATTACK);
         float dmg = CalcDamage(Data.AttackDamage * 3.5f, target.GetEffectiveDefense());
-        target.TakeDamage(dmg);
+        target.TakeDamage(dmg, DamageType.Ultimate);
         target.ApplyStun(2f);
         BattleVfx.SpawnRingPulse(target.transform.position,
             new Color(1f, 0.6f, 0.3f, 0.95f), 0.6f, 1.3f);
@@ -424,7 +499,7 @@ public partial class ChampionUnit
                 target.transform.position + Vector3.up * 0.6f,
                 new Color(0.9f, 0.95f, 1f, 1f), 0.08f);
             float dmg = CalcDamage(Data.AttackDamage * 0.7f, target.GetEffectiveDefense());
-            target.TakeDamage(dmg);
+            target.TakeDamage(dmg, DamageType.Ultimate);
 
             // 마지막 타격은 강한 셰이크
             if (i == 4)
@@ -463,8 +538,9 @@ public partial class ChampionUnit
             PlayAnim(PlayerState.ATTACK);
 
             float dmg = CalcDamage(Data.AttackDamage * 1.0f, e.GetEffectiveDefense());
-            e.TakeDamage(dmg);
-            e.ApplyRoot(0.5f);
+            e.TakeDamage(dmg, DamageType.Ultimate);
+            // 넉백 적용 (기획서 force 6, 0.5s root)
+            BattleVfx.ApplyKnockback(e, transform.position, 6f, 0.5f);
 
             if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.08f, 0.07f);
             yield return new WaitForSeconds(0.25f);

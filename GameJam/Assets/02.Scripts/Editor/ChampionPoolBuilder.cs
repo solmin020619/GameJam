@@ -17,6 +17,7 @@ public static class ChampionPoolBuilder
     const string PrefabsFolder = "Assets/03.Prefabs";
     const string ChampionDataDir = "Assets/06.ScriptableObjects/Champions";
     const string ConfigPath = "Assets/06.ScriptableObjects/BanPickConfig.asset";
+    const int CopiesPerPrefab = 2;  // prefab 1개당 ChampionData N개 (풀 크기 늘리기)
 
     [MenuItem("TFM/Rebuild Champion Pool (From 03.Prefabs)")]
     public static void Rebuild()
@@ -74,28 +75,32 @@ public static class ChampionPoolBuilder
             }
 
             var role = GuessRole(prefab);
-            if (!roleCounters.ContainsKey(role)) roleCounters[role] = 0;
-            roleCounters[role]++;
-            int idx = roleCounters[role];
 
-            var dataPath = $"{ChampionDataDir}/Champion_{role}_{idx:D2}.asset";
+            // 같은 prefab 으로 ChampionData N개 생성 (풀 크기 늘리기)
+            for (int copy = 0; copy < CopiesPerPrefab; copy++)
+            {
+                if (!roleCounters.ContainsKey(role)) roleCounters[role] = 0;
+                roleCounters[role]++;
+                int idx = roleCounters[role];
 
-            // 만에 하나 같은 path에 이미 자산 있으면 삭제 후 새로 만듦
-            if (AssetDatabase.LoadAssetAtPath<ChampionData>(dataPath) != null)
-                AssetDatabase.DeleteAsset(dataPath);
+                var dataPath = $"{ChampionDataDir}/Champion_{role}_{idx:D2}.asset";
 
-            var data = ScriptableObject.CreateInstance<ChampionData>();
-            AssetDatabase.CreateAsset(data, dataPath);
-            ApplyPreset(data, role, idx, prefab);
+                if (AssetDatabase.LoadAssetAtPath<ChampionData>(dataPath) != null)
+                    AssetDatabase.DeleteAsset(dataPath);
 
-            // 검증
-            if (string.IsNullOrEmpty(data.displayName) || data.unitPrefab == null)
-                Debug.LogError($"[TFM] {dataPath} 빈 상태! displayName='{data.displayName}', prefab={(data.unitPrefab == null ? "null" : data.unitPrefab.name)}");
-            else
-                Debug.Log($"[TFM] {data.displayName} ({role}) ← {prefab.name}");
+                var data = ScriptableObject.CreateInstance<ChampionData>();
+                ApplyPreset(data, role, idx, prefab);     // CreateAsset 전에 데이터 채움
+                AssetDatabase.CreateAsset(data, dataPath);
+                EditorUtility.SetDirty(data);
+                AssetDatabase.SaveAssetIfDirty(data);     // 즉시 디스크에 저장 강제
 
-            EditorUtility.SetDirty(data);
-            generated.Add(data);
+                if (string.IsNullOrEmpty(data.displayName) || data.unitPrefab == null)
+                    Debug.LogError($"[TFM] {dataPath} 빈 상태! displayName='{data.displayName}', prefab={(data.unitPrefab == null ? "null" : data.unitPrefab.name)}");
+                else
+                    Debug.Log($"[TFM] {data.displayName} ({role}) ← {prefab.name}");
+
+                generated.Add(data);
+            }
         }
 
         // 4) BanPickConfig 갱신
@@ -183,8 +188,10 @@ public static class ChampionPoolBuilder
         if (n.EndsWith("_d")) return ChampionRole.Disruptor;
         if (n.EndsWith("_s")) return ChampionRole.Skirmisher;
         if (n.EndsWith("_u")) return ChampionRole.Duelist;    // dUelist
+        if (n.EndsWith("_n")) return ChampionRole.Assassin;   // nINja
 
         // 2) 이름 매칭
+        if (n.Contains("ninja") || n.Contains("assassin") || n.Contains("닌자")) return ChampionRole.Assassin;
         if (n.Contains("swordsm") || n.Contains("duelist") || n.Contains("검사") || n.Contains("쾌검")) return ChampionRole.Duelist;
         if (n.Contains("crush") || n.Contains("hammer") || n.Contains("분쇄")) return ChampionRole.Disruptor;
         if (n.Contains("lancer") || n.Contains("horse") || n.Contains("rider") || n.Contains("기병") || n.Contains("돌격")) return ChampionRole.Skirmisher;
@@ -261,6 +268,10 @@ public static class ChampionPoolBuilder
                 c.maxHealth = 420; c.attackDamage = 58; c.attackSpeed = 1.1f;
                 c.attackRange = 1.4f; c.defense = 12; c.moveSpeed = 4.2f;
                 break;
+            case ChampionRole.Assassin:
+                c.maxHealth = 360; c.attackDamage = 52; c.attackSpeed = 1.4f;
+                c.attackRange = 1.3f; c.defense = 5; c.moveSpeed = 5.0f;
+                break;
         }
 
         // 스킬 메타 자동 채움 (기획서 기반)
@@ -274,6 +285,7 @@ public static class ChampionPoolBuilder
             case ChampionRole.Disruptor:  c.basicSkillName = "지진강타"; c.basicSkillCooldown = 6f; c.ultimateName = "분쇄의 일격"; c.ultimateCooldown = 22f; break;
             case ChampionRole.Skirmisher: c.basicSkillName = "돌격창";   c.basicSkillCooldown = 6f; c.ultimateName = "짓밟기";      c.ultimateCooldown = 20f; break;
             case ChampionRole.Duelist:    c.basicSkillName = "쾌검";     c.basicSkillCooldown = 5f; c.ultimateName = "연참";        c.ultimateCooldown = 20f; break;
+            case ChampionRole.Assassin:   c.basicSkillName = "배후습격"; c.basicSkillCooldown = 5f; c.ultimateName = "잔영난무";    c.ultimateCooldown = 18f; break;
         }
     }
 
@@ -323,6 +335,7 @@ public static class ChampionPoolBuilder
         ChampionRole.Disruptor => "분쇄자",
         ChampionRole.Skirmisher => "돌격기병",
         ChampionRole.Duelist => "검사",
+        ChampionRole.Assassin => "닌자",
         _ => "전사"
     };
 
@@ -336,6 +349,7 @@ public static class ChampionPoolBuilder
         ChampionRole.Disruptor => new Color(0.7f, 0.45f, 0.2f),
         ChampionRole.Skirmisher => new Color(0.9f, 0.7f, 0.3f),
         ChampionRole.Duelist => new Color(0.85f, 0.85f, 0.95f),
+        ChampionRole.Assassin => new Color(0.5f, 0.3f, 0.7f),
         _ => Color.white
     };
 

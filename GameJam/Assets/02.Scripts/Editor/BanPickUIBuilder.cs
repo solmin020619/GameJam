@@ -55,6 +55,8 @@ public static class BanPickUIBuilder
         manager.cards = cards;
         manager.allySlots = allySlot;
         manager.enemySlots = enemySlot;
+        manager.autoLoadBattleSceneOnDone = true;
+        manager.battleSceneName = "KScene";
         manager.ai = ai;
 
         EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
