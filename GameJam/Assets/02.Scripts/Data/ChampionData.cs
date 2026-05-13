@@ -26,6 +26,10 @@ public class ChampionData : ScriptableObject
 
     [Header("Kill log icon (머리 컷)")]
     public Sprite killIcon;
+    [Tooltip("KillLog 안 박스에서 얼굴을 얼마나 확대할지. 1.0 = 박스 꽉, 1.5 = 1.5배 확대(머리만 보임)")]
+    [Range(0.5f, 5.0f)] public float killIconZoom = 1.0f;
+    [Tooltip("KillLog 박스 안에서 얼굴 위치 미세조정 (음수 = 왼쪽/아래)")]
+    public Vector2 killIconOffset = Vector2.zero;
 
     [Header("Basic Skill (기본 스킬)")]
     public string basicSkillName = "기본 스킬";

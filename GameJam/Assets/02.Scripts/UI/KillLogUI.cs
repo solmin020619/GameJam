@@ -117,9 +117,16 @@ public class KillLogUI : MonoBehaviour
         portraitGo.transform.SetParent(box.transform, false);
         var prt = portraitGo.AddComponent<RectTransform>();
         prt.anchorMin = Vector2.zero; prt.anchorMax = Vector2.one;
-        // 박스보다 14px 씩 크게 → sprite 안 여백 큰 캐릭도 머리가 박스 꽉 차게
+        // 박스 안 zoom — ChampionData 의 KillIconZoom 으로 챔프별 조절 (기본 1.0)
         // RectMask2D 가 박스 밖 영역 자르므로 안전
-        prt.offsetMin = new Vector2(-14, -14); prt.offsetMax = new Vector2(14, 14);
+        const float baseExpand = 14f;
+        float zoom = (unit != null && unit.Data != null) ? Mathf.Max(0.5f, unit.Data.KillIconZoom) : 1f;
+        Vector2 off = (unit != null && unit.Data != null) ? unit.Data.KillIconOffset : Vector2.zero;
+        float ex = baseExpand * zoom;
+        // offset 큰 값도 받게 — offset 크기만큼 portrait sizeDelta 추가 확장 (머리 영역이 항상 box 안에 잡힘)
+        ex += Mathf.Max(Mathf.Abs(off.x), Mathf.Abs(off.y));
+        prt.offsetMin = new Vector2(-ex + off.x, -ex + off.y);
+        prt.offsetMax = new Vector2( ex + off.x,  ex + off.y);
         var portrait = portraitGo.AddComponent<Image>();
         portrait.preserveAspect = true;
         portrait.raycastTarget = false;

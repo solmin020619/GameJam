@@ -91,6 +91,8 @@ public class BattleManager : MonoBehaviour
             so.ChampionName = d.displayName;
             so.Icon = d.portrait;
             so.KillIcon = d.killIcon;
+            so.KillIconZoom = d.killIconZoom;
+            so.KillIconOffset = d.killIconOffset;
             so.Prefab = d.unitPrefab;
             so.Role = d.role;
             so.MaxHp = d.maxHealth;

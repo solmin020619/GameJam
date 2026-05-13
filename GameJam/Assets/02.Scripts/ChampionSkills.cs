@@ -215,10 +215,10 @@ public partial class ChampionUnit
         var target = _currentTarget;
         if (target == null || target.IsDead) return false;
 
-        // 배후 위치 = 적 너머 1.0 unit
+        // 배후 위치 = 적 너머 1.5 unit (separation minDist 0.7 보다 충분히 여유 → 떨림 방지)
         Vector3 dirFromNinjaToTarget = (target.transform.position - transform.position).normalized;
         if (dirFromNinjaToTarget.sqrMagnitude < 0.01f) dirFromNinjaToTarget = Vector3.right;
-        Vector3 backPos = target.transform.position + dirFromNinjaToTarget * 1.0f;
+        Vector3 backPos = target.transform.position + dirFromNinjaToTarget * 1.5f;
 
         // 잔상 (출발지)
         BattleVfx.SpawnAfterImage(gameObject, new Color(0.6f, 0.6f, 0.6f, 0.4f), 0.2f);
@@ -232,7 +232,6 @@ public partial class ChampionUnit
         // 2초간 배후 상태 (평타 +30%)
         ApplyBackAttack(2f);
 
-        if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.12f, 0.1f);
         return true;
     }
 
@@ -256,17 +255,16 @@ public partial class ChampionUnit
             // 출발지 잔상
             BattleVfx.SpawnAfterImage(gameObject, new Color(0.6f, 0.6f, 0.6f, 0.4f), 0.2f);
 
-            // 적 뒤로 순간이동
+            // 적 뒤로 순간이동 (1.5 unit — 떨림 방지)
             Vector3 dirToEnemy = (e.transform.position - transform.position).normalized;
             if (dirToEnemy.sqrMagnitude < 0.01f) dirToEnemy = Vector3.right;
-            transform.position = e.transform.position + dirToEnemy * 1.0f;
+            transform.position = e.transform.position + dirToEnemy * 1.5f;
             FaceTarget(e.transform.position);
             PlayAnim(PlayerState.ATTACK);
 
             float dmg = CalcDamage(Data.AttackDamage * 1.2f, e.GetEffectiveDefense());
             e.TakeDamage(dmg, DamageType.Ultimate, this);
 
-            if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.1f, 0.08f);
             yield return new WaitForSeconds(0.18f);
         }
 

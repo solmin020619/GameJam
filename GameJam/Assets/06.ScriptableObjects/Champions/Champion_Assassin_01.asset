@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Champion_Assassin_01
   m_EditorClassIdentifier: Assembly-CSharp::ChampionData
   championId: assassin_01
-  displayName: "\uB2CC\uC790 1"
+  displayName: "\uB2CC\uC790"
   role: 8
   portrait: {fileID: 21300000, guid: fac9c305a0b773746a735beddfa25b94, type: 3}
   themeColor: {r: 0.5, g: 0.3, b: 0.7, a: 1}
@@ -26,6 +26,8 @@ MonoBehaviour:
   moveSpeed: 5
   unitPrefab: {fileID: 1373908190539689936, guid: 3cf202bd6cdccea479af4eb37cc65965, type: 3}
   killIcon: {fileID: 21300000, guid: 1eae5f35fc4e55e4fb6736a11bc6ce3b, type: 3}
+  killIconZoom: 1
+  killIconOffset: {x: 0, y: 0}
   basicSkillName: "\uBC30\uD6C4\uC2B5\uACA9"
   basicSkillCooldown: 5
   basicSkillIcon: {fileID: 21300000, guid: 8f8fc9e10d3c5da4ba0319617025695c, type: 3}

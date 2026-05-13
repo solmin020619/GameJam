@@ -17,12 +17,15 @@ public class BanPickAI : MonoBehaviour
 
         if (mgr.IsBanStep)
         {
-            // 캐리 라인부터 밴 우선
+            // banPriority 안에서 풀에 있는 거 다 모은 뒤 무작위 — 매 게임마다 다른 밴 결과
+            var candidates = new List<ChampionData>();
             foreach (var role in banPriority)
             {
                 var c = pool.FirstOrDefault(x => x.role == role);
-                if (c != null) return c;
+                if (c != null) candidates.Add(c);
             }
+            if (candidates.Count > 0)
+                return candidates[Random.Range(0, candidates.Count)];
             return pool[Random.Range(0, pool.Count)];
         }
 
