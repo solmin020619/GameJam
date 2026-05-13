@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9c5a2b5dec07b53498e1505fd862b07c
+guid: 97f4698ad1d3285458330b0072da72d3
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3520328571827923679
-    second: "\uCCA0\uD1F4-removebg-preview (1)_0"
+      213: -5566516882174262643
+    second: Red_Speed_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\uCCA0\uD1F4-removebg-preview (1)_0"
+      name: Red_Speed_0
       rect:
         serializedVersion: 2
-        x: 34
-        y: 15
-        width: 141
-        height: 201
+        x: 3
+        y: 1
+        width: 200
+        height: 203
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 125d98fb0d7452fc0800000000000000
-      internalID: -3520328571827923679
+      spriteID: d82c9c96362cfb2b0800000000000000
+      internalID: -5566516882174262643
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\uCCA0\uD1F4-removebg-preview (1)_0": -3520328571827923679
+      Red_Speed_0: -5566516882174262643
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
