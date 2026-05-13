@@ -34,12 +34,23 @@ public class BattleManager : MonoBehaviour
     private bool _endingBattle;
     private int _speedIndex;
 
+    // 킬 점수
+    public int Team0Kills { get; private set; }
+    public int Team1Kills { get; private set; }
+
     private readonly float[] _speeds = { 1f, 2f, 3f };
 
     public bool IsBattleRunning { get; private set; }
 
     void Awake()
     {
+        // AScene_FightUI 가 Additive 로 올라올 때 그 안의 BattleManager 중복 차단
+        if (Instance != null && Instance != this)
+        {
+            Debug.LogWarning($"[BM] 중복 BattleManager 발견 — '{gameObject.name}' (씬: {gameObject.scene.name}) 파괴. KScene 의 BM 만 사용.");
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
 
         // CameraShake 자동 부착 (Inspector 작업 안 해도 작동)
@@ -50,7 +61,53 @@ public class BattleManager : MonoBehaviour
     void Start()
     {
         ResultPanel.SetActive(false);
+
+        // 셀프 주입 — Bridge 콜백 타이밍 의존 안 하고 여기서 직접 PickResult 흡수
+        if (PickResult.AllyPicks != null && PickResult.AllyPicks.Count > 0 &&
+            PickResult.EnemyPicks != null && PickResult.EnemyPicks.Count > 0)
+        {
+            var t0 = BuildFromPicks(PickResult.AllyPicks);
+            var t1 = BuildFromPicks(PickResult.EnemyPicks);
+            SetTeams(t0, t1);
+            Debug.Log($"[BM] PickResult 셀프 주입 — Team0:{t0.Length}, Team1:{t1.Length}");
+        }
+        else
+        {
+            Debug.LogWarning(
+                "[BM] PickResult 비어 있음 — HScene 거치지 않고 KScene 으로 직접 진입한 듯. " +
+                "메뉴 'TFM/▶ Play From HScene' 으로 시작하면 밴픽 결과가 자동 주입돼.");
+        }
+
         StartBattle();
+    }
+
+    static ChampionSO[] BuildFromPicks(System.Collections.Generic.List<ChampionData> picks)
+    {
+        var arr = new ChampionSO[picks.Count];
+        for (int i = 0; i < picks.Count; i++)
+        {
+            var d = picks[i];
+            var so = ScriptableObject.CreateInstance<ChampionSO>();
+            so.ChampionName = d.displayName;
+            so.Icon = d.portrait;
+            so.KillIcon = d.killIcon;
+            so.Prefab = d.unitPrefab;
+            so.Role = d.role;
+            so.MaxHp = d.maxHealth;
+            so.AttackDamage = d.attackDamage;
+            so.AttackSpeed = d.attackSpeed;
+            so.AttackRange = d.attackRange;
+            so.Defense = d.defense;
+            so.MoveSpeed = d.moveSpeed;
+            so.BasicSkillName = d.basicSkillName;
+            so.BasicSkillCooldown = d.basicSkillCooldown;
+            so.BasicSkillIcon = d.basicSkillIcon;
+            so.UltimateName = d.ultimateName;
+            so.UltimateCooldown = d.ultimateCooldown;
+            so.UltimateIcon = d.ultimateIcon;
+            arr[i] = so;
+        }
+        return arr;
     }
 
     void StartBattle()
@@ -151,9 +208,24 @@ public class BattleManager : MonoBehaviour
     public List<ChampionUnit> GetAllies(int myTeamId)
         => myTeamId == 0 ? _team0 : _team1;
 
-    public void OnUnitDied(ChampionUnit unit)
+    public void OnUnitDied(ChampionUnit killer, ChampionUnit victim)
     {
         if (_endingBattle) return;
+
+        // 킬 카운트 (killer 팀이 +1)
+        if (killer != null && !killer.IsDead)
+        {
+            if (killer.TeamId == 0) Team0Kills++;
+            else Team1Kills++;
+        }
+
+        // 킬로그
+        if (KillLogUI.Instance != null) KillLogUI.Instance.AddEntry(killer, victim);
+        // 킬 점수 UI 갱신
+        if (KillScoreUI.Instance != null) KillScoreUI.Instance.Refresh(Team0Kills, Team1Kills);
+        // 아군 사망 시 빨간 비네트
+        if (victim != null && victim.TeamId == 0 && DamageVignette.Instance != null)
+            DamageVignette.Instance.Flash();
 
         int alive0 = _team0.FindAll(u => !u.IsDead).Count;
         int alive1 = _team1.FindAll(u => !u.IsDead).Count;
@@ -225,6 +297,17 @@ public class BattleManager : MonoBehaviour
     {
         if (TimerText == null) return;
         TimerText.text = $"{Mathf.CeilToInt(_timer):00}";
+
+        // 마지막 10초 빨간 깜빡
+        if (_timer > 0f && _timer <= 10f)
+        {
+            float pulse = (Mathf.Sin(Time.unscaledTime * 8f) + 1f) * 0.5f;  // 0~1
+            TimerText.color = Color.Lerp(new Color(1f, 0.4f, 0.4f), new Color(1f, 0.9f, 0.2f), pulse);
+        }
+        else
+        {
+            TimerText.color = Color.white;
+        }
     }
 
     // called by PickManager (teammate) to set teams before battle starts

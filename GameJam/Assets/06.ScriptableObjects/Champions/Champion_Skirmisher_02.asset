@@ -15,7 +15,7 @@ MonoBehaviour:
   championId: skirmisher_02
   displayName: "\uB3CC\uACA9\uAE30\uBCD1 2"
   role: 6
-  portrait: {fileID: 0}
+  portrait: {fileID: 21300000, guid: 4515bdf58be54094f8d28beff327cba0, type: 3}
   themeColor: {r: 0.9, g: 0.7, b: 0.3, a: 1}
   description: 
   maxHealth: 450
@@ -25,6 +25,7 @@ MonoBehaviour:
   defense: 10
   moveSpeed: 5.5
   unitPrefab: {fileID: 8890895835754340246, guid: 5e53448a9ce78a04dbe35cf99ccd6b60, type: 3}
+  killIcon: {fileID: 21300000, guid: 84319e2d602b1344fae149ae9a342fb2, type: 3}
   basicSkillName: "\uB3CC\uACA9\uCC3D"
   basicSkillCooldown: 6
   basicSkillIcon: {fileID: 21300000, guid: f6b633773312b9947b88ea8167ff1146, type: 3}

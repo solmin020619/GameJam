@@ -21,10 +21,29 @@ public class BanPickManager : MonoBehaviour
     public bool autoLoadBattleSceneOnDone = false;
     public string battleSceneName = "Main";
 
+    [Header("Sound (드래그앤드롭)")]
+    public AudioClip banSfx;
+    public AudioClip pickSfx;
+    public float sfxVolume = 0.9f;
+
+    [Header("BGM (드래그앤드롭 — 루프 재생)")]
+    public AudioClip banPickBgm;
+    [Range(0f, 1f)] public float bgmVolume = 0.5f;
+    AudioSource _bgmSrc;
+
     // ---- runtime state ----
     public BanPickPhase Phase { get; private set; } = BanPickPhase.Idle;
     public int CurrentStep { get; private set; } = 0;
-    public bool IsAllyTurn => Phase != BanPickPhase.Done && config.turnOrderIsAlly[CurrentStep];
+    public bool IsAllyTurn
+    {
+        get
+        {
+            if (Phase == BanPickPhase.Done) return false;
+            if (config?.turnOrderIsAlly == null || CurrentStep < 0 || CurrentStep >= config.turnOrderIsAlly.Count)
+                return false;
+            return config.turnOrderIsAlly[CurrentStep];
+        }
+    }
     public bool IsBanStep => CurrentStep < config.BanSteps;
 
     public float TurnRemaining { get; private set; }
@@ -40,16 +59,55 @@ public class BanPickManager : MonoBehaviour
 
     void Start()
     {
+        StartBgm();
         BeginBanPick();
+    }
+
+    void StartBgm()
+    {
+        if (banPickBgm == null) return;
+        _bgmSrc = gameObject.AddComponent<AudioSource>();
+        _bgmSrc.clip = banPickBgm;
+        _bgmSrc.loop = true;
+        _bgmSrc.volume = bgmVolume;
+        _bgmSrc.playOnAwake = false;
+        _bgmSrc.spatialBlend = 0f; // 2D
+        _bgmSrc.Play();
+    }
+
+    void StopBgm()
+    {
+        if (_bgmSrc != null) _bgmSrc.Stop();
     }
 
     public void BeginBanPick()
     {
         PickResult.Clear();
         CurrentStep = 0;
+        EnsureTurnOrder();
         BindCards();
         SetPhase(IsBanStep ? BanPickPhase.Banning : BanPickPhase.Picking);
         StartTurn();
+    }
+
+    // 에셋에서 turnOrderIsAlly 가 깨졌거나 길이가 부족하면 스네이크 드래프트로 자동 생성
+    void EnsureTurnOrder()
+    {
+        if (config == null) return;
+        int need = config.TotalSteps;
+        if (config.turnOrderIsAlly != null && config.turnOrderIsAlly.Count >= need) return;
+
+        Debug.LogWarning($"[BanPick] turnOrderIsAlly 길이 부족 ({(config.turnOrderIsAlly?.Count ?? 0)} < {need}) → 스네이크 드래프트 자동 생성");
+        var list = new System.Collections.Generic.List<bool>(need);
+        // bans: 1 ban each per round — A, E, A, E, ...
+        for (int i = 0; i < config.bansPerTeam; i++) { list.Add(true); list.Add(false); }
+        // picks: snake — A, E, E, A, A, E, E, A, …
+        for (int i = 0; i < config.picksPerTeam * 2; i++)
+        {
+            bool isAlly = ((i + 1) / 2) % 2 == 0;
+            list.Add(isAlly);
+        }
+        config.turnOrderIsAlly = list;
     }
 
     void BindCards()
@@ -126,7 +184,8 @@ public class BanPickManager : MonoBehaviour
     void Submit(ChampionData c)
     {
         bool ally = IsAllyTurn;
-        if (IsBanStep)
+        bool isBan = IsBanStep;
+        if (isBan)
         {
             if (ally) PickResult.AllyBans.Add(c);
             else PickResult.EnemyBans.Add(c);
@@ -137,7 +196,19 @@ public class BanPickManager : MonoBehaviour
             else PickResult.EnemyPicks.Add(c);
         }
 
+        // 사운드
+        var clip = isBan ? banSfx : pickSfx;
+        if (clip != null)
+            PlaySfx(clip);
+
         Advance();
+    }
+
+    void PlaySfx(AudioClip clip)
+    {
+        var cam = Camera.main;
+        var pos = cam != null ? cam.transform.position : Vector3.zero;
+        AudioSource.PlayClipAtPoint(clip, pos, sfxVolume);
     }
 
     void Advance()
@@ -169,6 +240,20 @@ public class BanPickManager : MonoBehaviour
         yield return new WaitForSeconds(1.2f);
         hud?.ShowDone();
         yield return new WaitForSeconds(config.autoConfirmGrace);
+
+        // BGM 페이드아웃
+        if (_bgmSrc != null)
+        {
+            float t = 0f, dur = 0.4f, startVol = _bgmSrc.volume;
+            while (t < dur)
+            {
+                t += Time.unscaledDeltaTime;
+                _bgmSrc.volume = Mathf.Lerp(startVol, 0f, t / dur);
+                yield return null;
+            }
+            StopBgm();
+        }
+
         OnAllDone?.Invoke();
         if (autoLoadBattleSceneOnDone && !string.IsNullOrEmpty(battleSceneName))
             UnityEngine.SceneManagement.SceneManager.LoadScene(battleSceneName);

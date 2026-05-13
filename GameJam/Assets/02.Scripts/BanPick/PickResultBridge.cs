@@ -4,39 +4,37 @@ using UnityEngine.SceneManagement;
 
 /// <summary>
 /// 밴픽 결과를 다음 씬의 BattleManager 로 자동 주입.
-/// Main(또는 HScene)에 GameObject 하나 만들고 이 컴포넌트 붙이면 끝.
-/// DontDestroyOnLoad 로 씬 전환 후에도 살아남아서, KScene 로드되는 순간
-/// 그 안의 BattleManager 를 찾아 ChampionSO 주입함.
-/// → KScene 자체는 0건드림.
+/// 빈 MonoBehaviour 컴포넌트(호환용) + RuntimeInitializeOnLoadMethod 로 무조건 동작.
+/// 어떤 씬에서 시작하든 sceneLoaded 콜백이 자동 등록됨 → HScene 에 GameObject 안 둬도 됨.
 /// </summary>
 public class PickResultBridge : MonoBehaviour
 {
-    static PickResultBridge _instance;
-
-    void Awake()
+    // ==== 진짜 핵심: 정적 초기화 ====
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    static void StaticInit()
     {
-        if (_instance != null && _instance != this)
+        SceneManager.sceneLoaded -= OnSceneLoadedStatic;
+        SceneManager.sceneLoaded += OnSceneLoadedStatic;
+        Debug.Log("[Bridge] RuntimeInitialize — sceneLoaded 후크 등록");
+    }
+
+    static void OnSceneLoadedStatic(Scene scene, LoadSceneMode mode)
+    {
+        if (PickResult.AllyPicks == null || PickResult.AllyPicks.Count == 0)
         {
-            Destroy(gameObject);
+            // 픽 없음 → BanPick 안 거치고 직접 진입한 씬. 무시.
             return;
         }
-        _instance = this;
-        DontDestroyOnLoad(gameObject);
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    void OnDestroy()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
-
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        if (PickResult.AllyPicks == null || PickResult.AllyPicks.Count == 0) return;
         if (PickResult.EnemyPicks == null || PickResult.EnemyPicks.Count == 0) return;
 
-        var bm = FindObjectOfType<BattleManager>();
-        if (bm == null) return;  // 배틀 매니저 없는 씬이면 무시
+        // 이 씬의 BattleManager 찾기 (Additive 로 올라온 UI 씬엔 없음)
+        BattleManager bm = null;
+        foreach (var root in scene.GetRootGameObjects())
+        {
+            bm = root.GetComponentInChildren<BattleManager>(true);
+            if (bm != null) break;
+        }
+        if (bm == null) return;
 
         var team0 = BuildArray(PickResult.AllyPicks);
         var team1 = BuildArray(PickResult.EnemyPicks);
@@ -65,6 +63,7 @@ public class PickResultBridge : MonoBehaviour
         var so = ScriptableObject.CreateInstance<ChampionSO>();
         so.ChampionName = d.displayName;
         so.Icon = d.portrait;
+        so.KillIcon = d.killIcon;
         so.Prefab = d.unitPrefab;
         so.Role = d.role;
         so.MaxHp = d.maxHealth;

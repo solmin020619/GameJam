@@ -15,6 +15,8 @@ MonoBehaviour:
   championPool:
   - {fileID: 11400000, guid: 7e7b0d9ebced493499cf6536895ff343, type: 2}
   - {fileID: 11400000, guid: b567dd9c93176ed4d9056e1712a228c1, type: 2}
+  - {fileID: 11400000, guid: e944c7dbed7f71e42921fcf2ebd603c1, type: 2}
+  - {fileID: 11400000, guid: a0f448858fef8534e892b0d49ca978e7, type: 2}
   - {fileID: 11400000, guid: 25046f6664e753d438f41f898e4872ba, type: 2}
   - {fileID: 11400000, guid: 9d9034e3a9644ea40a1aa733ce4249a8, type: 2}
   - {fileID: 11400000, guid: 44514381b0dc63148a7a0183967e9d85, type: 2}
@@ -23,6 +25,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 46b84c7a843fc6d429627d72722687a9, type: 2}
   - {fileID: 11400000, guid: 2744bb075fca89840a51a3c89a89a747, type: 2}
   - {fileID: 11400000, guid: e2365a2e0bade59448cf2ff8753a53b5, type: 2}
+  - {fileID: 11400000, guid: 8d4f677adc639de4bb91eb601b8d50a3, type: 2}
+  - {fileID: 11400000, guid: 5a51b3db8812b534dabd926f5548ea17, type: 2}
   - {fileID: 11400000, guid: fd18b1624f7da5245a9c68575052c4d0, type: 2}
   - {fileID: 11400000, guid: 24a92f9ebb4d5d849a1a99e7c6d4ec4e, type: 2}
   - {fileID: 11400000, guid: 64c15b2da88d19e48a75a65335a4d5dc, type: 2}
@@ -32,4 +36,4 @@ MonoBehaviour:
   phaseTimeLimit: 20
   aiActionDelay: 0.8
   autoConfirmGrace: 1.5
-  turnOrderIsAlly: 0100010000010100
+  turnOrderIsAlly: 01010011

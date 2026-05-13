@@ -34,6 +34,9 @@ public partial class ChampionUnit : MonoBehaviour
     private float _stunTimer;          // > 0 이면 모든 행동 정지
     private float _rootTimer;          // > 0 이면 이동만 정지 (공격은 OK)
     private float _backAttackTimer;    // > 0 이면 닌자 배후 상태 (평타 1.3배)
+
+    // 킬로그용 — 마지막으로 데미지 입힌 attacker 추적
+    public ChampionUnit LastAttacker { get; private set; }
     public bool IsBackAttacking => _backAttackTimer > 0f;
     public void ApplyBackAttack(float duration) { _backAttackTimer = Mathf.Max(_backAttackTimer, duration); }
 
@@ -55,9 +58,14 @@ public partial class ChampionUnit : MonoBehaviour
     float GetEffectiveMoveSpeed() => Data.MoveSpeed * (1f + (_moveSpeedBuffEnd > Time.time ? _moveSpeedBuffPct : 0f));
     public float GetEffectiveDefense() => Data.Defense * (1f + (_defenseBuffEnd > Time.time ? _defenseBuffPct : 0f));
 
+    // 발밑 외곽선 (팀 색 / 우선타겟이면 진한 빨강)
+    private GameObject _footRing;
+    private SpriteRenderer _footRingSr;
+
     // Champion info UI refs (HP + Basic CD + Ult slot + Name)
     private GameObject _infoUiRoot;
     private Image _hpFill;
+    private Image _hpDelayedFill;      // 빨간 잔여 (lerp 따라감)
     private Image _basicCdFill;
     private Image _ultSlotImage;       // 필살기 배경 (CD 진행에 따라 색 변화)
     private Image _ultSlotFill;        // 필살기 채워지는 게이지 (옵션)
@@ -92,7 +100,43 @@ public partial class ChampionUnit : MonoBehaviour
 
         if (_spum != null) _spum.OverrideControllerInit();
         CreateInfoUI();
+        CreateFootRing();
         PlayAnim(PlayerState.IDLE);
+    }
+
+    static Sprite _ringSprite;
+    static Sprite GetRingSprite()
+    {
+        if (_ringSprite != null) return _ringSprite;
+        const int size = 64;
+        var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        tex.filterMode = FilterMode.Bilinear;
+        float c = size * 0.5f;
+        for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
+            {
+                float dx = x - c, dy = y - c;
+                float dist = Mathf.Sqrt(dx * dx + dy * dy);
+                float r = c - 1f;
+                // 링 모양 (가장자리만 진하게)
+                float ring = Mathf.Clamp01(1f - Mathf.Abs(dist - r * 0.85f) / (r * 0.15f));
+                tex.SetPixel(x, y, new Color(1, 1, 1, ring));
+            }
+        tex.Apply();
+        _ringSprite = Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 64);
+        return _ringSprite;
+    }
+
+    void CreateFootRing()
+    {
+        if (_footRing != null) return;
+        _footRing = new GameObject($"FootRing_{name}");
+        // 부모-자식 X (flipX 영향 안 받음). LateUpdate에서 위치 추적
+        _footRingSr = _footRing.AddComponent<SpriteRenderer>();
+        _footRingSr.sprite = GetRingSprite();
+        _footRingSr.sortingOrder = -5;  // 캐릭 뒤
+        // 납작한 타원
+        _footRing.transform.localScale = new Vector3(0.9f, 0.45f, 1f);
     }
 
     void Update()
@@ -359,7 +403,7 @@ public partial class ChampionUnit : MonoBehaviour
 
         float atkMul = IsBackAttacking ? 1.3f : 1f;   // 닌자 배후 상태 평타 +30%
         float dmg = CalcDamage(Data.AttackDamage * atkMul, _currentTarget.GetEffectiveDefense());
-        _currentTarget.TakeDamage(dmg);
+        _currentTarget.TakeDamage(dmg, DamageType.Basic, this);
     }
 
     /// <summary>카이팅 중 평타 (애니 안 바꿈, 데미지만)</summary>
@@ -370,7 +414,7 @@ public partial class ChampionUnit : MonoBehaviour
         SpawnRangedVfx();
         float atkMul = IsBackAttacking ? 1.3f : 1f;
         float dmg = CalcDamage(Data.AttackDamage * atkMul, _currentTarget.GetEffectiveDefense());
-        _currentTarget.TakeDamage(dmg);
+        _currentTarget.TakeDamage(dmg, DamageType.Basic, this);
     }
 
     void SpawnRangedVfx()
@@ -396,10 +440,11 @@ public partial class ChampionUnit : MonoBehaviour
     float CalcDamage(float atk, float def)
         => atk * (100f / (100f + def * 1.8f));
 
-    public void TakeDamage(float amount, DamageType type = DamageType.Basic)
+    public void TakeDamage(float amount, DamageType type = DamageType.Basic, ChampionUnit attacker = null)
     {
         if (IsDead) return;
 
+        if (attacker != null) LastAttacker = attacker;
         CurrentHp -= amount;
         BattleManager.Instance.SpawnDamageText(transform.position, amount, type);
 
@@ -423,11 +468,12 @@ public partial class ChampionUnit : MonoBehaviour
         IsDead = true;
         _rb.linearVelocity = Vector2.zero;
         if (_infoUiRoot != null) _infoUiRoot.SetActive(false);
+        if (_footRing != null) _footRing.SetActive(false);
         PlayAnim(PlayerState.DEATH);
 
         if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.18f, 0.12f);
 
-        BattleManager.Instance.OnUnitDied(this);
+        BattleManager.Instance.OnUnitDied(LastAttacker, this);
         StartCoroutine(FadeOut());
     }
 
@@ -473,6 +519,87 @@ public partial class ChampionUnit : MonoBehaviour
     void OnDestroy()
     {
         if (_infoUiRoot != null) Destroy(_infoUiRoot);
+        if (_footRing != null) Destroy(_footRing);
+    }
+
+    void UpdateFootRing()
+    {
+        if (_footRing == null || _footRingSr == null) return;
+        _footRing.transform.position = transform.position + Vector3.up * 0.05f;
+
+        // 색상: 팀 색 (낮은 알파) / 우선타겟이면 진한 빨강 + 펄스
+        bool isPriorityTarget = isAllyPriorityTarget();
+        if (isPriorityTarget)
+        {
+            float pulse = (Mathf.Sin(Time.time * 6f) + 1f) * 0.5f;
+            _footRingSr.color = Color.Lerp(new Color(1f, 0.2f, 0.2f, 0.7f), new Color(1f, 0.6f, 0.3f, 0.9f), pulse);
+        }
+        else
+        {
+            _footRingSr.color = TeamId == 0
+                ? new Color(0.35f, 0.6f, 1f, 0.5f)
+                : new Color(1f, 0.4f, 0.4f, 0.5f);
+        }
+    }
+
+    bool isAllyPriorityTarget()
+    {
+        // 자신이 적팀이고, 우리팀 챔프 중 자기를 우선타겟으로 지정한 게 있는지 (BattleManager 의 playerFocusTarget)
+        if (TeamId == 0) return false;
+        if (BattleManager.Instance == null) return false;
+        // BattleManager 내 _team0 의 PriorityTarget == this 면 우선타겟
+        foreach (var u in BattleManager.Instance.GetAllies(0))
+        {
+            if (u != null && u.PriorityTarget == this) return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// 매 프레임 다른 챔프와 너무 가까우면 부드럽게 분리 (Steering Separation).
+    /// 캐릭터들이 한 점에 겹치지 않고 자연스럽게 거리 유지.
+    /// </summary>
+    void LateUpdate()
+    {
+        if (IsDead || Data == null) return;
+
+        // 발밑 외곽선 위치/색 갱신
+        UpdateFootRing();
+
+        if (BattleManager.Instance == null || !BattleManager.Instance.IsBattleRunning) return;
+
+        const float minDist = 0.7f;        // 이 거리 이하면 분리 적용
+        const float weight = 3.0f;          // 분리 속도 (이속 단위)
+
+        Vector2 separation = Vector2.zero;
+        int neighbors = 0;
+
+        foreach (var ally in BattleManager.Instance.GetAllies(TeamId))
+        {
+            if (ally == null || ally == this || ally.IsDead) continue;
+            Vector2 diff = (Vector2)transform.position - (Vector2)ally.transform.position;
+            float d = diff.magnitude;
+            if (d < minDist && d > 0.001f)
+            {
+                separation += diff.normalized * (minDist - d);
+                neighbors++;
+            }
+        }
+        foreach (var enemy in BattleManager.Instance.GetEnemies(TeamId))
+        {
+            if (enemy == null || enemy.IsDead) continue;
+            Vector2 diff = (Vector2)transform.position - (Vector2)enemy.transform.position;
+            float d = diff.magnitude;
+            if (d < minDist && d > 0.001f)
+            {
+                separation += diff.normalized * (minDist - d);
+                neighbors++;
+            }
+        }
+
+        if (neighbors == 0) return;
+        // position 직접 살짝 보정 (velocity 안 건드림 — 행동 로직과 독립)
+        transform.position += (Vector3)(separation * Time.deltaTime * weight);
     }
 
     void OnDrawGizmosSelected()
@@ -520,6 +647,10 @@ public partial class ChampionUnit : MonoBehaviour
         // ============== HP 바 ==============
         var hpBg = MakeUIImage("HpBg", _infoUiRoot.transform, new Vector2(110, 12),
                                new Vector3(0, 24, 0), new Color(0, 0, 0, 0.85f));
+        // 잔여 빨강 (delayed lerp) — fill 아래 깔림
+        _hpDelayedFill = MakeFilledImage("HpDelayed", _infoUiRoot.transform, new Vector2(104, 8),
+                                         new Vector3(0, 24, 0),
+                                         new Color(1f, 0.25f, 0.25f, 0.95f));
         _hpFill = MakeFilledImage("HpFill", _infoUiRoot.transform, new Vector2(104, 8),
                                   new Vector3(0, 24, 0),
                                   TeamId == 0 ? new Color(0.35f, 1f, 0.45f) : new Color(1f, 0.4f, 0.4f));
@@ -590,7 +721,20 @@ public partial class ChampionUnit : MonoBehaviour
         if (_infoUiRoot == null || Data == null) return;
         _infoUiRoot.transform.position = transform.position + Vector3.up * 1.8f;
 
-        if (_hpFill != null) _hpFill.fillAmount = Mathf.Clamp01(CurrentHp / Data.MaxHp);
+        if (_hpFill != null)
+        {
+            float ratio = Mathf.Clamp01(CurrentHp / Data.MaxHp);
+            _hpFill.fillAmount = ratio;
+
+            // 잔여 빨강 — fill 보다 클 때만 천천히 따라감 (데미지 받았을 때 잔여 효과)
+            if (_hpDelayedFill != null)
+            {
+                if (_hpDelayedFill.fillAmount > ratio)
+                    _hpDelayedFill.fillAmount = Mathf.MoveTowards(_hpDelayedFill.fillAmount, ratio, Time.deltaTime * 0.45f);
+                else
+                    _hpDelayedFill.fillAmount = ratio;  // 힐 시 즉시
+            }
+        }
 
         if (_basicCdFill != null)
         {

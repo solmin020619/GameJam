@@ -6,6 +6,7 @@ public class ChampionSO : ScriptableObject
     [Header("Info")]
     public string ChampionName;
     public Sprite Icon;
+    public Sprite KillIcon;    // 킬로그 머리 컷
     public GameObject Prefab;  // SPUM prefab for this champion
     public ChampionRole Role = ChampionRole.Fighter;
 

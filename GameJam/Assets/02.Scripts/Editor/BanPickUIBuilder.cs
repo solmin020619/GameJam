@@ -57,6 +57,21 @@ public static class BanPickUIBuilder
         manager.enemySlots = enemySlot;
         manager.autoLoadBattleSceneOnDone = true;
         manager.battleSceneName = "KScene";
+        // 사운드 자동 와이어링 (없으면 비어둠 — 인스펙터에서 드래그앤드롭 가능)
+        if (manager.banSfx == null)
+            manager.banSfx = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/05.Sounds/SFX/ban.mp3");
+        if (manager.pickSfx == null)
+            manager.pickSfx = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/05.Sounds/SFX/pick.mp3");
+        if (manager.banPickBgm == null)
+            manager.banPickBgm = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/05.Sounds/BGM/ban_bgm.mp3");
+
+        // PickResultBridge 자동 추가 — KScene 으로 픽 결과 전달
+        var existingBridge = Object.FindFirstObjectByType<PickResultBridge>();
+        if (existingBridge == null)
+        {
+            var bridgeGo = new GameObject("PickResultBridge");
+            bridgeGo.AddComponent<PickResultBridge>();
+        }
         manager.ai = ai;
 
         EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
@@ -227,30 +242,72 @@ public static class BanPickUIBuilder
         card.roleLabel.alignment = TextAlignmentOptions.Center;
         card.roleLabel.color = new Color(0.7f, 0.8f, 1f);
 
-        // Banned overlay
+        // Banned overlay — 어두운 회색 + 오른쪽 위 ⊘ 마크
         var banned = new GameObject("BannedOverlay", typeof(RectTransform));
         banned.transform.SetParent(go.transform, false);
         var brt = (RectTransform)banned.transform;
         brt.anchorMin = Vector2.zero; brt.anchorMax = Vector2.one;
         brt.offsetMin = brt.offsetMax = Vector2.zero;
         var banImg = banned.AddComponent<Image>();
-        banImg.color = new Color(1f, 0.1f, 0.1f, 0.35f);
-        var banX = CreateText(banned.transform, "X", "밴", 32, Vector2.zero, new Vector2(150, 80));
-        banX.alignment = TextAlignmentOptions.Center;
-        banX.color = Color.white;
+        banImg.color = new Color(0.1f, 0.1f, 0.1f, 0.55f);  // 어둡게
+        // 오른쪽 위 작은 ⊘ 박스
+        var banMark = new GameObject("BanMark", typeof(RectTransform));
+        banMark.transform.SetParent(banned.transform, false);
+        var bmRt = (RectTransform)banMark.transform;
+        bmRt.anchorMin = new Vector2(1f, 1f); bmRt.anchorMax = new Vector2(1f, 1f);
+        bmRt.pivot = new Vector2(1f, 1f);
+        bmRt.anchoredPosition = new Vector2(-4, -4);
+        bmRt.sizeDelta = new Vector2(28, 28);
+        var bmImg = banMark.AddComponent<Image>();
+        bmImg.color = new Color(0.3f, 0.3f, 0.3f, 0.95f);
+        var banSymbol = CreateText(banMark.transform, "S", "X", 22, Vector2.zero, new Vector2(28, 28));
+        banSymbol.alignment = TextAlignmentOptions.Center;
+        banSymbol.color = new Color(0.95f, 0.4f, 0.4f);
+        banSymbol.fontStyle = FontStyles.Bold;
         card.bannedOverlay = banned;
         banned.SetActive(false);
 
-        // Picked overlay
+        // Picked overlay — 어두운 회색 + 위쪽 팀 색 바 + 오른쪽 위 픽 순서 번호
         var picked = new GameObject("PickedOverlay", typeof(RectTransform));
         picked.transform.SetParent(go.transform, false);
         var prt2 = (RectTransform)picked.transform;
         prt2.anchorMin = Vector2.zero; prt2.anchorMax = Vector2.one;
         prt2.offsetMin = prt2.offsetMax = Vector2.zero;
         var pickImg = picked.AddComponent<Image>();
-        pickImg.color = new Color(0.3f, 1f, 0.4f, 0.25f);
+        pickImg.color = new Color(0.1f, 0.1f, 0.1f, 0.45f);
         card.pickedOverlay = picked;
         picked.SetActive(false);
+
+        // 위쪽 팀 색 바 (픽 시만 표시 — ChampionCardUI 가 색/표시 제어)
+        var teamBar = new GameObject("TeamBar", typeof(RectTransform));
+        teamBar.transform.SetParent(go.transform, false);
+        var tbRt = (RectTransform)teamBar.transform;
+        tbRt.anchorMin = new Vector2(0f, 1f); tbRt.anchorMax = new Vector2(1f, 1f);
+        tbRt.pivot = new Vector2(0.5f, 1f);
+        tbRt.anchoredPosition = Vector2.zero;
+        tbRt.sizeDelta = new Vector2(0, 8);
+        var tbImg = teamBar.AddComponent<Image>();
+        tbImg.color = new Color(0.3f, 0.55f, 1f);
+        card.teamColorBar = tbImg;
+        teamBar.SetActive(false);
+
+        // 오른쪽 위 픽 순서 번호 박스
+        var pickNumBox = new GameObject("PickNumBox", typeof(RectTransform));
+        pickNumBox.transform.SetParent(go.transform, false);
+        var pnRt = (RectTransform)pickNumBox.transform;
+        pnRt.anchorMin = new Vector2(1f, 1f); pnRt.anchorMax = new Vector2(1f, 1f);
+        pnRt.pivot = new Vector2(1f, 1f);
+        pnRt.anchoredPosition = new Vector2(-4, -4);
+        pnRt.sizeDelta = new Vector2(28, 28);
+        var pnImg = pickNumBox.AddComponent<Image>();
+        pnImg.color = new Color(0.3f, 0.55f, 1f);
+        var pickNumText = CreateText(pickNumBox.transform, "Num", "1", 20, Vector2.zero, new Vector2(28, 28));
+        pickNumText.alignment = TextAlignmentOptions.Center;
+        pickNumText.color = Color.white;
+        pickNumText.fontStyle = FontStyles.Bold;
+        card.pickOrderLabel = pickNumText;
+        pickNumBox.SetActive(false);
+        // pickOrderLabel.gameObject.SetActive 가 부모(PickNumBox) 처리
 
         // Hover frame
         var hover = new GameObject("HoverFrame", typeof(RectTransform));

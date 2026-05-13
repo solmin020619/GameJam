@@ -6,7 +6,10 @@
       "Bash(cp '/c/Users/user/OneDrive - 신구대학교/바탕 화면/VFX,오브젝트 모음/skill_icons/*.png' Assets/04.Images/Icons/Skills/)",
       "Bash(cp '/c/Users/user/OneDrive - 신구대학교/바탕 화면/VFX,오브젝트 모음/buffs/*.png' Assets/04.Images/Icons/Buffs/)",
       "Bash(cp '/c/Users/user/OneDrive - 신구대학교/바탕 화면/VFX,오브젝트 모음/arrows/*.png' Assets/04.Images/Effects/Arrows/)",
-      "Bash(cp '/c/Users/user/OneDrive - 신구대학교/바탕 화면/VFX,오브젝트 모음/vfx/*.png' Assets/04.Images/Effects/VFX/)"
+      "Bash(cp '/c/Users/user/OneDrive - 신구대학교/바탕 화면/VFX,오브젝트 모음/vfx/*.png' Assets/04.Images/Effects/VFX/)",
+      "Bash(ls \"/c/Users/user/Downloads/\" 2>&1 | grep -iE \"sword|kill\" | head; echo \"---\"; find \"/c/Users/user/OneDrive - 신구대학교/바탕 화면/\" -maxdepth 3 -iname \"*sword*\" 2>&1 | head)",
+      "Bash(mkdir -p \"Assets/04.Images/UI\"; cp \"/c/Users/user/Downloads/sword_icon_6x.png\" \"Assets/04.Images/UI/sword_icon.png\"; ls -la \"Assets/04.Images/UI/sword_icon.png\" 2>&1)",
+      "Bash(grep -E \"m_Name: BlueCard|m_Name: RedCard|m_Name: TimerText|m_Name: ResultText|m_Name: Canvas|m_Name: New Text|m_Name: Attack$|m_Name: Armor|m_Name: HP|m_Name: AttackSpeed|m_Name: Intersection|m_Name: Speed\" \"Assets/01.Scenes/AScene_FightUI.unity\")"
     ]
   }
 }

@@ -24,6 +24,9 @@ public class ChampionData : ScriptableObject
     [Header("Prefab handoff (set by battle dev)")]
     public GameObject unitPrefab;
 
+    [Header("Kill log icon (머리 컷)")]
+    public Sprite killIcon;
+
     [Header("Basic Skill (기본 스킬)")]
     public string basicSkillName = "기본 스킬";
     public float basicSkillCooldown = 6f;

@@ -75,7 +75,7 @@ public partial class ChampionUnit
         FaceTarget(target.transform.position);
         PlayAnim(PlayerState.ATTACK);
         float dmg = CalcDamage(Data.AttackDamage * 1.2f, target.GetEffectiveDefense());
-        target.TakeDamage(dmg, DamageType.Skill);
+        target.TakeDamage(dmg, DamageType.Skill, this);
         target.ApplyStun(1f);
         BattleVfx.ApplyKnockback(target, transform.position, 2f, 0.2f);  // 소형 넉백
         BattleVfx.SpawnRingPulse(target.transform.position, new Color(0.4f, 0.7f, 1f, 0.8f), 0.4f, 0.7f);
@@ -93,7 +93,7 @@ public partial class ChampionUnit
         foreach (var e in hits)
         {
             float dmg = CalcDamage(Data.AttackDamage * 1.5f, e.GetEffectiveDefense());
-            e.TakeDamage(dmg, DamageType.Skill);
+            e.TakeDamage(dmg, DamageType.Skill, this);
         }
         BattleVfx.SpawnRingPulse(transform.position, new Color(1f, 0.4f, 0.3f, 0.7f), 0.4f, 1.5f);
         if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.12f, 0.1f);
@@ -122,7 +122,7 @@ public partial class ChampionUnit
                 target.transform.position + Vector3.up * 0.7f,
                 isMagic: false, duration: 0.15f);
             float dmg = CalcDamage(Data.AttackDamage * 0.7f, target.GetEffectiveDefense());
-            target.TakeDamage(dmg, DamageType.Skill);
+            target.TakeDamage(dmg, DamageType.Skill, this);
             yield return new WaitForSeconds(0.2f);
         }
     }
@@ -141,7 +141,7 @@ public partial class ChampionUnit
             target.transform.position + Vector3.up * 0.7f,
             isMagic: true, duration: 0.2f);
         float dmg = CalcDamage(Data.AttackDamage * 1.8f, target.GetEffectiveDefense());
-        target.TakeDamage(dmg, DamageType.Skill);
+        target.TakeDamage(dmg, DamageType.Skill, this);
         BattleVfx.SpawnRingPulse(target.transform.position, new Color(1f, 0.4f, 1f, 0.7f), 0.4f, 0.8f);
         if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.12f, 0.08f);
         return true;
@@ -173,7 +173,7 @@ public partial class ChampionUnit
         foreach (var e in hits)
         {
             float dmg = CalcDamage(Data.AttackDamage * 1.3f, e.GetEffectiveDefense());
-            e.TakeDamage(dmg, DamageType.Skill);
+            e.TakeDamage(dmg, DamageType.Skill, this);
             e.ApplyRoot(0.8f);
         }
         BattleVfx.SpawnRingPulse(transform.position, new Color(0.8f, 0.5f, 0.2f, 0.8f), 0.6f, 1.8f);
@@ -201,7 +201,7 @@ public partial class ChampionUnit
         FaceTarget(target.transform.position);
         PlayAnim(PlayerState.ATTACK);
         float dmg = CalcDamage(Data.AttackDamage * 1.6f, target.GetEffectiveDefense());
-        target.TakeDamage(dmg, DamageType.Skill);
+        target.TakeDamage(dmg, DamageType.Skill, this);
 
         if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.12f, 0.1f);
         return true;
@@ -227,7 +227,7 @@ public partial class ChampionUnit
         PlayAnim(PlayerState.ATTACK);
 
         float dmg = CalcDamage(Data.AttackDamage * 1.8f, target.GetEffectiveDefense());
-        target.TakeDamage(dmg, DamageType.Skill);
+        target.TakeDamage(dmg, DamageType.Skill, this);
 
         // 2초간 배후 상태 (평타 +30%)
         ApplyBackAttack(2f);
@@ -264,7 +264,7 @@ public partial class ChampionUnit
             PlayAnim(PlayerState.ATTACK);
 
             float dmg = CalcDamage(Data.AttackDamage * 1.2f, e.GetEffectiveDefense());
-            e.TakeDamage(dmg, DamageType.Ultimate);
+            e.TakeDamage(dmg, DamageType.Ultimate, this);
 
             if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.1f, 0.08f);
             yield return new WaitForSeconds(0.18f);
@@ -306,7 +306,7 @@ public partial class ChampionUnit
         foreach (var e in hits)
         {
             float dmg = CalcDamage(Data.AttackDamage * 1.4f, e.GetEffectiveDefense());
-            e.TakeDamage(dmg, DamageType.Skill);
+            e.TakeDamage(dmg, DamageType.Skill, this);
         }
         // 시각 라인 + 자신 약간 전진
         BattleVfx.SpawnProjectileLine(
@@ -366,7 +366,7 @@ public partial class ChampionUnit
                 e.transform.position,
                 isMagic: false, duration: 0.25f);
             float dmg = CalcDamage(Data.AttackDamage * 1.3f, e.GetEffectiveDefense());
-            e.TakeDamage(dmg, DamageType.Ultimate);
+            e.TakeDamage(dmg, DamageType.Ultimate, this);
         }
         if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.3f, 0.2f);
     }
@@ -393,7 +393,7 @@ public partial class ChampionUnit
         foreach (var e in AliveEnemies())
         {
             float dmg = CalcDamage(Data.AttackDamage * 2.5f, e.GetEffectiveDefense());
-            e.TakeDamage(dmg, DamageType.Ultimate);
+            e.TakeDamage(dmg, DamageType.Ultimate, this);
             BattleVfx.SpawnRingPulse(e.transform.position,
                 new Color(1f, 0.4f, 1f, 0.9f), 0.5f, 1.2f);
         }
@@ -463,7 +463,7 @@ public partial class ChampionUnit
 
         PlayAnim(PlayerState.ATTACK);
         float dmg = CalcDamage(Data.AttackDamage * 3.5f, target.GetEffectiveDefense());
-        target.TakeDamage(dmg, DamageType.Ultimate);
+        target.TakeDamage(dmg, DamageType.Ultimate, this);
         target.ApplyStun(2f);
         BattleVfx.SpawnRingPulse(target.transform.position,
             new Color(1f, 0.6f, 0.3f, 0.95f), 0.6f, 1.3f);
@@ -499,7 +499,7 @@ public partial class ChampionUnit
                 target.transform.position + Vector3.up * 0.6f,
                 new Color(0.9f, 0.95f, 1f, 1f), 0.08f);
             float dmg = CalcDamage(Data.AttackDamage * 0.7f, target.GetEffectiveDefense());
-            target.TakeDamage(dmg, DamageType.Ultimate);
+            target.TakeDamage(dmg, DamageType.Ultimate, this);
 
             // 마지막 타격은 강한 셰이크
             if (i == 4)
@@ -538,7 +538,7 @@ public partial class ChampionUnit
             PlayAnim(PlayerState.ATTACK);
 
             float dmg = CalcDamage(Data.AttackDamage * 1.0f, e.GetEffectiveDefense());
-            e.TakeDamage(dmg, DamageType.Ultimate);
+            e.TakeDamage(dmg, DamageType.Ultimate, this);
             // 넉백 적용 (기획서 force 6, 0.5s root)
             BattleVfx.ApplyKnockback(e, transform.position, 6f, 0.5f);
 

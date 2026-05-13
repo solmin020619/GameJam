@@ -15,7 +15,7 @@ MonoBehaviour:
   championId: mage_02
   displayName: "\uB9C8\uBC95\uC0AC 2"
   role: 3
-  portrait: {fileID: 0}
+  portrait: {fileID: 21300000, guid: 4e2927c5c0863264dbffa835b9310fab, type: 3}
   themeColor: {r: 1, g: 0.3, b: 1, a: 1}
   description: 
   maxHealth: 350
@@ -25,6 +25,7 @@ MonoBehaviour:
   defense: 5
   moveSpeed: 3.5
   unitPrefab: {fileID: 1409330150742225430, guid: c6f9a0001c9487047a4a2e2a9959d630, type: 3}
+  killIcon: {fileID: 21300000, guid: affead4e7fa501943ba993c2642ee53d, type: 3}
   basicSkillName: "\uB9C8\uBC95\uD0C4"
   basicSkillCooldown: 7
   basicSkillIcon: {fileID: 21300000, guid: 9dece8fddaabf7348aee629b63c6a4be, type: 3}

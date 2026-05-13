@@ -15,7 +15,7 @@ MonoBehaviour:
   championId: fighter_02
   displayName: "\uAD11\uC804\uC0AC 2"
   role: 1
-  portrait: {fileID: 0}
+  portrait: {fileID: 21300000, guid: 8dc17e53d41943b43a426bd16512f3e5, type: 3}
   themeColor: {r: 1, g: 0.4, b: 0.3, a: 1}
   description: 
   maxHealth: 500
@@ -25,6 +25,7 @@ MonoBehaviour:
   defense: 15
   moveSpeed: 4
   unitPrefab: {fileID: 5733240747036874455, guid: 18de6475eb47a9945acda0c8d542fd46, type: 3}
+  killIcon: {fileID: 21300000, guid: 5fa1340a5cd540f4580b71ba4ced5baf, type: 3}
   basicSkillName: "\uD68C\uC804\uBCA0\uAE30"
   basicSkillCooldown: 5
   basicSkillIcon: {fileID: 21300000, guid: f3aa85b6c52aa7b41841e68cbdd722da, type: 3}
