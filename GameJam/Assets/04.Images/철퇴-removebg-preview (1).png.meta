@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: efd0114b08f982941afc77bc2b4ef7a0
+guid: 9c5a2b5dec07b53498e1505fd862b07c
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6196247561698238981
-    second: ui_unit_card_bg_transparent_0
+      213: -3520328571827923679
+    second: "\uCCA0\uD1F4-removebg-preview (1)_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -52,11 +52,11 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 21, y: 22, z: 0, w: 0}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
-  spriteTessellationDetail: 0
+  spriteTessellationDetail: -1
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
@@ -100,38 +100,33 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ui_unit_card_bg_transparent_0
+      name: "\uCCA0\uD1F4-removebg-preview (1)_0"
       rect:
         serializedVersion: 2
-        x: 19
-        y: 19
-        width: 1116
-        height: 621
+        x: 34
+        y: 15
+        width: 141
+        height: 201
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5026767045e7df550800000000000000
-      internalID: 6196247561698238981
+      spriteID: 125d98fb0d7452fc0800000000000000
+      internalID: -3520328571827923679
       vertices: []
       indices: 
       edges: []
       weights: []
-    outline:
-    - - {x: 559, y: 311.5}
-      - {x: -557, y: 311.5}
-      - {x: -559, y: 303.5}
-      - {x: -559, y: -311.5}
-      - {x: 559, y: -311.5}
+    outline: []
     customData: 
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    internalID: 0
     vertices: []
     indices: 
     edges: []
@@ -140,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ui_unit_card_bg_transparent_0: 6196247561698238981
+      "\uCCA0\uD1F4-removebg-preview (1)_0": -3520328571827923679
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
