@@ -24,4 +24,4 @@ MonoBehaviour:
   attackRange: 1.2
   defense: 30
   moveSpeed: 3
-  unitPrefab: {fileID: 6575081137198735227, guid: 50939aaa5a6cd6442a51b6f88a716dfc, type: 3}
+  unitPrefab: {fileID: 8059323491257457011, guid: f407fef102518494aa9dc2a8229bd67e, type: 3}

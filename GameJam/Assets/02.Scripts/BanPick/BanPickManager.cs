@@ -145,6 +145,11 @@ public class BanPickManager : MonoBehaviour
         CurrentStep++;
         OnStepAdvanced?.Invoke();
 
+        // 새 픽이 카드/슬롯에 즉시 반영되도록 (마지막 픽 포함)
+        RefreshCardStates();
+        hud?.allySlotUI?.Refresh();
+        hud?.enemySlotUI?.Refresh();
+
         if (CurrentStep >= config.TotalSteps)
         {
             SetPhase(BanPickPhase.Done);
@@ -160,6 +165,8 @@ public class BanPickManager : MonoBehaviour
 
     IEnumerator FinishRoutine()
     {
+        // 마지막 픽이 슬롯에 표시된 상태를 잠시 보여준 뒤 READY 오버레이
+        yield return new WaitForSeconds(1.2f);
         hud?.ShowDone();
         yield return new WaitForSeconds(config.autoConfirmGrace);
         OnAllDone?.Invoke();

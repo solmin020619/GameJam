@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 99bd45a2ac914f04bb0850afbec47e19, type: 3}
-  m_Name: Champion_Tank_07
+  m_Name: Champion_Fighter_03
   m_EditorClassIdentifier: Assembly-CSharp::ChampionData
-  championId: tank_07
-  displayName: "\uC218\uD638\uAE30\uC0AC 7"
-  role: 0
+  championId: fighter_03
+  displayName: "\uAD11\uC804\uC0AC 3"
+  role: 1
   portrait: {fileID: 0}
-  themeColor: {r: 0.3, g: 0.6, b: 1, a: 1}
+  themeColor: {r: 1, g: 0.4, b: 0.3, a: 1}
   description: 
-  maxHealth: 700
-  attackDamage: 25
-  attackSpeed: 0.8
-  attackRange: 1.2
-  defense: 30
-  moveSpeed: 3
-  unitPrefab: {fileID: 649267437827472009, guid: 2cfa87990452079408242818bef73bcc, type: 3}
+  maxHealth: 500
+  attackDamage: 50
+  attackSpeed: 1
+  attackRange: 1.5
+  defense: 15
+  moveSpeed: 4
+  unitPrefab: {fileID: 4332893836375525230, guid: 3e2540e8932de6a46bdc6156e2709cdb, type: 3}

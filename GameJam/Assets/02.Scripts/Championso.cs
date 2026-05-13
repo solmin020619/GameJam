@@ -7,6 +7,7 @@ public class ChampionSO : ScriptableObject
     public string ChampionName;
     public Sprite Icon;
     public GameObject Prefab;  // SPUM prefab for this champion
+    public ChampionRole Role = ChampionRole.Fighter;
 
     [Header("Stats")]
     public float MaxHp = 500f;
@@ -15,4 +16,12 @@ public class ChampionSO : ScriptableObject
     public float AttackRange = 1.5f;  // unity units
     public float Defense = 10f;
     public float MoveSpeed = 3.5f;
+
+    [Header("Role-specific (auto)")]
+    [Tooltip("Marksman/Mage: 이 거리보다 가까운 적은 카이팅으로 피함")]
+    public float KitingDistance = 2.5f;
+    [Tooltip("Healer: 힐 쿨타임 (초)")]
+    public float HealCooldown = 2f;
+    [Tooltip("Healer: 힐량 (% of MaxHp). 0.15 = MaxHp의 15%")]
+    public float HealAmountPercent = 0.15f;
 }

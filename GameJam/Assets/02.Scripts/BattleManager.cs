@@ -31,6 +31,7 @@ public class BattleManager : MonoBehaviour
     private float _timer;
     private float _currentSpeed = 1f;
     private bool _isPaused;
+    private bool _endingBattle;
     private int _speedIndex;
 
     private readonly float[] _speeds = { 1f, 2f, 3f };
@@ -40,6 +41,10 @@ public class BattleManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
+
+        // CameraShake 자동 부착 (Inspector 작업 안 해도 작동)
+        if (Camera.main != null && Camera.main.GetComponent<CameraShake>() == null)
+            Camera.main.gameObject.AddComponent<CameraShake>();
     }
 
     void Start()
@@ -91,7 +96,11 @@ public class BattleManager : MonoBehaviour
         _timer -= Time.deltaTime;
         UpdateTimerUI();
 
-        if (_timer <= 0f) EndBattle(timeUp: true);
+        if (_timer <= 0f && !_endingBattle)
+        {
+            _endingBattle = true;
+            StartCoroutine(EndBattleWithSlowmo(timeUp: true));
+        }
     }
 
     void LateUpdate()
@@ -118,11 +127,37 @@ public class BattleManager : MonoBehaviour
 
     public void OnUnitDied(ChampionUnit unit)
     {
+        if (_endingBattle) return;
+
         int alive0 = _team0.FindAll(u => !u.IsDead).Count;
         int alive1 = _team1.FindAll(u => !u.IsDead).Count;
 
+        // 마지막 한 마리가 죽는 순간 슬로우모션 + 결과 화면
         if (alive0 == 0 || alive1 == 0)
-            EndBattle(timeUp: false);
+        {
+            _endingBattle = true;
+            StartCoroutine(EndBattleWithSlowmo(timeUp: false));
+            return;
+        }
+
+        // 일반 사망 — 살짝 슬로우 (게임 정지 X)
+        StartCoroutine(QuickSlowmo(0.45f, 0.12f));
+    }
+
+    IEnumerator QuickSlowmo(float scale, float realDuration)
+    {
+        Time.timeScale = scale * _currentSpeed;
+        yield return new WaitForSecondsRealtime(realDuration);
+        if (IsBattleRunning) Time.timeScale = _isPaused ? 0f : _currentSpeed;
+    }
+
+    IEnumerator EndBattleWithSlowmo(bool timeUp)
+    {
+        // 결정적 슬로우 모션
+        Time.timeScale = 0.2f * _currentSpeed;
+        yield return new WaitForSecondsRealtime(1.0f);
+        Time.timeScale = 1f;
+        EndBattle(timeUp);
     }
 
     void EndBattle(bool timeUp)
@@ -134,12 +169,17 @@ public class BattleManager : MonoBehaviour
         int alive1 = _team1.FindAll(u => !u.IsDead).Count;
 
         string result;
-        if (alive0 > alive1) result = "VICTORY!";
-        else if (alive1 > alive0) result = "DEFEAT";
-        else result = "DRAW";
+        Color resultColor;
+        if (alive0 > alive1) { result = "VICTORY!"; resultColor = new Color(1f, 0.9f, 0.3f); }
+        else if (alive1 > alive0) { result = "DEFEAT"; resultColor = new Color(1f, 0.4f, 0.4f); }
+        else { result = "DRAW"; resultColor = Color.white; }
 
         ResultPanel.SetActive(true);
         ResultText.text = $"{result}\nSurvivors: {alive0} vs {alive1}";
+        ResultText.color = resultColor;
+
+        // 결과 화면 등장 시 큰 카메라 셰이크
+        if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.4f, 0.25f);
     }
 
     void TogglePause()

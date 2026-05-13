@@ -13,21 +13,19 @@ MonoBehaviour:
   m_Name: BanPickConfig
   m_EditorClassIdentifier: Assembly-CSharp::BanPickConfig
   championPool:
-  - {fileID: 11400000, guid: 44514381b0dc63148a7a0183967e9d85, type: 2}
-  - {fileID: 11400000, guid: fd18b1624f7da5245a9c68575052c4d0, type: 2}
-  - {fileID: 11400000, guid: 20f28f5ce9769f04f90da6aef12f83bf, type: 2}
   - {fileID: 11400000, guid: 7e7b0d9ebced493499cf6536895ff343, type: 2}
+  - {fileID: 11400000, guid: fd18b1624f7da5245a9c68575052c4d0, type: 2}
+  - {fileID: 11400000, guid: 44514381b0dc63148a7a0183967e9d85, type: 2}
   - {fileID: 11400000, guid: b567dd9c93176ed4d9056e1712a228c1, type: 2}
-  - {fileID: 11400000, guid: 24a92f9ebb4d5d849a1a99e7c6d4ec4e, type: 2}
+  - {fileID: 11400000, guid: 20f28f5ce9769f04f90da6aef12f83bf, type: 2}
   - {fileID: 11400000, guid: 2d3d107ff95171a4c93f48001090c63f, type: 2}
+  - {fileID: 11400000, guid: 8346d00c5363d3c40b18e7426b710511, type: 2}
   - {fileID: 11400000, guid: f03298883d8a54c4fa82c52edfeed8e9, type: 2}
   - {fileID: 11400000, guid: 2928d5a75c98c6e41959df40b7119417, type: 2}
-  - {fileID: 11400000, guid: 9284e36bcaf4eec4288a9bd3231f7089, type: 2}
-  - {fileID: 11400000, guid: 9e246bd1becb0ec4abb7ce337698d0d1, type: 2}
-  - {fileID: 11400000, guid: ead0700e96cfb904c89d24dbe5dee59b, type: 2}
-  bansPerTeam: 2
+  - {fileID: 11400000, guid: 24a92f9ebb4d5d849a1a99e7c6d4ec4e, type: 2}
+  bansPerTeam: 1
   picksPerTeam: 3
   phaseTimeLimit: 20
   aiActionDelay: 0.8
   autoConfirmGrace: 1.5
-  turnOrderIsAlly: 01000100010000010100
+  turnOrderIsAlly: 0100010000010100

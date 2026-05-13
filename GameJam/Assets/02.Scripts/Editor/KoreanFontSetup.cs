@@ -2,40 +2,40 @@
 using TMPro;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.TextCore.LowLevel;
 
 public static class KoreanFontSetup
 {
-    const string TtfPath = "Assets/06.Fonts/Galmuri11.ttf";
-    const string SdfPath = "Assets/06.Fonts/Galmuri11_SDF.asset";
+    const string FontsFolder = "Assets/06.Fonts";
 
     [MenuItem("TFM/Setup Korean Font (Galmuri11)")]
     public static void Setup()
     {
-        var ttf = AssetDatabase.LoadAssetAtPath<Font>(TtfPath);
-        if (ttf == null)
+        // 06.Fonts 폴더에서 atlas 텍스처가 살아있는 TMP 폰트 자산을 자동 검색.
+        // (GUI Font Asset Creator 로 만든 정상 자산을 우선 사용)
+        var guids = AssetDatabase.FindAssets("t:TMP_FontAsset", new[] { FontsFolder });
+        TMP_FontAsset fontAsset = null;
+        string pickedPath = null;
+
+        foreach (var guid in guids)
         {
-            Debug.LogError($"[TFM] TTF not found at {TtfPath}");
+            var path = AssetDatabase.GUIDToAssetPath(guid);
+            var fa = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(path);
+            if (fa == null) continue;
+            if (fa.atlasTexture == null) continue;  // 깨진 자산은 건너뜀
+
+            fontAsset = fa;
+            pickedPath = path;
+            break;
+        }
+
+        if (fontAsset == null)
+        {
+            Debug.LogError($"[TFM] {FontsFolder} 안에 정상 TMP 폰트 자산이 없습니다. " +
+                           "Window → TextMeshPro → Font Asset Creator 로 먼저 만들어 주세요.");
             return;
         }
 
-        var fontAsset = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(SdfPath);
-        if (fontAsset == null)
-        {
-            fontAsset = TMP_FontAsset.CreateFontAsset(
-                ttf,
-                32,                              // sampling point size
-                9,                               // atlas padding
-                GlyphRenderMode.SDFAA,
-                1024, 1024,                      // atlas size
-                AtlasPopulationMode.Dynamic,     // dynamic: 런타임에 한글 자동 채움
-                true                             // multi atlas
-            );
-            AssetDatabase.CreateAsset(fontAsset, SdfPath);
-            Debug.Log($"[TFM] Created TMP font asset at {SdfPath}");
-        }
-
-        // 1) TMP Settings의 Default Font Asset 변경 → 이후 생성되는 TMP 모두 한글 폰트 사용
+        // 1) TMP Settings의 Default Font Asset 변경 → 이후 생성되는 TMP 모두 이 폰트 사용
         var settings = TMP_Settings.instance;
         if (settings != null)
         {
@@ -70,7 +70,7 @@ public static class KoreanFontSetup
         UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(
             UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene());
 
-        Debug.Log($"[TFM] Galmuri11 applied. TMP UI: {countUI}, TMP 3D: {count3D}. Default font set.");
+        Debug.Log($"[TFM] '{pickedPath}' 폰트 적용. TMP UI: {countUI}, TMP 3D: {count3D}. Default font set.");
         Selection.activeObject = fontAsset;
     }
 }
