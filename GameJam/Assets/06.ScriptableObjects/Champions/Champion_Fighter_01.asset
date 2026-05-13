@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99bd45a2ac914f04bb0850afbec47e19, type: 3}
+  m_Name: Champion_Fighter_01
+  m_EditorClassIdentifier: Assembly-CSharp::ChampionData
+  championId: fighter_01
+  displayName: "\uAD11\uC804\uC0AC 1"
+  role: 1
+  portrait: {fileID: 0}
+  themeColor: {r: 1, g: 0.4, b: 0.3, a: 1}
+  description: 
+  maxHealth: 500
+  attackDamage: 50
+  attackSpeed: 1
+  attackRange: 1.5
+  defense: 15
+  moveSpeed: 4
+  unitPrefab: {fileID: 4332893836375525230, guid: 3e2540e8932de6a46bdc6156e2709cdb, type: 3}

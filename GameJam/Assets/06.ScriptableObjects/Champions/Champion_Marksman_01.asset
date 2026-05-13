@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99bd45a2ac914f04bb0850afbec47e19, type: 3}
+  m_Name: Champion_Marksman_01
+  m_EditorClassIdentifier: Assembly-CSharp::ChampionData
+  championId: marksman_01
+  displayName: "\uC800\uACA9\uC218 1"
+  role: 2
+  portrait: {fileID: 0}
+  themeColor: {r: 0.4, g: 1, b: 0.4, a: 1}
+  description: 
+  maxHealth: 350
+  attackDamage: 60
+  attackSpeed: 1.2
+  attackRange: 4.5
+  defense: 5
+  moveSpeed: 4.5
+  unitPrefab: {fileID: 5113837395290500559, guid: b11f897f43e2e52449ee22d692ddcb08, type: 3}
