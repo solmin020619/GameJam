@@ -2559,7 +2559,7 @@ GameObject:
   - component: {fileID: 8229097897935690575}
   - component: {fileID: 4803960995596285418}
   - component: {fileID: 8242747829769156762}
-  - component: {fileID: 4215363389388976818}
+  - component: {fileID: 7260584727738603961}
   m_Layer: 5
   m_Name: Berserker_Fighter
   m_TagString: Untagged
@@ -5801,7 +5801,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.8, y: 1.4}
   m_EdgeRadius: 0
---- !u!114 &4215363389388976818
+--- !u!114 &7260584727738603961
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

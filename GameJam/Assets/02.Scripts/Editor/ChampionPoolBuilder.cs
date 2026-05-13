@@ -17,7 +17,7 @@ public static class ChampionPoolBuilder
     const string PrefabsFolder = "Assets/03.Prefabs";
     const string ChampionDataDir = "Assets/06.ScriptableObjects/Champions";
     const string ConfigPath = "Assets/06.ScriptableObjects/BanPickConfig.asset";
-    const int CopiesPerPrefab = 2;  // prefab 1개당 ChampionData N개 (풀 크기 늘리기)
+    const int CopiesPerPrefab = 1;  // prefab 1개당 ChampionData N개 (1 = 역할별 1챔 → 풀 9개)
 
     [MenuItem("TFM/Rebuild Champion Pool (From 03.Prefabs)")]
     public static void Rebuild()
@@ -111,6 +111,24 @@ public static class ChampionPoolBuilder
 
         var summary = string.Join(", ", roleCounters.Select(kv => $"{kv.Key} x{kv.Value}"));
         Debug.Log($"[TFM] Champion pool rebuilt — {generated.Count} champions. {summary}");
+
+        // 풀 재빌드 시 portrait / killIcon / skill icon 모두 비워졌음 → 자동으로 매핑 메뉴 호출
+        try
+        {
+            ChampionPortraitMapper.Map();
+            Debug.Log("[TFM] Portraits / KillIcons 자동 매핑 완료");
+        }
+        catch (System.Exception e) { Debug.LogWarning($"[TFM] Portrait 매핑 실패: {e.Message}"); }
+
+        try
+        {
+            IconAssetInstaller.Install();
+            Debug.Log("[TFM] Skill Icons 자동 매핑 완료");
+        }
+        catch (System.Exception e) { Debug.LogWarning($"[TFM] Skill Icon 매핑 실패: {e.Message}"); }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
         Selection.activeObject = AssetDatabase.LoadAssetAtPath<BanPickConfig>(ConfigPath);
     }
 

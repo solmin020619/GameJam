@@ -26400,7 +26400,7 @@ MonoBehaviour:
   enemySlots: {fileID: 540244566}
   ai: {fileID: 1239075860}
   autoLoadBattleSceneOnDone: 1
-  battleSceneName: KScene
+  battleSceneName: InGame
   banSfx: {fileID: 8300000, guid: d11a8503c032d3d44909107967e17228, type: 3}
   pickSfx: {fileID: 8300000, guid: 4b5e66dced24aa346847fd3385159e3e, type: 3}
   sfxVolume: 0.9

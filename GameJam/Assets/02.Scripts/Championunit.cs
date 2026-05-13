@@ -640,56 +640,79 @@ public partial class ChampionUnit : MonoBehaviour
         canvas.renderMode = RenderMode.WorldSpace;
         canvas.sortingOrder = 200;
 
-        Color allyColor = new Color(0.4f, 0.7f, 1f);
-        Color enemyColor = new Color(1f, 0.4f, 0.4f);
-        Color teamColor = TeamId == 0 ? allyColor : enemyColor;
+        // ============ 레이아웃 ============
+        // 캐릭터 아래에 가로형 — 왼쪽에 큰 정사각 궁극기 박스, 오른쪽에 [이름 / HP / 스킬CD] 세로 스택
+        // 모든 좌표는 root 중심 기준 (root 자체는 캐릭터 아래로 이동)
+        const float ultSize = 26f;
+        const float panelW  = 96f;
+        const float gap     = 4f;            // 박스–패널 사이
+        const float barH    = 8f;            // HP / CD 바 두께
+        const float nameH   = 10f;           // 이름 라벨 높이
 
-        // ============== HP 바 ==============
-        var hpBg = MakeUIImage("HpBg", _infoUiRoot.transform, new Vector2(110, 12),
-                               new Vector3(0, 24, 0), new Color(0, 0, 0, 0.85f));
-        // 잔여 빨강 (delayed lerp) — fill 아래 깔림
-        _hpDelayedFill = MakeFilledImage("HpDelayed", _infoUiRoot.transform, new Vector2(104, 8),
-                                         new Vector3(0, 24, 0),
-                                         new Color(1f, 0.25f, 0.25f, 0.95f));
-        _hpFill = MakeFilledImage("HpFill", _infoUiRoot.transform, new Vector2(104, 8),
-                                  new Vector3(0, 24, 0),
-                                  TeamId == 0 ? new Color(0.35f, 1f, 0.45f) : new Color(1f, 0.4f, 0.4f));
+        // 전체 가로폭 중앙정렬 → 캐릭터 정중앙 아래 위치
+        float totalHalf = (ultSize + gap + panelW) * 0.5f;
+        float ultX   = -totalHalf + ultSize * 0.5f;
+        float panelX =  totalHalf - panelW   * 0.5f;
 
-        // ============== 기본 스킬 CD 바 ==============
-        var cdBg = MakeUIImage("BasicCdBg", _infoUiRoot.transform, new Vector2(110, 8),
-                               new Vector3(0, 12, 0), new Color(0, 0, 0, 0.85f));
-        _basicCdFill = MakeFilledImage("BasicCdFill", _infoUiRoot.transform, new Vector2(104, 5),
-                                       new Vector3(0, 12, 0),
-                                       new Color(0.35f, 0.7f, 1f));
+        // 세로 배치 (위 → 이름, 중간 → HP, 아래 → CD)
+        float nameY = (barH + barH + nameH) * 0.5f - nameH * 0.5f;
+        float hpY   = nameY - nameH * 0.5f - 1f - barH * 0.5f;
+        float cdY   = hpY   - barH        - 1f;
 
-        // ============== 필살기 아이콘 + 이름 ==============
-        // 필살기 박스 (왼쪽). 실제 아이콘 있으면 sprite 로, 없으면 회색 박스.
-        _ultSlotImage = MakeUIImage("UltSlot", _infoUiRoot.transform, new Vector2(20, 20),
-                                    new Vector3(-46, -4, 0), Color.white);
+        // ============ 궁극기 박스 (왼쪽) ============
+        // 짙은 배경 (테두리 느낌)
+        MakeUIImage("UltFrame", _infoUiRoot.transform, new Vector2(ultSize + 2, ultSize + 2),
+                    new Vector3(ultX, 0, 0), new Color(0, 0, 0, 0.9f));
+        _ultSlotImage = MakeUIImage("UltSlot", _infoUiRoot.transform, new Vector2(ultSize, ultSize),
+                                    new Vector3(ultX, 0, 0), Color.white);
         if (Data.UltimateIcon != null) _ultSlotImage.sprite = Data.UltimateIcon;
-        else _ultSlotImage.color = new Color(0.3f, 0.3f, 0.3f, 0.95f);
+        else _ultSlotImage.color = new Color(0.3f, 0.4f, 0.55f, 1f);
 
-        // 어두운 오버레이 (CD 안 찬 만큼 가림 — 다 차면 사라짐)
-        _ultSlotFill = MakeFilledImage("UltCdOverlay", _infoUiRoot.transform, new Vector2(20, 20),
-                                       new Vector3(-46, -4, 0),
+        // CD 오버레이 (radial 채워짐)
+        _ultSlotFill = MakeFilledImage("UltCdOverlay", _infoUiRoot.transform, new Vector2(ultSize, ultSize),
+                                       new Vector3(ultX, 0, 0),
                                        new Color(0, 0, 0, 0.75f));
         _ultSlotFill.fillMethod = Image.FillMethod.Radial360;
         _ultSlotFill.fillOrigin = (int)Image.Origin360.Top;
         _ultSlotFill.fillClockwise = false;
 
-        // 이름 라벨 (오른쪽)
+        // ============ 이름 라벨 (오른쪽 상단) ============
         var nameGo = new GameObject("Name");
         nameGo.transform.SetParent(_infoUiRoot.transform, false);
         var nameRt = nameGo.AddComponent<RectTransform>();
-        nameRt.sizeDelta = new Vector2(90, 18);
-        nameRt.localPosition = new Vector3(8, -4, 0);
+        nameRt.sizeDelta = new Vector2(panelW, nameH + 4);
+        nameRt.localPosition = new Vector3(panelX, nameY, 0);
         _nameLabel = nameGo.AddComponent<TMPro.TextMeshProUGUI>();
-        _nameLabel.text = Data != null ? Data.ChampionName : name;
-        _nameLabel.fontSize = 12;
+        // 이름 — 인덱스 떼고 (예: "수호기사 1" → "수호기사")
+        string nm = Data != null ? Data.ChampionName : name;
+        int sp = nm.LastIndexOf(' ');
+        if (sp > 0 && int.TryParse(nm.Substring(sp + 1), out _)) nm = nm.Substring(0, sp);
+        _nameLabel.text = nm;
+        _nameLabel.fontSize = 10;
+        _nameLabel.fontStyle = TMPro.FontStyles.Bold;
         _nameLabel.color = Color.white;
         _nameLabel.alignment = TMPro.TextAlignmentOptions.Left;
         _nameLabel.enableAutoSizing = false;
         _nameLabel.raycastTarget = false;
+        _nameLabel.enableWordWrapping = false;
+        _nameLabel.overflowMode = TMPro.TextOverflowModes.Overflow;
+
+        // ============ HP 바 (오른쪽 중단) ============
+        MakeUIImage("HpBg", _infoUiRoot.transform, new Vector2(panelW + 2, barH + 2),
+                    new Vector3(panelX, hpY, 0), new Color(0, 0, 0, 0.9f));
+        _hpDelayedFill = MakeFilledImage("HpDelayed", _infoUiRoot.transform, new Vector2(panelW, barH),
+                                         new Vector3(panelX, hpY, 0),
+                                         new Color(1f, 0.25f, 0.25f, 0.95f));
+        _hpFill = MakeFilledImage("HpFill", _infoUiRoot.transform, new Vector2(panelW, barH),
+                                  new Vector3(panelX, hpY, 0),
+                                  TeamId == 0 ? new Color(0.35f, 1f, 0.45f) : new Color(1f, 0.4f, 0.4f));
+
+        // ============ 기본 스킬 CD 바 (오른쪽 하단) ============
+        MakeUIImage("BasicCdBg", _infoUiRoot.transform, new Vector2(panelW + 2, barH + 2),
+                    new Vector3(panelX, cdY, 0), new Color(0, 0, 0, 0.9f));
+        _basicCdFill = MakeFilledImage("BasicCdFill", _infoUiRoot.transform, new Vector2(panelW, barH),
+                                       new Vector3(panelX, cdY, 0),
+                                       new Color(0.35f, 0.7f, 1f));
     }
 
     Image MakeUIImage(string n, Transform parent, Vector2 size, Vector3 pos, Color color)
@@ -719,7 +742,8 @@ public partial class ChampionUnit : MonoBehaviour
     void UpdateInfoUI()
     {
         if (_infoUiRoot == null || Data == null) return;
-        _infoUiRoot.transform.position = transform.position + Vector3.up * 1.8f;
+        // 캐릭터 아래로 (이전: up * 1.8) — TFM 참고 레퍼런스 스타일
+        _infoUiRoot.transform.position = transform.position + Vector3.down * 0.75f;
 
         if (_hpFill != null)
         {

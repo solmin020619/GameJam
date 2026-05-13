@@ -56,7 +56,7 @@ public static class BanPickUIBuilder
         manager.allySlots = allySlot;
         manager.enemySlots = enemySlot;
         manager.autoLoadBattleSceneOnDone = true;
-        manager.battleSceneName = "KScene";
+        manager.battleSceneName = "InGame";
         // 사운드 자동 와이어링 (없으면 비어둠 — 인스펙터에서 드래그앤드롭 가능)
         if (manager.banSfx == null)
             manager.banSfx = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/05.Sounds/SFX/ban.mp3");

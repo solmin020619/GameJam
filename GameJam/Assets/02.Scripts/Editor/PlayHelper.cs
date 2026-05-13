@@ -5,14 +5,18 @@ using UnityEngine;
 
 public static class PlayHelper
 {
-    const string HScenePath = "Assets/01.Scenes/HScene.unity";
-    const string AScenePath = "Assets/01.Scenes/AScene.unity";
+    const string BanPickPath = "Assets/01.Scenes/BanPick.unity";
+    const string AScenePath  = "Assets/01.Scenes/AScene.unity";
+    const string LobbyPath   = "Assets/01.Scenes/Lobby.unity";
 
-    [MenuItem("TFM/▶ Play From HScene (BanPick → Battle)", priority = -100)]
-    public static void PlayFromHScene() => PlayScene(HScenePath);
+    [MenuItem("TFM/▶ Play From BanPick (BanPick → InGame)", priority = -100)]
+    public static void PlayFromBanPick() => PlayScene(BanPickPath);
 
     [MenuItem("TFM/▶ Play From AScene (Main Menu)", priority = -99)]
     public static void PlayFromAScene() => PlayScene(AScenePath);
+
+    [MenuItem("TFM/▶ Play From Lobby", priority = -98)]
+    public static void PlayFromLobby() => PlayScene(LobbyPath);
 
     static void PlayScene(string path)
     {

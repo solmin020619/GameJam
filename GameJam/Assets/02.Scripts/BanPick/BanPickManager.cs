@@ -19,7 +19,7 @@ public class BanPickManager : MonoBehaviour
 
     [Header("Events")]
     public bool autoLoadBattleSceneOnDone = false;
-    public string battleSceneName = "Main";
+    public string battleSceneName = "InGame";
 
     [Header("Sound (드래그앤드롭)")]
     public AudioClip banSfx;

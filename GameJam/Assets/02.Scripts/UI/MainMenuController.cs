@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class MainMenuController : MonoBehaviour
 {
     [Header("Scene Names")]
-    public string hSceneName = "HScene";   // Start → 이 씬 로드
+    public string hSceneName = "BanPick";  // Start → 이 씬 로드 (이전 HScene)
 
     void Awake()
     {
