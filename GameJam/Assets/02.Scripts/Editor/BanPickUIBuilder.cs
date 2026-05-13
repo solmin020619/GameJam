@@ -117,9 +117,9 @@ public static class BanPickUIBuilder
         rt.sizeDelta = new Vector2(800, 160);
 
         var hud = go.AddComponent<BanPickHUD>();
-        hud.phaseLabel = CreateText(go.transform, "PhaseLabel", "BAN PHASE", 56, new Vector2(0, -30), new Vector2(800, 80));
+        hud.phaseLabel = CreateText(go.transform, "PhaseLabel", "밴 단계", 56, new Vector2(0, -30), new Vector2(800, 80));
         hud.phaseLabel.alignment = TextAlignmentOptions.Center;
-        hud.turnLabel = CreateText(go.transform, "TurnLabel", "YOUR TURN · BAN", 28, new Vector2(0, -90), new Vector2(800, 36));
+        hud.turnLabel = CreateText(go.transform, "TurnLabel", "내 차례 · 밴", 28, new Vector2(0, -90), new Vector2(800, 36));
         hud.turnLabel.alignment = TextAlignmentOptions.Center;
 
         var timerGO = new GameObject("TimerFill", typeof(RectTransform));
@@ -149,7 +149,7 @@ public static class BanPickUIBuilder
         drt.offsetMin = drt.offsetMax = Vector2.zero;
         var doneBg = doneGO.AddComponent<Image>();
         doneBg.color = new Color(0, 0, 0, 0.7f);
-        var doneLabel = CreateText(doneGO.transform, "DoneLabel", "READY!", 140, Vector2.zero, new Vector2(800, 200));
+        var doneLabel = CreateText(doneGO.transform, "DoneLabel", "준비 완료!", 140, Vector2.zero, new Vector2(800, 200));
         doneLabel.alignment = TextAlignmentOptions.Center;
         doneLabel.color = new Color(0.4f, 1f, 0.5f);
         hud.doneOverlay = doneGO;
@@ -233,7 +233,7 @@ public static class BanPickUIBuilder
         brt.offsetMin = brt.offsetMax = Vector2.zero;
         var banImg = banned.AddComponent<Image>();
         banImg.color = new Color(1f, 0.1f, 0.1f, 0.35f);
-        var banX = CreateText(banned.transform, "X", "BAN", 32, Vector2.zero, new Vector2(150, 80));
+        var banX = CreateText(banned.transform, "X", "밴", 32, Vector2.zero, new Vector2(150, 80));
         banX.alignment = TextAlignmentOptions.Center;
         banX.color = Color.white;
         card.bannedOverlay = banned;
@@ -279,12 +279,12 @@ public static class BanPickUIBuilder
 
         var slot = go.AddComponent<TeamSlotUI>();
         slot.side = side;
-        slot.teamLabel = CreateText(go.transform, "TeamLabel", ally ? "YOUR TEAM" : "ENEMY TEAM", 28,
+        slot.teamLabel = CreateText(go.transform, "TeamLabel", ally ? "우리 팀" : "상대 팀", 28,
             new Vector2(0, -50), new Vector2(220, 36));
         slot.teamLabel.alignment = TextAlignmentOptions.Center;
 
         // Ban row label + slots
-        CreateText(go.transform, "BanLabel", "BANS", 18, new Vector2(0, -100), new Vector2(220, 24))
+        CreateText(go.transform, "BanLabel", "밴", 18, new Vector2(0, -100), new Vector2(220, 24))
             .alignment = TextAlignmentOptions.Center;
         slot.banSlots = new Image[config.bansPerTeam];
         for (int i = 0; i < config.bansPerTeam; i++)
@@ -293,7 +293,7 @@ public static class BanPickUIBuilder
                 new Vector2(-60 + i * 70, -150), 60);
         }
 
-        CreateText(go.transform, "PickLabel", "PICKS", 18, new Vector2(0, -210), new Vector2(220, 24))
+        CreateText(go.transform, "PickLabel", "픽", 18, new Vector2(0, -210), new Vector2(220, 24))
             .alignment = TextAlignmentOptions.Center;
         slot.pickSlots = new Image[config.picksPerTeam];
         for (int i = 0; i < config.picksPerTeam; i++)

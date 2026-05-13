@@ -37,9 +37,9 @@ public class BanPickHUD : MonoBehaviour
         if (phaseLabel == null) return;
         phaseLabel.text = p switch
         {
-            BanPickPhase.Banning => "BAN PHASE",
-            BanPickPhase.Picking => "PICK PHASE",
-            BanPickPhase.Done => "READY!",
+            BanPickPhase.Banning => "밴 단계",
+            BanPickPhase.Picking => "픽 단계",
+            BanPickPhase.Done => "준비 완료!",
             _ => ""
         };
         phaseLabel.color = p == BanPickPhase.Banning ? new Color(1f, 0.4f, 0.4f)
@@ -50,8 +50,8 @@ public class BanPickHUD : MonoBehaviour
     public void RefreshTurn(BanPickManager mgr)
     {
         if (turnLabel == null) return;
-        string side = mgr.IsAllyTurn ? "YOUR TURN" : "ENEMY...";
-        string act = mgr.IsBanStep ? "BAN" : "PICK";
+        string side = mgr.IsAllyTurn ? "내 차례" : "상대 차례...";
+        string act = mgr.IsBanStep ? "밴" : "픽";
         turnLabel.text = $"{side}  ·  {act}";
         turnLabel.color = mgr.IsAllyTurn ? allyColor : enemyColor;
         if (turnSideIndicator != null)
@@ -75,6 +75,6 @@ public class BanPickHUD : MonoBehaviour
     public void ShowDone()
     {
         if (doneOverlay != null) doneOverlay.SetActive(true);
-        if (doneLabel != null) doneLabel.text = "READY!";
+        if (doneLabel != null) doneLabel.text = "준비 완료!";
     }
 }

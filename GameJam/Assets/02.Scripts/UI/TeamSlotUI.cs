@@ -26,14 +26,14 @@ public class TeamSlotUI : MonoBehaviour
 
     void Reset()
     {
-        if (teamLabel != null) teamLabel.text = side == TeamSide.Ally ? "YOUR TEAM" : "ENEMY TEAM";
+        if (teamLabel != null) teamLabel.text = side == TeamSide.Ally ? "우리 팀" : "상대 팀";
     }
 
     void Awake()
     {
         if (teamLabel != null)
         {
-            teamLabel.text = side == TeamSide.Ally ? "YOUR TEAM" : "ENEMY TEAM";
+            teamLabel.text = side == TeamSide.Ally ? "우리 팀" : "상대 팀";
             teamLabel.color = side == TeamSide.Ally ? allyColor : enemyColor;
         }
         ClearAll();
