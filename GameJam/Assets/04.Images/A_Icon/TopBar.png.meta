@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 1e52d21728d396543833441cd0475c14
+guid: 6d2e210065ad17a4bba8588f7ddb6454
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -106413003905911418
-    second: BlackBall_0
+      213: 4916514817523440012
+    second: TopBar_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: BlackBall_0
+      name: TopBar_0
       rect:
         serializedVersion: 2
-        x: 6
-        y: 6
-        width: 31
-        height: 30
+        x: 26
+        y: 95
+        width: 814
+        height: 102
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 685b4becfe1f58ef0800000000000000
-      internalID: -106413003905911418
+      spriteID: c89dd6f7d28fa3440800000000000000
+      internalID: 4916514817523440012
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      BlackBall_0: -106413003905911418
+      TopBar_0: 4916514817523440012
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
