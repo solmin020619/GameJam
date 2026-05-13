@@ -69,14 +69,40 @@ public class BattleManager : MonoBehaviour
             SpawnChampion(Team1Champions[i], teamId: 1, Team1SpawnPoints[i]);
         }
 
+        // 캐릭터끼리만 충돌 무시 → 미끄러짐 X / 벽엔 막힘
+        var all = new List<ChampionUnit>();
+        all.AddRange(_team0);
+        all.AddRange(_team1);
+        for (int i = 0; i < all.Count; i++)
+        {
+            var ci = all[i].GetComponent<Collider2D>();
+            if (ci == null) continue;
+            for (int j = i + 1; j < all.Count; j++)
+            {
+                var cj = all[j].GetComponent<Collider2D>();
+                if (cj == null) continue;
+                Physics2D.IgnoreCollision(ci, cj, true);
+            }
+        }
+
         IsBattleRunning = true;
         UpdateTimerUI();
     }
 
     void SpawnChampion(ChampionSO data, int teamId, Transform spawnPoint)
     {
+        if (data == null) { Debug.LogWarning($"[BM] Team{teamId} 의 ChampionSO 가 null. 슬롯 비움."); return; }
+        if (data.Prefab == null) { Debug.LogError($"[BM] '{data.ChampionName}' 의 Prefab 이 null. 풀 빌더 재실행 필요."); return; }
+        if (spawnPoint == null) { Debug.LogError($"[BM] Team{teamId} spawnPoint 가 null. KScene SpawnPoints 와이어링 확인."); return; }
+
         var go = Instantiate(data.Prefab, spawnPoint.position, Quaternion.identity);
         var unit = go.GetComponent<ChampionUnit>();
+        if (unit == null)
+        {
+            Debug.LogError($"[BM] '{data.ChampionName}' (prefab: {data.Prefab.name}) 에 ChampionUnit 컴포넌트 없음. TFM > Rebuild Champion Pool 메뉴 재실행 필요.");
+            Destroy(go);
+            return;
+        }
         unit.Init(data, teamId);
 
         if (teamId == 0) _team0.Add(unit);

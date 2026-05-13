@@ -24,4 +24,10 @@ MonoBehaviour:
   attackRange: 1.5
   defense: 15
   moveSpeed: 4
-  unitPrefab: {fileID: 2990566411949785538, guid: 1677cb804308f60468963fb212f9bb12, type: 3}
+  unitPrefab: {fileID: 5733240747036874455, guid: 18de6475eb47a9945acda0c8d542fd46, type: 3}
+  basicSkillName: "\uD68C\uC804\uBCA0\uAE30"
+  basicSkillCooldown: 5
+  basicSkillIcon: {fileID: 0}
+  ultimateName: "\uAD11\uD3ED"
+  ultimateCooldown: 18
+  ultimateIcon: {fileID: 0}

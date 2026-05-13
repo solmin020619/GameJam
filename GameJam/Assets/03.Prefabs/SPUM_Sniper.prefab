@@ -1960,7 +1960,7 @@ GameObject:
   - component: {fileID: 7828400223433044864}
   - component: {fileID: 3434678783406127032}
   - component: {fileID: 8355472883111629231}
-  - component: {fileID: 1504362623971403525}
+  - component: {fileID: 2049107697283351103}
   m_Layer: 5
   m_Name: SPUM_Sniper
   m_TagString: Untagged
@@ -1975,7 +1975,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3834195797625971705}
-  m_LocalRotation: {x: -0, y: 0.008726557, z: -0, w: 0.9999619}
+  m_LocalRotation: {x: 0, y: 0.008726558, z: 0, w: 0.999962}
   m_LocalPosition: {x: 0, y: 0, z: 0.00015256465}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4934,7 +4934,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.8, y: 1.4}
   m_EdgeRadius: 0
---- !u!114 &1504362623971403525
+--- !u!114 &2049107697283351103
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4943,7 +4943,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3834195797625971705}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac7160488e04a184986ede7abe52bc5c, type: 3}
+  m_Script: {fileID: 0}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChampionUnit
   Data: {fileID: 0}

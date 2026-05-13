@@ -24,7 +24,7 @@ public static class ChampionPoolBuilder
         if (!AssetDatabase.IsValidFolder(ChampionDataDir))
             Directory.CreateDirectory(ChampionDataDir);
 
-        // 1) 03.Prefabs 안 SPUM_*.prefab 찾기 (서브폴더 제외)
+        // 1) 03.Prefabs 안 SPUM_Prefabs 컴포넌트 보유 prefab (서브폴더 제외)
         var prefabPaths = new List<string>();
         var allGuids = AssetDatabase.FindAssets("t:Prefab", new[] { PrefabsFolder });
         foreach (var guid in allGuids)
@@ -33,7 +33,10 @@ public static class ChampionPoolBuilder
             // 03.Prefabs 바로 아래만 (Champions/ 같은 서브폴더는 제외)
             var rel = path.Substring(PrefabsFolder.Length + 1);
             if (rel.Contains("/")) continue;
-            if (!Path.GetFileName(path).StartsWith("SPUM_")) continue;
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (prefab == null) continue;
+            // SPUM 캐릭터 prefab만 (DamageText 등 제외)
+            if (prefab.GetComponentInChildren<SPUM_Prefabs>(true) == null) continue;
             prefabPaths.Add(path);
         }
 
@@ -43,10 +46,14 @@ public static class ChampionPoolBuilder
             return;
         }
 
+        Debug.Log($"[TFM] Found {prefabPaths.Count} SPUM prefabs in {PrefabsFolder}");
+
         // 2) 기존 ChampionData 자산 삭제
         var oldGuids = AssetDatabase.FindAssets("t:ChampionData", new[] { ChampionDataDir });
         foreach (var g in oldGuids)
             AssetDatabase.DeleteAsset(AssetDatabase.GUIDToAssetPath(g));
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
 
         // 3) 각 prefab → 배틀 준비 + ChampionData 생성
         var roleCounters = new Dictionary<ChampionRole, int>();
@@ -55,8 +62,16 @@ public static class ChampionPoolBuilder
         foreach (var path in prefabPaths)
         {
             EnsureBattleReady(path);
+
+            // EnsureBattleReady 후 디스크 갱신 → AssetDatabase Refresh 한 번
+            AssetDatabase.ImportAsset(path);
+
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-            if (prefab == null) continue;
+            if (prefab == null)
+            {
+                Debug.LogWarning($"[TFM] Load 실패 (path={path})");
+                continue;
+            }
 
             var role = GuessRole(prefab);
             if (!roleCounters.ContainsKey(role)) roleCounters[role] = 0;
@@ -64,9 +79,21 @@ public static class ChampionPoolBuilder
             int idx = roleCounters[role];
 
             var dataPath = $"{ChampionDataDir}/Champion_{role}_{idx:D2}.asset";
+
+            // 만에 하나 같은 path에 이미 자산 있으면 삭제 후 새로 만듦
+            if (AssetDatabase.LoadAssetAtPath<ChampionData>(dataPath) != null)
+                AssetDatabase.DeleteAsset(dataPath);
+
             var data = ScriptableObject.CreateInstance<ChampionData>();
             AssetDatabase.CreateAsset(data, dataPath);
             ApplyPreset(data, role, idx, prefab);
+
+            // 검증
+            if (string.IsNullOrEmpty(data.displayName) || data.unitPrefab == null)
+                Debug.LogError($"[TFM] {dataPath} 빈 상태! displayName='{data.displayName}', prefab={(data.unitPrefab == null ? "null" : data.unitPrefab.name)}");
+            else
+                Debug.Log($"[TFM] {data.displayName} ({role}) ← {prefab.name}");
+
             EditorUtility.SetDirty(data);
             generated.Add(data);
         }
@@ -84,46 +111,90 @@ public static class ChampionPoolBuilder
 
     // ============ helpers ============
 
+    /// <summary>
+    /// Preview Scene 에 prefab 을 인스턴스화 → 깨진 스크립트 제거 + 컴포넌트 보장 → 저장.
+    /// LoadPrefabContents 보다 인스턴스가 missing script 제거에 안전.
+    /// </summary>
     static void EnsureBattleReady(string prefabPath)
     {
-        var contents = PrefabUtility.LoadPrefabContents(prefabPath);
-        bool changed = false;
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+        if (prefab == null) return;
 
-        if (contents.GetComponent<Rigidbody2D>() == null)
+        var scene = UnityEditor.SceneManagement.EditorSceneManager.NewPreviewScene();
+        GameObject instance = null;
+        try
         {
-            var rb = contents.AddComponent<Rigidbody2D>();
-            rb.gravityScale = 0f;
-            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-            changed = true;
-        }
-        if (contents.GetComponent<Collider2D>() == null)
-        {
-            var col = contents.AddComponent<BoxCollider2D>();
-            col.size = new Vector2(0.8f, 1.4f);
-            col.offset = new Vector2(0f, 0.7f);
-            changed = true;
-        }
-        if (contents.GetComponent<ChampionUnit>() == null)
-        {
-            contents.AddComponent<ChampionUnit>();
-            changed = true;
-        }
+            instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, scene);
+            if (instance == null) return;
 
-        if (changed) PrefabUtility.SaveAsPrefabAsset(contents, prefabPath);
-        PrefabUtility.UnloadPrefabContents(contents);
+            bool changed = false;
+
+            // 1) 모든 자식의 missing script 제거 (instance 에서는 빌트인 API 가 잘 작동)
+            foreach (var t in instance.GetComponentsInChildren<Transform>(true))
+            {
+                int removed = GameObjectUtility.RemoveMonoBehavioursWithMissingScript(t.gameObject);
+                if (removed > 0) changed = true;
+            }
+
+            // 2) 컴포넌트 보장
+            if (instance.GetComponent<Rigidbody2D>() == null)
+            {
+                var rb = instance.AddComponent<Rigidbody2D>();
+                rb.gravityScale = 0f;
+                rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+                changed = true;
+            }
+            if (instance.GetComponent<Collider2D>() == null)
+            {
+                var col = instance.AddComponent<BoxCollider2D>();
+                col.size = new Vector2(0.8f, 1.4f);
+                col.offset = new Vector2(0f, 0.7f);
+                changed = true;
+            }
+            if (instance.GetComponent<ChampionUnit>() == null)
+            {
+                instance.AddComponent<ChampionUnit>();
+                changed = true;
+            }
+
+            // 3) 저장
+            if (changed)
+            {
+                try { PrefabUtility.SaveAsPrefabAsset(instance, prefabPath); }
+                catch (System.Exception ex) { Debug.LogWarning($"[TFM] {prefabPath} 저장 실패: {ex.Message}"); }
+            }
+        }
+        finally
+        {
+            if (instance != null) Object.DestroyImmediate(instance);
+            UnityEditor.SceneManagement.EditorSceneManager.ClosePreviewScene(scene);
+        }
     }
 
     static ChampionRole GuessRole(GameObject prefab)
     {
-        // 1) 이름 매칭
+        // 1) 접미사 매칭 (_T, _F, _M, _A, _H, _D, _S, _U)
         var n = prefab.name.ToLower();
+        if (n.EndsWith("_t")) return ChampionRole.Tank;
+        if (n.EndsWith("_f")) return ChampionRole.Fighter;
+        if (n.EndsWith("_m") && !n.EndsWith("man_m")) return ChampionRole.Mage;
+        if (n.EndsWith("_a")) return ChampionRole.Marksman;   // Archer
+        if (n.EndsWith("_h")) return ChampionRole.Healer;
+        if (n.EndsWith("_d")) return ChampionRole.Disruptor;
+        if (n.EndsWith("_s")) return ChampionRole.Skirmisher;
+        if (n.EndsWith("_u")) return ChampionRole.Duelist;    // dUelist
+
+        // 2) 이름 매칭
+        if (n.Contains("swordsm") || n.Contains("duelist") || n.Contains("검사") || n.Contains("쾌검")) return ChampionRole.Duelist;
+        if (n.Contains("crush") || n.Contains("hammer") || n.Contains("분쇄")) return ChampionRole.Disruptor;
+        if (n.Contains("lancer") || n.Contains("horse") || n.Contains("rider") || n.Contains("기병") || n.Contains("돌격")) return ChampionRole.Skirmisher;
         if (n.Contains("guard") || n.Contains("tank") || n.Contains("paladin")) return ChampionRole.Tank;
         if (n.Contains("snip") || n.Contains("arch") || n.Contains("bow") || n.Contains("rang")) return ChampionRole.Marksman;
         if (n.Contains("mage") || n.Contains("wiz") || n.Contains("sorc")) return ChampionRole.Mage;
         if (n.Contains("heal") || n.Contains("priest") || n.Contains("cleric")) return ChampionRole.Healer;
         if (n.Contains("berserk") || n.Contains("warrior") || n.Contains("fight") || n.Contains("knight")) return ChampionRole.Fighter;
 
-        // 2) 무기 기반 자동 분류 (SPUM_숫자 같은 모호한 이름)
+        // 3) 무기 기반 자동 분류 (SPUM_숫자 같은 모호한 이름)
         var spum = prefab.GetComponent<SPUM_Prefabs>() ?? prefab.GetComponentInChildren<SPUM_Prefabs>();
         if (spum != null) return ClassifyByWeapon(spum);
         return ChampionRole.Fighter;
@@ -178,6 +249,67 @@ public static class ChampionPoolBuilder
                 c.maxHealth = 400; c.attackDamage = 25; c.attackSpeed = 0.8f;
                 c.attackRange = 3.5f; c.defense = 10; c.moveSpeed = 3.5f;
                 break;
+            case ChampionRole.Disruptor:
+                c.maxHealth = 600; c.attackDamage = 45; c.attackSpeed = 0.6f;
+                c.attackRange = 1.4f; c.defense = 22; c.moveSpeed = 3.2f;
+                break;
+            case ChampionRole.Skirmisher:
+                c.maxHealth = 450; c.attackDamage = 55; c.attackSpeed = 0.9f;
+                c.attackRange = 1.6f; c.defense = 10; c.moveSpeed = 5.5f;
+                break;
+            case ChampionRole.Duelist:
+                c.maxHealth = 420; c.attackDamage = 58; c.attackSpeed = 1.1f;
+                c.attackRange = 1.4f; c.defense = 12; c.moveSpeed = 4.2f;
+                break;
+        }
+
+        // 스킬 메타 자동 채움 (기획서 기반)
+        switch (role)
+        {
+            case ChampionRole.Tank:       c.basicSkillName = "방패강타"; c.basicSkillCooldown = 6f; c.ultimateName = "수호의 결의";  c.ultimateCooldown = 20f; break;
+            case ChampionRole.Fighter:    c.basicSkillName = "회전베기"; c.basicSkillCooldown = 5f; c.ultimateName = "광폭";        c.ultimateCooldown = 18f; break;
+            case ChampionRole.Marksman:   c.basicSkillName = "3연사";    c.basicSkillCooldown = 6f; c.ultimateName = "화살비";      c.ultimateCooldown = 22f; break;
+            case ChampionRole.Mage:       c.basicSkillName = "마법탄";   c.basicSkillCooldown = 7f; c.ultimateName = "광역폭발";    c.ultimateCooldown = 22f; break;
+            case ChampionRole.Healer:     c.basicSkillName = "치유의 빛"; c.basicSkillCooldown = 5f; c.ultimateName = "성역";        c.ultimateCooldown = 20f; break;
+            case ChampionRole.Disruptor:  c.basicSkillName = "지진강타"; c.basicSkillCooldown = 6f; c.ultimateName = "분쇄의 일격"; c.ultimateCooldown = 22f; break;
+            case ChampionRole.Skirmisher: c.basicSkillName = "돌격창";   c.basicSkillCooldown = 6f; c.ultimateName = "짓밟기";      c.ultimateCooldown = 20f; break;
+            case ChampionRole.Duelist:    c.basicSkillName = "쾌검";     c.basicSkillCooldown = 5f; c.ultimateName = "연참";        c.ultimateCooldown = 20f; break;
+        }
+    }
+
+    static void ApplySkillMeta(ChampionSO so, ChampionRole role)
+    {
+        // 기획서 (TFM_Champion_Reference.pdf) 기반
+        switch (role)
+        {
+            case ChampionRole.Tank:
+                so.BasicSkillName = "방패강타"; so.BasicSkillCooldown = 6f;
+                so.UltimateName = "수호의 결의"; so.UltimateCooldown = 20f;
+                break;
+            case ChampionRole.Fighter:
+                so.BasicSkillName = "회전베기"; so.BasicSkillCooldown = 5f;
+                so.UltimateName = "광폭"; so.UltimateCooldown = 18f;
+                break;
+            case ChampionRole.Marksman:
+                so.BasicSkillName = "3연사"; so.BasicSkillCooldown = 6f;
+                so.UltimateName = "화살비"; so.UltimateCooldown = 22f;
+                break;
+            case ChampionRole.Mage:
+                so.BasicSkillName = "마법탄"; so.BasicSkillCooldown = 7f;
+                so.UltimateName = "광역폭발"; so.UltimateCooldown = 22f;
+                break;
+            case ChampionRole.Healer:
+                so.BasicSkillName = "신성치유"; so.BasicSkillCooldown = 5f;
+                so.UltimateName = "광역축복"; so.UltimateCooldown = 20f;
+                break;
+            case ChampionRole.Disruptor:
+                so.BasicSkillName = "지진강타"; so.BasicSkillCooldown = 6f;
+                so.UltimateName = "분쇄의 일격"; so.UltimateCooldown = 22f;
+                break;
+            case ChampionRole.Skirmisher:
+                so.BasicSkillName = "돌격창"; so.BasicSkillCooldown = 6f;
+                so.UltimateName = "짓밟기"; so.UltimateCooldown = 20f;
+                break;
         }
     }
 
@@ -187,7 +319,10 @@ public static class ChampionPoolBuilder
         ChampionRole.Fighter => "광전사",
         ChampionRole.Marksman => "저격수",
         ChampionRole.Mage => "마법사",
-        ChampionRole.Healer => "성기사",
+        ChampionRole.Healer => "성직자",
+        ChampionRole.Disruptor => "분쇄자",
+        ChampionRole.Skirmisher => "돌격기병",
+        ChampionRole.Duelist => "검사",
         _ => "전사"
     };
 
@@ -198,6 +333,9 @@ public static class ChampionPoolBuilder
         ChampionRole.Marksman => new Color(0.4f, 1.0f, 0.4f),
         ChampionRole.Mage => new Color(1.0f, 0.3f, 1.0f),
         ChampionRole.Healer => new Color(1.0f, 0.9f, 0.4f),
+        ChampionRole.Disruptor => new Color(0.7f, 0.45f, 0.2f),
+        ChampionRole.Skirmisher => new Color(0.9f, 0.7f, 0.3f),
+        ChampionRole.Duelist => new Color(0.85f, 0.85f, 0.95f),
         _ => Color.white
     };
 

@@ -24,4 +24,14 @@ public class ChampionSO : ScriptableObject
     public float HealCooldown = 2f;
     [Tooltip("Healer: 힐량 (% of MaxHp). 0.15 = MaxHp의 15%")]
     public float HealAmountPercent = 0.15f;
+
+    [Header("Basic Skill (기본 스킬, CD 자동 회전)")]
+    public string BasicSkillName = "기본 스킬";
+    public float BasicSkillCooldown = 6f;
+    public Sprite BasicSkillIcon;
+
+    [Header("Ultimate (필살기)")]
+    public string UltimateName = "필살기";
+    public float UltimateCooldown = 20f;
+    public Sprite UltimateIcon;
 }

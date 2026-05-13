@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class ChampionUnit : MonoBehaviour
+public partial class ChampionUnit : MonoBehaviour
 {
     [Header("Data")]
     public ChampionSO Data;
@@ -26,20 +26,52 @@ public class ChampionUnit : MonoBehaviour
     private bool _isKiting;            // hysteresis state for ranged
     private PlayerState _currentAnim = PlayerState.IDLE;
 
-    // HP bar refs
+    // Skill timers (CD 가 0 도달하면 발동 → CD 리셋)
+    private float _basicCd;
+    private float _ultCd;
+
+    // 상태이상
+    private float _stunTimer;          // > 0 이면 모든 행동 정지
+    private float _rootTimer;          // > 0 이면 이동만 정지 (공격은 OK)
+
+    // 버프 (남은 시간 + 배수)
+    private float _atkSpeedBuffEnd;  private float _atkSpeedBuffPct;
+    private float _moveSpeedBuffEnd; private float _moveSpeedBuffPct;
+    private float _defenseBuffEnd;   private float _defenseBuffPct;
+
+    public bool IsStunned => _stunTimer > 0f;
+    public bool IsRooted => _rootTimer > 0f;
+
+    public void ApplyStun(float duration) { _stunTimer = Mathf.Max(_stunTimer, duration); }
+    public void ApplyRoot(float duration) { _rootTimer = Mathf.Max(_rootTimer, duration); }
+    public void ApplyAttackSpeedBuff(float percent, float duration) { _atkSpeedBuffPct = percent; _atkSpeedBuffEnd = Time.time + duration; }
+    public void ApplyMoveSpeedBuff(float percent, float duration) { _moveSpeedBuffPct = percent; _moveSpeedBuffEnd = Time.time + duration; }
+    public void ApplyDefenseBuff(float percent, float duration) { _defenseBuffPct = percent; _defenseBuffEnd = Time.time + duration; }
+
+    float GetEffectiveAttackSpeed() => Data.AttackSpeed * (1f + (_atkSpeedBuffEnd > Time.time ? _atkSpeedBuffPct : 0f));
+    float GetEffectiveMoveSpeed() => Data.MoveSpeed * (1f + (_moveSpeedBuffEnd > Time.time ? _moveSpeedBuffPct : 0f));
+    public float GetEffectiveDefense() => Data.Defense * (1f + (_defenseBuffEnd > Time.time ? _defenseBuffPct : 0f));
+
+    // Champion info UI refs (HP + Basic CD + Ult slot + Name)
+    private GameObject _infoUiRoot;
     private Image _hpFill;
-    private GameObject _hpBarRoot;
+    private Image _basicCdFill;
+    private Image _ultSlotImage;       // 필살기 배경 (CD 진행에 따라 색 변화)
+    private Image _ultSlotFill;        // 필살기 채워지는 게이지 (옵션)
+    private TMPro.TextMeshProUGUI _nameLabel;
 
     void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
         _spum = GetComponentInChildren<SPUM_Prefabs>();
 
-        // Kinematic: 외부 임펄스 영향 0 → 시작 시 미끄러짐 사라짐
-        // velocity 는 우리가 직접 설정 (이동 코드 그대로 작동)
-        _rb.bodyType = RigidbodyType2D.Kinematic;
+        // Dynamic 유지 → 벽 콜라이더(PolygonCollider2D)에 막힘
+        // 캐릭터끼리는 BattleManager 에서 IgnoreCollision 처리 → 미끄러짐 X
+        _rb.bodyType = RigidbodyType2D.Dynamic;
+        _rb.gravityScale = 0f;
         _rb.freezeRotation = true;
         _rb.linearVelocity = Vector2.zero;
+        _rb.linearDamping = 0f;  // 우리가 velocity 직접 제어하니 자연 감속 X
     }
 
     public void Init(ChampionSO data, int teamId)
@@ -51,8 +83,12 @@ public class ChampionUnit : MonoBehaviour
         _attackTimer = 0f;
         _healTimer = data.HealCooldown * 0.5f;  // 시작 시 절반쯤 차있게
 
+        // 스킬 CD 초기화 (시작 시 일부 차있게 — 첫 5초 공백 방지)
+        _basicCd = data.BasicSkillCooldown * 0.6f;
+        _ultCd = data.UltimateCooldown * 0.8f;
+
         if (_spum != null) _spum.OverrideControllerInit();
-        CreateHpBar();
+        CreateInfoUI();
         PlayAnim(PlayerState.IDLE);
     }
 
@@ -65,7 +101,24 @@ public class ChampionUnit : MonoBehaviour
 
         _attackTimer -= Time.deltaTime;
         _healTimer -= Time.deltaTime;
-        UpdateHpBar();
+        _basicCd -= Time.deltaTime;
+        _ultCd -= Time.deltaTime;
+        _stunTimer -= Time.deltaTime;
+        _rootTimer -= Time.deltaTime;
+
+        UpdateInfoUI();
+
+        // Stun 중이면 모든 행동 정지
+        if (IsStunned)
+        {
+            _rb.linearVelocity = Vector2.zero;
+            PlayAnim(PlayerState.DEBUFF);
+            return;
+        }
+
+        // 스킬 자동 발동 (CD 0 도달 + 사거리 내 적 있음)
+        TryCastUltimate();
+        TryCastBasicSkill();
 
         // 힐러 자동 힐 패시브
         if (Data.Role == ChampionRole.Healer) TryAutoHeal();
@@ -126,8 +179,9 @@ public class ChampionUnit : MonoBehaviour
 
         if (_isKiting)
         {
+            if (IsRooted) { _rb.linearVelocity = Vector2.zero; return; }
             Vector2 away = ((Vector2)transform.position - (Vector2)nearest.transform.position).normalized;
-            _rb.linearVelocity = away * Data.MoveSpeed;
+            _rb.linearVelocity = away * GetEffectiveMoveSpeed();
             FaceTarget(_currentTarget.transform.position);
             PlayAnim(PlayerState.MOVE);
             // 후퇴 중에도 사거리 안이면 공격
@@ -267,8 +321,9 @@ public class ChampionUnit : MonoBehaviour
 
     void MoveToward(Vector3 targetPos)
     {
+        if (IsRooted) { _rb.linearVelocity = Vector2.zero; return; }
         Vector2 dir = ((Vector2)targetPos - (Vector2)transform.position).normalized;
-        _rb.linearVelocity = dir * Data.MoveSpeed;
+        _rb.linearVelocity = dir * GetEffectiveMoveSpeed();
         FaceDirection(dir);
         PlayAnim(PlayerState.MOVE);
     }
@@ -293,12 +348,12 @@ public class ChampionUnit : MonoBehaviour
             return;
         }
         FaceTarget(_currentTarget.transform.position);
-        _attackTimer = 1f / Data.AttackSpeed;
+        _attackTimer = 1f / GetEffectiveAttackSpeed();
         PlayAnim(PlayerState.ATTACK);
 
         SpawnRangedVfx();
 
-        float dmg = CalcDamage(Data.AttackDamage, _currentTarget.Data.Defense);
+        float dmg = CalcDamage(Data.AttackDamage, _currentTarget.GetEffectiveDefense());
         _currentTarget.TakeDamage(dmg);
     }
 
@@ -306,9 +361,9 @@ public class ChampionUnit : MonoBehaviour
     void TryAttackNoAnim()
     {
         if (_attackTimer > 0f) return;
-        _attackTimer = 1f / Data.AttackSpeed;
+        _attackTimer = 1f / GetEffectiveAttackSpeed();
         SpawnRangedVfx();
-        float dmg = CalcDamage(Data.AttackDamage, _currentTarget.Data.Defense);
+        float dmg = CalcDamage(Data.AttackDamage, _currentTarget.GetEffectiveDefense());
         _currentTarget.TakeDamage(dmg);
     }
 
@@ -360,7 +415,7 @@ public class ChampionUnit : MonoBehaviour
     {
         IsDead = true;
         _rb.linearVelocity = Vector2.zero;
-        if (_hpBarRoot != null) _hpBarRoot.SetActive(false);
+        if (_infoUiRoot != null) _infoUiRoot.SetActive(false);
         PlayAnim(PlayerState.DEATH);
 
         if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.18f, 0.12f);
@@ -410,7 +465,7 @@ public class ChampionUnit : MonoBehaviour
 
     void OnDestroy()
     {
-        if (_hpBarRoot != null) Destroy(_hpBarRoot);
+        if (_infoUiRoot != null) Destroy(_infoUiRoot);
     }
 
     void OnDrawGizmosSelected()
@@ -439,49 +494,160 @@ public class ChampionUnit : MonoBehaviour
         }
     }
 
-    void CreateHpBar()
+    void CreateInfoUI()
     {
-        if (_hpBarRoot != null) return;
+        if (_infoUiRoot != null) return;
 
         // 별도 root (부모-자식 X → flipX 영향 안 받음)
-        _hpBarRoot = new GameObject($"HpBar_{name}");
-        _hpBarRoot.transform.localScale = Vector3.one * 0.01f;
+        _infoUiRoot = new GameObject($"ChampInfo_{name}");
+        _infoUiRoot.transform.localScale = Vector3.one * 0.01f;
 
-        var canvas = _hpBarRoot.AddComponent<Canvas>();
+        var canvas = _infoUiRoot.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.WorldSpace;
         canvas.sortingOrder = 200;
 
-        // 배경
-        var bgGo = new GameObject("BG");
-        bgGo.transform.SetParent(_hpBarRoot.transform, false);
-        var bgRt = bgGo.AddComponent<RectTransform>();
-        bgRt.sizeDelta = new Vector2(110, 14);
-        bgRt.localPosition = Vector3.zero;
-        var bgImg = bgGo.AddComponent<Image>();
-        bgImg.sprite = WhiteSprite;
-        bgImg.color = new Color(0, 0, 0, 0.85f);
-        bgImg.raycastTarget = false;
+        Color allyColor = new Color(0.4f, 0.7f, 1f);
+        Color enemyColor = new Color(1f, 0.4f, 0.4f);
+        Color teamColor = TeamId == 0 ? allyColor : enemyColor;
 
-        // Fill (좌측에서 채워짐)
-        var fillGo = new GameObject("Fill");
-        fillGo.transform.SetParent(_hpBarRoot.transform, false);
-        var fillRt = fillGo.AddComponent<RectTransform>();
-        fillRt.sizeDelta = new Vector2(100, 8);
-        fillRt.localPosition = Vector3.zero;
-        _hpFill = fillGo.AddComponent<Image>();
-        _hpFill.sprite = WhiteSprite;
-        _hpFill.color = TeamId == 0 ? new Color(0.35f, 1f, 0.45f) : new Color(1f, 0.35f, 0.35f);
-        _hpFill.type = Image.Type.Filled;
-        _hpFill.fillMethod = Image.FillMethod.Horizontal;
-        _hpFill.fillOrigin = (int)Image.OriginHorizontal.Left;
-        _hpFill.fillAmount = 1f;
-        _hpFill.raycastTarget = false;
+        // ============== HP 바 ==============
+        var hpBg = MakeUIImage("HpBg", _infoUiRoot.transform, new Vector2(110, 12),
+                               new Vector3(0, 24, 0), new Color(0, 0, 0, 0.85f));
+        _hpFill = MakeFilledImage("HpFill", _infoUiRoot.transform, new Vector2(104, 8),
+                                  new Vector3(0, 24, 0),
+                                  TeamId == 0 ? new Color(0.35f, 1f, 0.45f) : new Color(1f, 0.4f, 0.4f));
+
+        // ============== 기본 스킬 CD 바 ==============
+        var cdBg = MakeUIImage("BasicCdBg", _infoUiRoot.transform, new Vector2(110, 8),
+                               new Vector3(0, 12, 0), new Color(0, 0, 0, 0.85f));
+        _basicCdFill = MakeFilledImage("BasicCdFill", _infoUiRoot.transform, new Vector2(104, 5),
+                                       new Vector3(0, 12, 0),
+                                       new Color(0.35f, 0.7f, 1f));
+
+        // ============== 필살기 아이콘 + 이름 ==============
+        // 필살기 박스 (왼쪽)
+        _ultSlotImage = MakeUIImage("UltSlot", _infoUiRoot.transform, new Vector2(18, 18),
+                                    new Vector3(-46, -4, 0), new Color(0.3f, 0.3f, 0.3f, 0.95f));
+        // 필살기 게이지 (CD 진행 표시)
+        _ultSlotFill = MakeFilledImage("UltSlotFill", _infoUiRoot.transform, new Vector2(16, 16),
+                                       new Vector3(-46, -4, 0),
+                                       new Color(1f, 0.85f, 0.3f, 0.9f));
+
+        // 이름 라벨 (오른쪽)
+        var nameGo = new GameObject("Name");
+        nameGo.transform.SetParent(_infoUiRoot.transform, false);
+        var nameRt = nameGo.AddComponent<RectTransform>();
+        nameRt.sizeDelta = new Vector2(90, 18);
+        nameRt.localPosition = new Vector3(8, -4, 0);
+        _nameLabel = nameGo.AddComponent<TMPro.TextMeshProUGUI>();
+        _nameLabel.text = Data != null ? Data.ChampionName : name;
+        _nameLabel.fontSize = 12;
+        _nameLabel.color = Color.white;
+        _nameLabel.alignment = TMPro.TextAlignmentOptions.Left;
+        _nameLabel.enableAutoSizing = false;
+        _nameLabel.raycastTarget = false;
     }
 
-    void UpdateHpBar()
+    Image MakeUIImage(string n, Transform parent, Vector2 size, Vector3 pos, Color color)
     {
-        if (_hpBarRoot == null || _hpFill == null || Data == null) return;
-        _hpBarRoot.transform.position = transform.position + Vector3.up * 1.7f;
-        _hpFill.fillAmount = Mathf.Clamp01(CurrentHp / Data.MaxHp);
+        var go = new GameObject(n);
+        go.transform.SetParent(parent, false);
+        var rt = go.AddComponent<RectTransform>();
+        rt.sizeDelta = size;
+        rt.localPosition = pos;
+        var img = go.AddComponent<Image>();
+        img.sprite = WhiteSprite;
+        img.color = color;
+        img.raycastTarget = false;
+        return img;
+    }
+
+    Image MakeFilledImage(string n, Transform parent, Vector2 size, Vector3 pos, Color color)
+    {
+        var img = MakeUIImage(n, parent, size, pos, color);
+        img.type = Image.Type.Filled;
+        img.fillMethod = Image.FillMethod.Horizontal;
+        img.fillOrigin = (int)Image.OriginHorizontal.Left;
+        img.fillAmount = 1f;
+        return img;
+    }
+
+    void UpdateInfoUI()
+    {
+        if (_infoUiRoot == null || Data == null) return;
+        _infoUiRoot.transform.position = transform.position + Vector3.up * 1.8f;
+
+        if (_hpFill != null) _hpFill.fillAmount = Mathf.Clamp01(CurrentHp / Data.MaxHp);
+
+        if (_basicCdFill != null)
+        {
+            float cdMax = Data.BasicSkillCooldown;
+            float cdRemaining = Mathf.Max(0f, _basicCd);
+            float ratio = cdMax > 0f ? 1f - (cdRemaining / cdMax) : 1f;
+            _basicCdFill.fillAmount = Mathf.Clamp01(ratio);
+            // 가득 차면 노란색 깜빡
+            if (_basicCd <= 0f)
+            {
+                float pulse = (Mathf.Sin(Time.time * 8f) + 1f) * 0.5f;
+                _basicCdFill.color = Color.Lerp(new Color(0.4f, 0.9f, 1f), new Color(1f, 1f, 0.4f), pulse);
+            }
+            else _basicCdFill.color = new Color(0.35f, 0.7f, 1f);
+        }
+
+        if (_ultSlotFill != null)
+        {
+            float cdMax = Data.UltimateCooldown;
+            float cdRemaining = Mathf.Max(0f, _ultCd);
+            float ratio = cdMax > 0f ? 1f - (cdRemaining / cdMax) : 1f;
+            _ultSlotFill.fillAmount = Mathf.Clamp01(ratio);
+            if (_ultCd <= 0f)
+            {
+                float pulse = (Mathf.Sin(Time.time * 6f) + 1f) * 0.5f;
+                _ultSlotFill.color = Color.Lerp(new Color(1f, 0.85f, 0.3f), new Color(1f, 1f, 0.7f), pulse);
+            }
+            else _ultSlotFill.color = new Color(1f, 0.85f, 0.3f, 0.9f);
+        }
+    }
+
+    // ============== 스킬 발동 라우터 (실제 효과는 ChampionSkills.cs partial 파일) ==============
+
+    void TryCastBasicSkill()
+    {
+        if (_basicCd > 0f) return;
+        if (Data == null) return;
+
+        bool casted = Data.Role switch
+        {
+            ChampionRole.Tank       => CastShieldBash(),
+            ChampionRole.Fighter    => CastWhirlwind(),
+            ChampionRole.Marksman   => CastTripleShot(),
+            ChampionRole.Mage       => CastFireball(),
+            ChampionRole.Healer     => CastHolyHeal(),
+            ChampionRole.Disruptor  => CastEarthquake(),
+            ChampionRole.Skirmisher => CastLanceCharge(),
+            ChampionRole.Duelist    => CastSwiftBlade(),
+            _ => false
+        };
+        if (casted) _basicCd = Data.BasicSkillCooldown;
+    }
+
+    void TryCastUltimate()
+    {
+        if (_ultCd > 0f) return;
+        if (Data == null) return;
+
+        bool casted = Data.Role switch
+        {
+            ChampionRole.Tank       => CastUltDefiance(),
+            ChampionRole.Fighter    => CastUltFrenzy(),
+            ChampionRole.Marksman   => CastUltArrowRain(),
+            ChampionRole.Mage       => CastUltAoeExplosion(),
+            ChampionRole.Healer     => CastUltSanctuary(),
+            ChampionRole.Disruptor  => CastUltCrushingBlow(),
+            ChampionRole.Skirmisher => CastUltTrampling(),
+            ChampionRole.Duelist    => CastUltFiveStrike(),
+            _ => false
+        };
+        if (casted) _ultCd = Data.UltimateCooldown;
     }
 }

@@ -25,3 +25,9 @@ MonoBehaviour:
   defense: 5
   moveSpeed: 4.5
   unitPrefab: {fileID: 3834195797625971705, guid: 4c81bc86eaa7f204f8ff1035912bc683, type: 3}
+  basicSkillName: "3\uC5F0\uC0AC"
+  basicSkillCooldown: 6
+  basicSkillIcon: {fileID: 0}
+  ultimateName: "\uD654\uC0B4\uBE44"
+  ultimateCooldown: 22
+  ultimateIcon: {fileID: 0}

@@ -73,6 +73,12 @@ public class PickResultBridge : MonoBehaviour
         so.AttackRange = d.attackRange;
         so.Defense = d.defense;
         so.MoveSpeed = d.moveSpeed;
+        so.BasicSkillName = d.basicSkillName;
+        so.BasicSkillCooldown = d.basicSkillCooldown;
+        so.BasicSkillIcon = d.basicSkillIcon;
+        so.UltimateName = d.ultimateName;
+        so.UltimateCooldown = d.ultimateCooldown;
+        so.UltimateIcon = d.ultimateIcon;
         return so;
     }
 }

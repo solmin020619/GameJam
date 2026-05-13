@@ -10,24 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 99bd45a2ac914f04bb0850afbec47e19, type: 3}
-  m_Name: Champion_Tank_02
+  m_Name: Champion_Tank_06
   m_EditorClassIdentifier: Assembly-CSharp::ChampionData
-  championId: tank_02
-  displayName: "\uC218\uD638\uAE30\uC0AC 2"
+  championId: 
+  displayName: 
   role: 0
   portrait: {fileID: 0}
-  themeColor: {r: 0.3, g: 0.6, b: 1, a: 1}
+  themeColor: {r: 1, g: 1, b: 1, a: 1}
   description: 
-  maxHealth: 700
-  attackDamage: 25
-  attackSpeed: 0.8
-  attackRange: 1.2
-  defense: 30
-  moveSpeed: 3
-  unitPrefab: {fileID: 8059323491257457011, guid: f407fef102518494aa9dc2a8229bd67e, type: 3}
-  basicSkillName: "\uBC29\uD328\uAC15\uD0C0"
+  maxHealth: 500
+  attackDamage: 30
+  attackSpeed: 1
+  attackRange: 2
+  defense: 10
+  moveSpeed: 3.5
+  unitPrefab: {fileID: 0}
+  basicSkillName: "\uAE30\uBCF8 \uC2A4\uD0AC"
   basicSkillCooldown: 6
   basicSkillIcon: {fileID: 0}
-  ultimateName: "\uC218\uD638\uC758 \uACB0\uC758"
+  ultimateName: "\uD544\uC0B4\uAE30"
   ultimateCooldown: 20
   ultimateIcon: {fileID: 0}

@@ -1281,8 +1281,8 @@ GameObject:
   - component: {fileID: 8042417122879933604}
   - component: {fileID: 7811869733272387388}
   - component: {fileID: -3862221509093756253}
-  - component: {fileID: 1171852334430172493}
   - component: {fileID: 534639713149317629}
+  - component: {fileID: 965791692979771684}
   m_Layer: 5
   m_Name: SPUM_2
   m_TagString: Untagged
@@ -4508,20 +4508,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &1171852334430172493
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2990566411949785538}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac7160488e04a184986ede7abe52bc5c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ChampionUnit
-  Data: {fileID: 0}
-  TeamId: 0
 --- !u!61 &534639713149317629
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4568,6 +4554,20 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.8, y: 1.4}
   m_EdgeRadius: 0
+--- !u!114 &965791692979771684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2990566411949785538}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChampionUnit
+  Data: {fileID: 0}
+  TeamId: 0
 --- !u!1 &3358512463075473599
 GameObject:
   m_ObjectHideFlags: 0

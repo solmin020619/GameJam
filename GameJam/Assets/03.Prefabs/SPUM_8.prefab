@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 8994034306562286615}
   - component: {fileID: 8687831896036273166}
   - component: {fileID: 3340406334408922219}
-  - component: {fileID: 1441943820060504657}
+  - component: {fileID: 8131667687084598957}
   m_Layer: 5
   m_Name: SPUM_8
   m_TagString: Untagged
@@ -72,7 +72,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 253437881757942427}
-  m_LocalRotation: {x: -0, y: 0.008726557, z: -0, w: 0.9999619}
+  m_LocalRotation: {x: 0, y: 0.008726558, z: 0, w: 0.999962}
   m_LocalPosition: {x: 0, y: 0, z: 0.00015256465}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3229,7 +3229,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.8, y: 1.4}
   m_EdgeRadius: 0
---- !u!114 &1441943820060504657
+--- !u!114 &8131667687084598957
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3238,7 +3238,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 253437881757942427}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac7160488e04a184986ede7abe52bc5c, type: 3}
+  m_Script: {fileID: 0}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChampionUnit
   Data: {fileID: 0}
