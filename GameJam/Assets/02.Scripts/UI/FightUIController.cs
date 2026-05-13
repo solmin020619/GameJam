@@ -21,8 +21,38 @@ public class FightUIController : MonoBehaviour
     [Tooltip("1.0 = 원본. 1.4~1.6 = TFM 스타일 (좌우 UI 카드와 안 겹침)")]
     [Range(0.8f, 2.5f)] public float cameraZoomMultiplier = 1.5f;
 
-    [Header("Score Text (상단 점수 폰트 크기)")]
-    public int scoreFontSize = 64;
+    [Header("Score Text (상단 점수 폰트 크기 + 위치)")]
+    public int scoreFontSize = 90;
+    [Tooltip("왼쪽(파랑) 점수 폰트의 위치 오프셋 (X 양수=오른쪽, Y 양수=위)")]
+    public Vector2 allyScoreOffset = Vector2.zero;
+    [Tooltip("오른쪽(빨강) 점수 폰트의 위치 오프셋")]
+    public Vector2 enemyScoreOffset = Vector2.zero;
+
+    [Header("자동 배치 ON/OFF — 끄면 사용자가 씬에서 직접 위치 잡음")]
+    [Tooltip("점수 폰트 위치/alignment 자동 변경 끔")]
+    public bool autoScorePosition = false;
+    [Tooltip("Ball 자동 재배치 끔 — 씬에서 끌어서 직접 위치")]
+    public bool autoBallReposition = false;
+    [Tooltip("팀 이름 라벨 자동 생성 끔 — 씬에서 직접 만든 라벨 사용")]
+    public bool autoCreateTeamLabel = false;
+
+    [Header("Team Label (팀 이름) — autoCreateTeamLabel 켰을 때만)")]
+    public string allyTeamName = "OUR TEAM";
+    public string enemyTeamName = "ENEMY TEAM";
+    public int teamLabelFontSize = 32;
+    public Vector2 allyLabelOffset = new Vector2(-300f, 0f);
+    public Vector2 enemyLabelOffset = new Vector2(300f, 0f);
+
+    [Header("씬에서 직접 만든 팀 라벨 TMP/Text 끌어넣기 (autoCreateTeamLabel = false 일 때)")]
+    public TextMeshProUGUI allyLabelTmp;
+    public TextMeshProUGUI enemyLabelTmp;
+    public Text allyLabelLegacy;
+    public Text enemyLabelLegacy;
+
+    [Header("Ball 자동 배치값 (autoBallReposition 켰을 때만)")]
+    public Vector2 ballLeftOffset = new Vector2(-30f, -55f);
+    public Vector2 ballRightOffset = new Vector2(30f, -55f);
+    public float ballSpacing = 18f;
 
     [Header("Kill Log (타이머 아래로 내리기)")]
     [Tooltip("KillLogRoot Y 위치. 음수 = 위에서부터 내려간 거리. -200 정도가 타이머 아래")]
@@ -63,27 +93,137 @@ public class FightUIController : MonoBehaviour
         Debug.Log($"[FightUI] 카메라 줌 — {_originalOrthoSize:0.00} → {cam.orthographicSize:0.00} (x{cameraZoomMultiplier})");
     }
 
-    void ConfigureScoreLegacy(Text t)
+    void ConfigureScoreLegacy(Text t, bool isLeftSide)
     {
         t.text = "0";
         t.fontStyle = FontStyle.Bold;
-        t.alignment = TextAnchor.MiddleCenter;
         t.horizontalOverflow = HorizontalWrapMode.Overflow;
         t.verticalOverflow = VerticalWrapMode.Overflow;
-        // BestFit 켜서 컨테이너 안에서 최대로 크게
-        t.resizeTextForBestFit = true;
-        t.resizeTextMinSize = 20;
-        t.resizeTextMaxSize = scoreFontSize;
+        t.resizeTextForBestFit = false;
+        t.fontSize = scoreFontSize;
+        t.color = Color.white;
+        if (autoScorePosition)
+        {
+            t.alignment = isLeftSide ? TextAnchor.MiddleRight : TextAnchor.MiddleLeft;
+            var rt = t.transform as RectTransform;
+            if (rt != null) rt.anchoredPosition += (isLeftSide ? allyScoreOffset : enemyScoreOffset);
+        }
     }
 
-    void ConfigureScoreTMP(TextMeshProUGUI t)
+    void ConfigureScoreTMP(TextMeshProUGUI t, bool isLeftSide)
     {
         t.text = "0";
         t.fontStyle = FontStyles.Bold;
-        t.alignment = TextAlignmentOptions.Center;
-        t.enableAutoSizing = true;
-        t.fontSizeMin = 20;
-        t.fontSizeMax = scoreFontSize;
+        t.enableAutoSizing = false;
+        t.fontSize = scoreFontSize;
+        t.color = Color.white;
+        if (autoScorePosition)
+        {
+            t.alignment = isLeftSide ? TextAlignmentOptions.Right : TextAlignmentOptions.Left;
+            var rt = t.transform as RectTransform;
+            if (rt != null) rt.anchoredPosition += (isLeftSide ? allyScoreOffset : enemyScoreOffset);
+        }
+    }
+
+    // Ball_1 / Ball_2 들을 점수 박스 기준 offset 위치에 배치 (인스펙터에서 자유 조절)
+    void RepositionBalls(Scene scene, Transform leftScore, Transform rightScore)
+    {
+        var balls = new List<RectTransform>();
+        foreach (var root in scene.GetRootGameObjects())
+        {
+            foreach (var t in root.GetComponentsInChildren<Transform>(true))
+            {
+                if (t.name == "Ball_1" || t.name == "Ball_2")
+                {
+                    var rt = t as RectTransform;
+                    if (rt != null) balls.Add(rt);
+                }
+            }
+        }
+        if (balls.Count < 2) return;
+
+        // 현재 X 위치 순으로 정렬 → 절반은 좌측, 절반은 우측
+        balls.Sort((a, b) => a.position.x.CompareTo(b.position.x));
+        int half = balls.Count / 2;
+
+        // 좌측 Ball 들 — leftScore + ballLeftOffset 중심으로 spacing 만큼 가로 배열
+        for (int i = 0; i < half; i++) PositionBall(balls[i], leftScore, ballLeftOffset, i, half);
+        // 우측 Ball 들 — rightScore + ballRightOffset 중심
+        int rightStart = balls.Count - half;
+        for (int i = rightStart; i < balls.Count; i++)
+            PositionBall(balls[i], rightScore, ballRightOffset, i - rightStart, half);
+
+        Debug.Log($"[FightUI] Ball {balls.Count}개 재배치 — left:{ballLeftOffset}, right:{ballRightOffset}, spacing:{ballSpacing}");
+    }
+
+    void PositionBall(RectTransform ball, Transform scoreAnchor, Vector2 offset, int idx, int total)
+    {
+        var parent = ball.parent as RectTransform;
+        if (parent == null) return;
+        Vector3 anchorWorld = scoreAnchor.position;
+        Vector3 groupCenter = new Vector3(anchorWorld.x + offset.x, anchorWorld.y + offset.y, anchorWorld.z);
+        float xOff = (idx - (total - 1) * 0.5f) * ballSpacing;
+        Vector3 worldPos = new Vector3(groupCenter.x + xOff, groupCenter.y, groupCenter.z);
+
+        Vector2 localPos;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            parent,
+            RectTransformUtility.WorldToScreenPoint(null, worldPos),
+            null,
+            out localPos);
+        ball.anchoredPosition = localPos;
+
+        // 항상 가장 위 레이어로 (점수 박스에 가려지지 않게)
+        ball.SetAsLastSibling();
+    }
+
+    // 점수 TMP/Text 옆에 팀 이름 라벨 추가 (3번 사진의 "Cool Tigers" / "SSG" 스타일)
+    static readonly HashSet<Transform> _teamLabelAdded = new();
+    void CreateTeamLabel(Transform canvasRoot, Transform anchor, string teamName, bool isLeftSide, Vector2 offset)
+    {
+        if (anchor == null || _teamLabelAdded.Contains(anchor)) return;
+        _teamLabelAdded.Add(anchor);
+
+        var go = new GameObject(isLeftSide ? "AllyTeamLabel" : "EnemyTeamLabel");
+        go.transform.SetParent(canvasRoot, false);
+        var rt = go.AddComponent<RectTransform>();
+
+        // 점수 박스의 world 중심 좌표
+        Vector3 anchorWorldCenter = anchor.position;
+
+        // pivot — 왼쪽 라벨은 오른쪽 정렬(pivot.x=1), 오른쪽 라벨은 왼쪽 정렬(pivot.x=0)
+        rt.pivot = new Vector2(isLeftSide ? 1f : 0f, 0.5f);
+        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
+
+        // anchor 부모 (canvas RectTransform) 의 local 좌표로 변환
+        var parent = canvasRoot as RectTransform;
+        if (parent != null)
+        {
+            // 점수 박스 위치에 offset 적용한 world 좌표
+            Vector3 worldPos = new Vector3(
+                anchorWorldCenter.x + offset.x,
+                anchorWorldCenter.y + offset.y,
+                anchorWorldCenter.z);
+            Vector2 localPos;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                parent,
+                RectTransformUtility.WorldToScreenPoint(null, worldPos),
+                null,
+                out localPos);
+            rt.anchoredPosition = localPos;
+        }
+        rt.sizeDelta = new Vector2(360, 60);
+
+        var tmp = go.AddComponent<TextMeshProUGUI>();
+        tmp.text = teamName;
+        tmp.fontSize = teamLabelFontSize;
+        tmp.fontStyle = FontStyles.Bold;
+        tmp.color = Color.white;
+        tmp.alignment = isLeftSide ? TextAlignmentOptions.Right : TextAlignmentOptions.Left;
+        tmp.enableAutoSizing = false;
+        tmp.enableWordWrapping = false;
+        tmp.overflowMode = TextOverflowModes.Overflow;
+        tmp.raycastTarget = false;
     }
 
     static string StripIndex(string s)
@@ -279,9 +419,13 @@ public class FightUIController : MonoBehaviour
                     newLegacy.Sort((a, b) => a.transform.position.x.CompareTo(b.transform.position.x));
                     _team0ScoreLegacy = newLegacy[0];
                     _team1ScoreLegacy = newLegacy[1];
-                    // 시작 시 0 + BestFit 으로 컨테이너에 맞춰 자동 크게
-                    ConfigureScoreLegacy(_team0ScoreLegacy);
-                    ConfigureScoreLegacy(_team1ScoreLegacy);
+                    ConfigureScoreLegacy(_team0ScoreLegacy, true);
+                    ConfigureScoreLegacy(_team1ScoreLegacy, false);
+                    if (autoCreateTeamLabel)
+                    {
+                        CreateTeamLabel(root.transform, _team0ScoreLegacy.transform, allyTeamName, true, allyLabelOffset);
+                        CreateTeamLabel(root.transform, _team1ScoreLegacy.transform, enemyTeamName, false, enemyLabelOffset);
+                    }
                 }
                 else
                 {
@@ -295,8 +439,13 @@ public class FightUIController : MonoBehaviour
                         newTmp.Sort((a, b) => a.transform.position.x.CompareTo(b.transform.position.x));
                         _team0ScoreText = newTmp[0];
                         _team1ScoreText = newTmp[1];
-                        ConfigureScoreTMP(_team0ScoreText);
-                        ConfigureScoreTMP(_team1ScoreText);
+                        ConfigureScoreTMP(_team0ScoreText, true);
+                        ConfigureScoreTMP(_team1ScoreText, false);
+                        if (autoCreateTeamLabel)
+                        {
+                            CreateTeamLabel(root.transform, _team0ScoreText.transform, allyTeamName, true, allyLabelOffset);
+                            CreateTeamLabel(root.transform, _team1ScoreText.transform, enemyTeamName, false, enemyLabelOffset);
+                        }
                     }
                 }
             }
@@ -317,6 +466,25 @@ public class FightUIController : MonoBehaviour
         Debug.Log($"[FightUI] 카드 매칭 — Blue {blueFound}/3, Red {redFound}/3, Timer:{(_timerText != null)}, Team0Score:{(_team0ScoreText != null)}, Team1Score:{(_team1ScoreText != null)}");
         if (blueFound < 3 || redFound < 3)
             Debug.LogWarning("[FightUI] AScene_FightUI 안 카드 자식 이름이 BlueCard_1~3 / RedCard_1~3 가 아닐 수 있음 — Hierarchy 확인 필요");
+
+        // Ball_1 / Ball_2 들을 점수 박스 양 옆에 깔끔하게 배치 (autoBallReposition 켰을 때만)
+        if (autoBallReposition)
+        {
+            Transform leftScore = _team0ScoreLegacy != null ? _team0ScoreLegacy.transform :
+                                  (_team0ScoreText != null ? _team0ScoreText.transform : null);
+            Transform rightScore = _team1ScoreLegacy != null ? _team1ScoreLegacy.transform :
+                                   (_team1ScoreText != null ? _team1ScoreText.transform : null);
+            if (leftScore != null && rightScore != null)
+                RepositionBalls(scene, leftScore, rightScore);
+        }
+        // 사용자가 씬에서 직접 만든 팀 라벨에 텍스트 채우기 (autoCreateTeamLabel = false 일 때)
+        if (!autoCreateTeamLabel)
+        {
+            if (allyLabelTmp    != null) allyLabelTmp.text    = allyTeamName;
+            if (enemyLabelTmp   != null) enemyLabelTmp.text   = enemyTeamName;
+            if (allyLabelLegacy != null) allyLabelLegacy.text = allyTeamName;
+            if (enemyLabelLegacy!= null) enemyLabelLegacy.text= enemyTeamName;
+        }
 
         // 카드 첫 번째 자식 구조 덤프 (Image 컴포넌트 이름들 → portrait 매핑 디버그용)
         if (_blueCards[0] != null)
