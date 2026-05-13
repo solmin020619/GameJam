@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 065dfaa5ffb0901469cd793e3c78c5db, type: 3}
+  m_Name: BanPickConfig
+  m_EditorClassIdentifier: Assembly-CSharp::BanPickConfig
+  championPool:
+  - {fileID: 11400000, guid: 44514381b0dc63148a7a0183967e9d85, type: 2}
+  - {fileID: 11400000, guid: fd18b1624f7da5245a9c68575052c4d0, type: 2}
+  - {fileID: 11400000, guid: 20f28f5ce9769f04f90da6aef12f83bf, type: 2}
+  - {fileID: 11400000, guid: 7e7b0d9ebced493499cf6536895ff343, type: 2}
+  - {fileID: 11400000, guid: b567dd9c93176ed4d9056e1712a228c1, type: 2}
+  - {fileID: 11400000, guid: 24a92f9ebb4d5d849a1a99e7c6d4ec4e, type: 2}
+  - {fileID: 11400000, guid: 2d3d107ff95171a4c93f48001090c63f, type: 2}
+  - {fileID: 11400000, guid: f03298883d8a54c4fa82c52edfeed8e9, type: 2}
+  - {fileID: 11400000, guid: 2928d5a75c98c6e41959df40b7119417, type: 2}
+  - {fileID: 11400000, guid: 9284e36bcaf4eec4288a9bd3231f7089, type: 2}
+  - {fileID: 11400000, guid: 9e246bd1becb0ec4abb7ce337698d0d1, type: 2}
+  - {fileID: 11400000, guid: ead0700e96cfb904c89d24dbe5dee59b, type: 2}
+  bansPerTeam: 2
+  picksPerTeam: 3
+  phaseTimeLimit: 20
+  aiActionDelay: 0.8
+  autoConfirmGrace: 1.5
+  turnOrderIsAlly: 01000100010000010100
