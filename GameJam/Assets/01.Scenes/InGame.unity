@@ -2059,6 +2059,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FightUIController
   uiSceneName: AScene_FightUI
   swordIcon: {fileID: 0}
+  cameraZoomMultiplier: 1.5
+  scoreFontSize: 80
+  allyScoreOffset: {x: -50, y: 0}
+  enemyScoreOffset: {x: 30, y: 0}
+  allyTeamName: OUR TEAM
+  enemyTeamName: ENEMY TEAM
+  teamLabelFontSize: 58
+  allyLabelOffset: {x: -350, y: 0}
+  enemyLabelOffset: {x: 250, y: 0}
+  ballLeftOffset: {x: -40, y: -60}
+  ballRightOffset: {x: -20, y: -60}
+  ballSpacing: 35
+  killLogYOffset: -220
 --- !u!4 &1986517746
 Transform:
   m_ObjectHideFlags: 0
