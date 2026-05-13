@@ -12,7 +12,10 @@
       "Bash(grep -E \"m_Name: BlueCard|m_Name: RedCard|m_Name: TimerText|m_Name: ResultText|m_Name: Canvas|m_Name: New Text|m_Name: Attack$|m_Name: Armor|m_Name: HP|m_Name: AttackSpeed|m_Name: Intersection|m_Name: Speed\" \"Assets/01.Scenes/AScene_FightUI.unity\")",
       "Bash(mkdir -p \"C:/Users/user/OneDrive - 신구대학교/바탕 화면/5-13 게임잼/GameJam_0513/GameJam/Assets/Resources/RoleIcons\" && cp \"C:/Users/user/Downloads/_ \\(1\\)/output/role_icons/\"*.png \"C:/Users/user/OneDrive - 신구대학교/바탕 화면/5-13 게임잼/GameJam_0513/GameJam/Assets/Resources/RoleIcons/\" && ls \"C:/Users/user/OneDrive - 신구대학교/바탕 화면/5-13 게임잼/GameJam_0513/GameJam/Assets/Resources/RoleIcons/\")",
       "Bash(awk '/m_Name: RedCard_3$/,/m_Name: BlueCard_2$/' \"C:/Users/user/OneDrive - 신구대학교/바탕 화면/5-13 게임잼/GameJam_0513/GameJam/Assets/01.Scenes/AScene_FightUI.unity\")",
-      "Bash(grep -B 2 \"m_Text:\\\\|Icon_Weapon\\\\|m_Name: RedBG\\\\|m_Name: Red$\")"
+      "Bash(grep -B 2 \"m_Text:\\\\|Icon_Weapon\\\\|m_Name: RedBG\\\\|m_Name: Red$\")",
+      "Bash(grep -B 2 -A 25 \"m_Name: Canvas$\" \"C:/Users/user/OneDrive - 신구대학교/바탕 화면/5-13 게임잼/GameJam_0513/GameJam/Assets/01.Scenes/AScene_Wait.unity\")",
+      "Bash(grep -A 5 \"m_Name: BG$\" \"C:/Users/user/OneDrive - 신구대학교/바탕 화면/5-13 게임잼/GameJam_0513/GameJam/Assets/01.Scenes/AScene_Wait.unity\")",
+      "Bash(awk '/m_Name: BattleManager$/,/^---/' \"C:/Users/user/OneDrive - 신구대학교/바탕 화면/5-13 게임잼/GameJam_0513/GameJam/Assets/01.Scenes/InGame.unity\")"
     ]
   }
 }

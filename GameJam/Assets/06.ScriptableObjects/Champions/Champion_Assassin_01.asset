@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Champion_Assassin_01
   m_EditorClassIdentifier: Assembly-CSharp::ChampionData
   championId: assassin_01
-  displayName: "\uB2CC\uC790"
+  displayName: "\uB2CC\uC790 1"
   role: 8
   portrait: {fileID: 21300000, guid: fac9c305a0b773746a735beddfa25b94, type: 3}
   themeColor: {r: 0.5, g: 0.3, b: 0.7, a: 1}

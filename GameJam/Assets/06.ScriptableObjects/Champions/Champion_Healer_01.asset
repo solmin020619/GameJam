@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Champion_Healer_01
   m_EditorClassIdentifier: Assembly-CSharp::ChampionData
   championId: healer_01
-  displayName: "\uC131\uC9C1\uC790"
+  displayName: "\uC131\uC9C1\uC790 1"
   role: 4
   portrait: {fileID: 21300000, guid: 42ade3a7b5c26c54dbb794dd8eaf1658, type: 3}
   themeColor: {r: 1, g: 0.9, b: 0.4, a: 1}
@@ -26,8 +26,8 @@ MonoBehaviour:
   moveSpeed: 3.5
   unitPrefab: {fileID: 6657432396143452088, guid: f0166ea4d10247b4b9afd5d6f4fded67, type: 3}
   killIcon: {fileID: 21300000, guid: b089ee0bd9ed76d4ab5d60a0fce725ee, type: 3}
-  killIconZoom: 4
-  killIconOffset: {x: -3.5, y: -3.5}
+  killIconZoom: 1
+  killIconOffset: {x: 0, y: 0}
   basicSkillName: "\uCE58\uC720\uC758 \uBE5B"
   basicSkillCooldown: 5
   basicSkillIcon: {fileID: 21300000, guid: f628820f56f729f458ee75c969b2a06b, type: 3}

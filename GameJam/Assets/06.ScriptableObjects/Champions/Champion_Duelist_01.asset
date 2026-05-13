@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Champion_Duelist_01
   m_EditorClassIdentifier: Assembly-CSharp::ChampionData
   championId: duelist_01
-  displayName: "\uAC80\uC0AC"
+  displayName: "\uAC80\uC0AC 1"
   role: 7
   portrait: {fileID: 21300000, guid: 271e950f94705f446a0623dc2df1258c, type: 3}
   themeColor: {r: 0.85, g: 0.85, b: 0.95, a: 1}
@@ -26,8 +26,8 @@ MonoBehaviour:
   moveSpeed: 4.2
   unitPrefab: {fileID: 8499609824770538013, guid: f04b72e28c1919d429e1d138377567fc, type: 3}
   killIcon: {fileID: 21300000, guid: a83f0afd6ec628042a63b7bff5a84f9e, type: 3}
-  killIconZoom: 3
-  killIconOffset: {x: 0, y: -5}
+  killIconZoom: 1
+  killIconOffset: {x: 0, y: 0}
   basicSkillName: "\uCF8C\uAC80"
   basicSkillCooldown: 5
   basicSkillIcon: {fileID: 21300000, guid: 2475e19682b65694a9efd026f67ca6c1, type: 3}

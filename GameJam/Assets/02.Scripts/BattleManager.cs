@@ -155,13 +155,30 @@ public class BattleManager : MonoBehaviour
         if (spawnPoint == null) { Debug.LogError($"[BM] Team{teamId} spawnPoint 가 null. KScene SpawnPoints 와이어링 확인."); return; }
 
         var go = Instantiate(data.Prefab, spawnPoint.position, Quaternion.identity);
+
+        // ChampionUnit 없으면 런타임에 자동 추가 (풀 재빌드 누락 대비)
         var unit = go.GetComponent<ChampionUnit>();
         if (unit == null)
         {
-            Debug.LogError($"[BM] '{data.ChampionName}' (prefab: {data.Prefab.name}) 에 ChampionUnit 컴포넌트 없음. TFM > Rebuild Champion Pool 메뉴 재실행 필요.");
-            Destroy(go);
-            return;
+            Debug.LogWarning($"[BM] '{data.ChampionName}' (prefab: {data.Prefab.name}) 에 ChampionUnit 없음 → 런타임 자동 추가");
+            unit = go.AddComponent<ChampionUnit>();
         }
+        // Rigidbody2D 자동 보강
+        var rb = go.GetComponent<Rigidbody2D>();
+        if (rb == null)
+        {
+            rb = go.AddComponent<Rigidbody2D>();
+            rb.gravityScale = 0f;
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        }
+        // Collider2D 자동 보강
+        if (go.GetComponent<Collider2D>() == null)
+        {
+            var col = go.AddComponent<BoxCollider2D>();
+            col.size = new Vector2(0.8f, 1.4f);
+            col.offset = new Vector2(0f, 0.7f);
+        }
+
         unit.Init(data, teamId);
 
         if (teamId == 0) _team0.Add(unit);
