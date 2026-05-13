@@ -2161,7 +2161,7 @@ GameObject:
   - component: {fileID: 5822558959865970568}
   - component: {fileID: 7740177956932305093}
   m_Layer: 5
-  m_Name: SPUM_10
+  m_Name: SPUM_Guardian2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

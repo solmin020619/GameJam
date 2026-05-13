@@ -8,12 +8,12 @@ public class BattleManager : MonoBehaviour
     public static BattleManager Instance { get; private set; }
 
     [Header("Spawn")]
-    public Transform[] Team0SpawnPoints;
-    public Transform[] Team1SpawnPoints;
+    public Transform[] Team0SpawnPoints;   // 3 points
+    public Transform[] Team1SpawnPoints;   // 3 points
 
-    [Header("Champion Data (replaced by PickManager later)")]
-    public ChampionSO Team0ChampData;
-    public ChampionSO Team1ChampData;
+    [Header("Champion Data (3 per team)")]
+    public ChampionSO[] Team0Champions;    // size 3
+    public ChampionSO[] Team1Champions;    // size 3
 
     [Header("Battle")]
     public float BattleDuration = 60f;
@@ -52,8 +52,17 @@ public class BattleManager : MonoBehaviour
     {
         _timer = BattleDuration;
 
-        SpawnChampion(Team0ChampData, teamId: 0, Team0SpawnPoints[0]);
-        SpawnChampion(Team1ChampData, teamId: 1, Team1SpawnPoints[0]);
+        for (int i = 0; i < Team0Champions.Length; i++)
+        {
+            if (Team0Champions[i] == null || i >= Team0SpawnPoints.Length) continue;
+            SpawnChampion(Team0Champions[i], teamId: 0, Team0SpawnPoints[i]);
+        }
+
+        for (int i = 0; i < Team1Champions.Length; i++)
+        {
+            if (Team1Champions[i] == null || i >= Team1SpawnPoints.Length) continue;
+            SpawnChampion(Team1Champions[i], teamId: 1, Team1SpawnPoints[i]);
+        }
 
         IsBattleRunning = true;
         UpdateTimerUI();
@@ -68,9 +77,8 @@ public class BattleManager : MonoBehaviour
         if (teamId == 0) _team0.Add(unit);
         else _team1.Add(unit);
 
-        // flip enemy sprites to face left
         if (teamId == 1)
-            go.transform.localScale = new Vector3(-1, 1, 1);
+            go.transform.localScale = new Vector3(1, 1, 1);
     }
 
     void Update()
@@ -151,6 +159,13 @@ public class BattleManager : MonoBehaviour
     {
         if (TimerText == null) return;
         TimerText.text = $"{Mathf.CeilToInt(_timer):00}";
+    }
+
+    // called by PickManager (teammate) to set teams before battle starts
+    public void SetTeams(ChampionSO[] team0, ChampionSO[] team1)
+    {
+        Team0Champions = team0;
+        Team1Champions = team1;
     }
 
     public void SpawnDamageText(Vector3 worldPos, float amount, bool isHeal)
