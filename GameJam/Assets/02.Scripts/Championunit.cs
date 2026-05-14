@@ -285,18 +285,37 @@ public partial class ChampionUnit : MonoBehaviour
             return;
         }
 
-        // 카이팅 안 하는 상태에선 stuck 카운터 reset
-        _kiteStuckTimer = 0f;
-        _lastKitePos = transform.position;
-
-        // 안전 거리 → 사거리 끝에서 공격
+        // 카이팅 안 하는 상태 — 사거리 안이면 공격, 밖이면 chase
         float distToTarget = Vector2.Distance(transform.position, _currentTarget.transform.position);
         if (distToTarget <= Data.AttackRange)
         {
+            // 사거리 안 — 멈추고 공격. stuck 카운터 reset
+            _kiteStuckTimer = 0f;
+            _lastKitePos = transform.position;
             _rb.linearVelocity = Vector2.zero;
             TryAttack();
         }
-        else MoveToward(_currentTarget.transform.position);
+        else
+        {
+            // chase — 사거리 밖이면 접근. 단, 벽에 막혀 stuck 이면 그냥 공격 시도 (멀리서라도 쏘기 시도)
+            float moved = Vector3.Distance(transform.position, _lastKitePos);
+            _lastKitePos = transform.position;
+            float expectedMove = GetEffectiveMoveSpeed() * Time.deltaTime * 0.3f;
+            if (moved < expectedMove) _kiteStuckTimer += Time.deltaTime;
+            else _kiteStuckTimer = 0f;
+
+            // 0.6s stuck (chase 는 카이팅보다 좀 더 인내) → 멈추고 사거리 닿으면 공격
+            if (_kiteStuckTimer > 0.6f)
+            {
+                _rb.linearVelocity = Vector2.zero;
+                FaceTarget(_currentTarget.transform.position);
+                // 사거리 보너스 +0.5 줘서 stuck 일 때 어느정도 멀어도 발사
+                if (distToTarget <= Data.AttackRange + 0.5f) TryAttack();
+                else PlayAnim(PlayerState.IDLE);
+                return;
+            }
+            MoveToward(_currentTarget.transform.position);
+        }
     }
 
     /// <summary>힐러: 백라인 위치 유지 (아군 평균 위치보다 뒤) + 평타는 가장 가까운 적</summary>

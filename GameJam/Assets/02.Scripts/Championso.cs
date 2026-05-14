@@ -24,9 +24,9 @@ public class ChampionSO : ScriptableObject
     [Tooltip("Marksman/Mage: 이 거리보다 가까운 적은 카이팅으로 피함")]
     public float KitingDistance = 2.5f;
     [Tooltip("Healer: 힐 쿨타임 (초)")]
-    public float HealCooldown = 2f;
-    [Tooltip("Healer: 힐량 (% of MaxHp). 0.15 = MaxHp의 15%")]
-    public float HealAmountPercent = 0.15f;
+    public float HealCooldown = 2.5f;          // 2.0 → 2.5 (분쇄자+성직자 sustain 콤보 너프)
+    [Tooltip("Healer: 힐량 (% of MaxHp). 0.13 = MaxHp의 13%")]
+    public float HealAmountPercent = 0.13f;    // 0.15 → 0.13
 
     [Header("Basic Skill (기본 스킬, CD 자동 회전)")]
     public string BasicSkillName = "기본 스킬";

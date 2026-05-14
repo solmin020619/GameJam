@@ -462,7 +462,7 @@ public partial class ChampionUnit
         PlayAnim(PlayerState.ATTACK);
         float dmg = CalcDamage(Data.AttackDamage * 3.5f, target.GetEffectiveDefense());
         target.TakeDamage(dmg, DamageType.Ultimate, this);
-        target.ApplyStun(2f);
+        target.ApplyStun(1.5f);  // 2s → 1.5s (분쇄자+성직자 콤보 카운터 시간 확보)
         BattleVfx.SpawnRingPulse(target.transform.position,
             new Color(1f, 0.6f, 0.3f, 0.95f), 0.6f, 1.3f);
         if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.45f, 0.3f);
