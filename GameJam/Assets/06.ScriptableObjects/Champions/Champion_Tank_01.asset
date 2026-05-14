@@ -18,7 +18,7 @@ MonoBehaviour:
   portrait: {fileID: 21300000, guid: 675645446cb41c84880b44f0b1a89482, type: 3}
   themeColor: {r: 0.3, g: 0.6, b: 1, a: 1}
   description: 
-  maxHealth: 700
+  maxHealth: 600
   attackDamage: 25
   attackSpeed: 0.8
   attackRange: 1.2
@@ -34,3 +34,6 @@ MonoBehaviour:
   ultimateName: "\uC218\uD638\uC758 \uACB0\uC758"
   ultimateCooldown: 20
   ultimateIcon: {fileID: 21300000, guid: 63ce149d39faf7a4bbf90525164c4173, type: 3}
+  autoAttackSfx: {fileID: 0}
+  basicSkillSfx: {fileID: 0}
+  ultimateSfx: {fileID: 0}
