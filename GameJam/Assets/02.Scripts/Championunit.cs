@@ -560,7 +560,8 @@ public partial class ChampionUnit : MonoBehaviour
     }
 
     /// <summary>
-    /// 텔레포트 스킬용 — Rigidbody2D 와 transform 동시에 옮겨서 물리 시뮬레이션 떨림 방지.
+    /// 텔레포트 스킬용 — Rigidbody2D 와 transform 동시에 옮기고 Physics world 강제 동기화.
+    /// (안 그러면 FixedUpdate 가 stale physics 상태로 ninja 원위치로 snap-back 시키는 버그 발생)
     /// </summary>
     public void TeleportTo(Vector3 pos)
     {
@@ -569,7 +570,10 @@ public partial class ChampionUnit : MonoBehaviour
         {
             _rb.position = pos;
             _rb.linearVelocity = Vector2.zero;
+            _rb.angularVelocity = 0f;
         }
+        // 즉시 physics world 동기화 — Update 와 FixedUpdate 간 lag 제거
+        Physics2D.SyncTransforms();
     }
 
     void SpawnRangedVfx()

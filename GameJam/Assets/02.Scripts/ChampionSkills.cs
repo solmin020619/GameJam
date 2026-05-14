@@ -563,24 +563,49 @@ public partial class ChampionUnit
     }
 
     /// <summary>
-    /// 텔레포트 위치가 맵 콜라이더(벽) 안에 있으면 안전한 위치로 fallback.
+    /// 텔레포트 위치가 맵 콜라이더(벽) 안 또는 벽 너머에 있으면 안전한 위치로 fallback.
     /// 닌자 Backstab/Shadow Dance, 검사 SwiftBlade/FiveStrike 등 텔레포트 스킬 공용 헬퍼.
     /// </summary>
     Vector3 ClampToPlayableArea(Vector3 desiredPos, Vector3 fallbackAnchor, Vector3 dirFromAttackerToAnchor)
     {
-        // OverlapPoint 로 desiredPos 가 벽 콜라이더 안에 있는지 검사
-        // (맵의 PolygonCollider2D 는 '벽 밖'을 채우므로, desiredPos 가 collider 안이면 맵 밖)
+        Vector3 frontPos = fallbackAnchor - dirFromAttackerToAnchor * 0.5f;
+
+        // 검사 1 — desiredPos 가 벽 콜라이더 안에 있는지 (OverlapPoint)
         var hits = Physics2D.OverlapPointAll(desiredPos);
         foreach (var h in hits)
         {
             if (h == null) continue;
-            // 캐릭터 콜라이더는 무시 (밀어내기 separation 으로 해결)
             if (h.GetComponent<ChampionUnit>() != null) continue;
-            // 그 외 collider = 벽 → 적 앞으로 fallback
-            Vector3 frontPos = fallbackAnchor - dirFromAttackerToAnchor * 0.5f;
-            Debug.Log($"[Teleport Safety] '{h.gameObject.name}' (벽) 안으로 텔레포트 시도 → 적 앞 fallback");
+            Debug.Log($"[Teleport Safety] backPos 가 벽 '{h.gameObject.name}' 안 → 적 앞 fallback");
             return frontPos;
         }
+
+        // 검사 2 — fallbackAnchor (적 위치) → desiredPos 경로 사이에 벽 있는지 (Raycast)
+        // OverlapPoint 가 폴리곤 가장자리에서 놓치는 케이스 대비
+        Vector3 fromAnchorToBack = desiredPos - fallbackAnchor;
+        float dist = fromAnchorToBack.magnitude;
+        if (dist > 0.01f)
+        {
+            var rayHit = Physics2D.Raycast(fallbackAnchor, fromAnchorToBack.normalized, dist);
+            if (rayHit.collider != null && rayHit.collider.GetComponent<ChampionUnit>() == null)
+            {
+                Debug.Log($"[Teleport Safety] 적→backPos 경로에 벽 '{rayHit.collider.gameObject.name}' → 적 앞 fallback");
+                return frontPos;
+            }
+        }
+
+        // 검사 3 — desiredPos 주변 0.3 unit 반경에 벽 있는지 (OverlapCircle)
+        // 캐릭터 콜라이더 크기 고려한 안전망
+        var circleHits = Physics2D.OverlapCircleAll(desiredPos, 0.3f);
+        foreach (var h in circleHits)
+        {
+            if (h == null) continue;
+            if (h.GetComponent<ChampionUnit>() != null) continue;
+            // 벽이 가까이 있으면 — physics 가 푸시할 수 있어 fallback
+            Debug.Log($"[Teleport Safety] backPos 근처 (0.3) 벽 '{h.gameObject.name}' → 적 앞 fallback");
+            return frontPos;
+        }
+
         return desiredPos;
     }
 }
