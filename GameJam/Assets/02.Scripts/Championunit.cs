@@ -273,13 +273,29 @@ public partial class ChampionUnit : MonoBehaviour
     }
 
     /// <summary>힐러: 백라인 위치 유지 (아군 평균 위치보다 뒤) + 평타는 가장 가까운 적</summary>
+    bool _healerMoving;             // hysteresis 상태
+    Vector2 _healerBacklineCache;   // backline 위치 캐시 (0.5s 마다 갱신)
+    float _healerBacklineRefreshTimer;
+
     void BehaveHealer()
     {
         var allies = BattleManager.Instance.GetAllies(TeamId).Where(a => a != this && !a.IsDead).ToList();
-        Vector2 backlinePos = ComputeBacklinePosition(allies);
+
+        // backline 0.5s 마다만 재계산 — 매 프레임 새 위치로 갱신하면 healer 가 끊임없이 micro-adjust (떨림)
+        _healerBacklineRefreshTimer -= Time.deltaTime;
+        if (_healerBacklineRefreshTimer <= 0f)
+        {
+            _healerBacklineCache = ComputeBacklinePosition(allies);
+            _healerBacklineRefreshTimer = 0.5f;
+        }
+        Vector2 backlinePos = _healerBacklineCache;
 
         float distToBackline = Vector2.Distance(transform.position, backlinePos);
-        if (distToBackline > 0.5f)
+        // Hysteresis: 1.0 이상 떨어지면 이동 시작, 0.4 이하 도착하면 정지 (0.5 단일 임계값 → 떨림 났음)
+        if (_healerMoving && distToBackline < 0.4f) _healerMoving = false;
+        else if (!_healerMoving && distToBackline > 1.0f) _healerMoving = true;
+
+        if (_healerMoving)
         {
             MoveToward(backlinePos);
             return;
@@ -408,9 +424,9 @@ public partial class ChampionUnit : MonoBehaviour
 
     void FaceDirection(Vector2 dir)
     {
-        // Hysteresis flip — 현재 향한 방향 기준 비대칭 임계값으로 와리가리 완전 제거
-        // (scale.x < 0  →  오른쪽 보는 중 / scale.x > 0  →  왼쪽 보는 중)
-        const float flipThreshold = 0.3f;
+        // Hysteresis flip — 데드존 0.05 (이전 0.3 → 너무 커서 반대방향 공격 증상 났음)
+        // separation 영향으로 미세하게 흔들리는 건 hysteresis 가 막아주고, 진짜로 적이 반대편에 있으면 즉시 flip
+        const float flipThreshold = 0.05f;
         bool facingRight = transform.localScale.x < 0f;
         if (facingRight && dir.x < -flipThreshold)
             transform.localScale = new Vector3(1f, 1f, 1f);
@@ -674,20 +690,30 @@ public partial class ChampionUnit : MonoBehaviour
 
         if (BattleManager.Instance == null || !BattleManager.Instance.IsBattleRunning) return;
 
-        const float minDist = 0.55f;        // 0.7 → 0.55: 캐릭터끼리 좀 더 가까워질 수 있음 (진동 감소)
-        const float weight = 1.5f;          // 3.0 → 1.5: 더 부드럽게 분리 (떨림 방지)
+        const float minDist = 0.55f;
+        const float weight = 0.6f;          // 1.5 → 0.6: 떨림/측면 슬라이드 줄임. velocity 와 충돌 약화
 
         Vector2 separation = Vector2.zero;
         int neighbors = 0;
+
+        // 헬퍼 — 정확히 같은 위치 (d < 0.001) 일 때 random direction 으로 분리해서 영구 stuck 방지
+        Vector2 SafeDir(Vector2 diff, float d, ChampionUnit other)
+        {
+            if (d > 0.001f) return diff / d; // = normalized
+            // 같은 위치 — InstanceID 차이로 결정적 random direction (각 페어가 일관되게 같은 방향)
+            int seed = GetInstanceID() ^ (other != null ? other.GetInstanceID() : 0);
+            float angle = (seed * 0.001f) % (2f * Mathf.PI);
+            return new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+        }
 
         foreach (var ally in BattleManager.Instance.GetAllies(TeamId))
         {
             if (ally == null || ally == this || ally.IsDead) continue;
             Vector2 diff = (Vector2)transform.position - (Vector2)ally.transform.position;
             float d = diff.magnitude;
-            if (d < minDist && d > 0.001f)
+            if (d < minDist)
             {
-                separation += diff.normalized * (minDist - d);
+                separation += SafeDir(diff, d, ally) * (minDist - d);
                 neighbors++;
             }
         }
@@ -696,16 +722,20 @@ public partial class ChampionUnit : MonoBehaviour
             if (enemy == null || enemy.IsDead) continue;
             Vector2 diff = (Vector2)transform.position - (Vector2)enemy.transform.position;
             float d = diff.magnitude;
-            if (d < minDist && d > 0.001f)
+            if (d < minDist)
             {
-                separation += diff.normalized * (minDist - d);
+                separation += SafeDir(diff, d, enemy) * (minDist - d);
                 neighbors++;
             }
         }
 
         if (neighbors == 0) return;
-        // position 직접 살짝 보정 (velocity 안 건드림 — 행동 로직과 독립)
-        transform.position += (Vector3)(separation * Time.deltaTime * weight);
+
+        // position + Rigidbody 동시 보정 — Dynamic Rigidbody2D 는 _rb.position 으로 다음 FixedUpdate 동기
+        // (transform.position 만 변경하면 stale position 으로 rollback 되어 "제자리 점프" 발생)
+        Vector3 delta = (Vector3)(separation * Time.deltaTime * weight);
+        transform.position += delta;
+        if (_rb != null) _rb.position = transform.position;
     }
 
     void OnDrawGizmosSelected()

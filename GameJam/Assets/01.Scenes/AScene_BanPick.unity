@@ -1316,6 +1316,7 @@ GameObject:
   - component: {fileID: 63559780}
   - component: {fileID: 63559779}
   - component: {fileID: 63559778}
+  - component: {fileID: 63559782}
   m_Layer: 0
   m_Name: Card_06
   m_TagString: Untagged
@@ -1427,6 +1428,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 63559776}
   m_CullTransparentMesh: 1
+--- !u!114 &63559782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 63559776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 63559780}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &75634035
 GameObject:
   m_ObjectHideFlags: 0
@@ -2388,6 +2433,7 @@ GameObject:
   - component: {fileID: 127947429}
   - component: {fileID: 127947431}
   - component: {fileID: 127947430}
+  - component: {fileID: 127947432}
   m_Layer: 0
   m_Name: ourteam_Character_stat
   m_TagString: Untagged
@@ -2462,6 +2508,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 127947428}
   m_CullTransparentMesh: 1
+--- !u!114 &127947432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 127947428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a31270c81cb444438b5d8f9aa00c0c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PickCardUI
+  portrait: {fileID: 559436992}
+  nameLabel: {fileID: 0}
+  atkText: {fileID: 0}
+  hpText: {fileID: 0}
+  defText: {fileID: 0}
+  rangeText: {fileID: 0}
+  moveSpeedText: {fileID: 0}
+  atkSpeedText: {fileID: 0}
+  skillDescButton: {fileID: 0}
+  ultDescButton: {fileID: 0}
+  tooltipPanel: {fileID: 0}
+  tooltipText: {fileID: 0}
+  allyTint: {r: 0.4, g: 0.7, b: 1, a: 1}
+  enemyTint: {r: 1, g: 0.4, b: 0.4, a: 1}
+  isAlly: 1
+  colorFrame: {fileID: 0}
 --- !u!1 &130761444
 GameObject:
   m_ObjectHideFlags: 0
@@ -2785,6 +2859,7 @@ GameObject:
   - component: {fileID: 224967979}
   - component: {fileID: 224967981}
   - component: {fileID: 224967980}
+  - component: {fileID: 224967982}
   m_Layer: 0
   m_Name: ourteam_Character_stat (2)
   m_TagString: Untagged
@@ -2859,6 +2934,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 224967978}
   m_CullTransparentMesh: 1
+--- !u!114 &224967982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 224967978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a31270c81cb444438b5d8f9aa00c0c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PickCardUI
+  portrait: {fileID: 757440727}
+  nameLabel: {fileID: 0}
+  atkText: {fileID: 0}
+  hpText: {fileID: 0}
+  defText: {fileID: 0}
+  rangeText: {fileID: 0}
+  moveSpeedText: {fileID: 0}
+  atkSpeedText: {fileID: 0}
+  skillDescButton: {fileID: 0}
+  ultDescButton: {fileID: 0}
+  tooltipPanel: {fileID: 0}
+  tooltipText: {fileID: 0}
+  allyTint: {r: 0.4, g: 0.7, b: 1, a: 1}
+  enemyTint: {r: 1, g: 0.4, b: 0.4, a: 1}
+  isAlly: 1
+  colorFrame: {fileID: 0}
 --- !u!1 &230819071
 GameObject:
   m_ObjectHideFlags: 0
@@ -2919,7 +3022,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BanPickManager
   config: {fileID: 11400000, guid: 8ccef209fd1c7d04b8bad1f0c98c207a, type: 2}
-  hud: {fileID: 1247629008}
+  hud: {fileID: 1325938752}
   cards:
   - {fileID: 381782945}
   - {fileID: 630991698}
@@ -2930,17 +3033,8 @@ MonoBehaviour:
   - {fileID: 63559779}
   - {fileID: 949625066}
   - {fileID: 1813010413}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  allySlots: {fileID: 1479577437}
-  enemySlots: {fileID: 1120646373}
+  allySlots: {fileID: 335505158}
+  enemySlots: {fileID: 1132762607}
   ai: {fileID: 230819073}
   autoLoadBattleSceneOnDone: 1
   battleSceneName: InGame
@@ -2962,6 +3056,7 @@ GameObject:
   - component: {fileID: 260154250}
   - component: {fileID: 260154249}
   - component: {fileID: 260154248}
+  - component: {fileID: 260154252}
   m_Layer: 0
   m_Name: Card_04
   m_TagString: Untagged
@@ -3073,6 +3168,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 260154246}
   m_CullTransparentMesh: 1
+--- !u!114 &260154252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 260154246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 260154250}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &270408983
 GameObject:
   m_ObjectHideFlags: 0
@@ -3948,6 +4087,65 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 334707137}
   m_CullTransparentMesh: 1
+--- !u!1 &335505157
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 335505159}
+  - component: {fileID: 335505158}
+  m_Layer: 0
+  m_Name: AllyTeamSlot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &335505158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 335505157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35d609bc043d90348bfe0e9e90d8cd3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamSlotUI
+  side: 0
+  teamLabel: {fileID: 0}
+  allyColor: {r: 0.4, g: 0.7, b: 1, a: 1}
+  enemyColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  banSlots:
+  - {fileID: 1920667540}
+  pickSlots: []
+  pickCards:
+  - {fileID: 127947432}
+  - {fileID: 728453987}
+  - {fileID: 224967982}
+  emptySlotSprite: {fileID: 0}
+  emptySlotColor: {r: 1, g: 1, b: 1, a: 0.15}
+  bannedXSprite: {fileID: 0}
+  bannedTint: {r: 1, g: 1, b: 1, a: 1}
+--- !u!4 &335505159
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 335505157}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1863118414}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &340925066
 GameObject:
   m_ObjectHideFlags: 0
@@ -4116,6 +4314,7 @@ GameObject:
   - component: {fileID: 381782946}
   - component: {fileID: 381782945}
   - component: {fileID: 381782944}
+  - component: {fileID: 381782948}
   m_Layer: 0
   m_Name: Card_00
   m_TagString: Untagged
@@ -4227,6 +4426,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 381782942}
   m_CullTransparentMesh: 1
+--- !u!114 &381782948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 381782942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 381782946}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &383540479
 GameObject:
   m_ObjectHideFlags: 0
@@ -5879,6 +6122,7 @@ GameObject:
   - component: {fileID: 630991699}
   - component: {fileID: 630991698}
   - component: {fileID: 630991697}
+  - component: {fileID: 630991701}
   m_Layer: 0
   m_Name: Card_01
   m_TagString: Untagged
@@ -5990,6 +6234,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 630991695}
   m_CullTransparentMesh: 1
+--- !u!114 &630991701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 630991695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 630991699}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &641956434
 GameObject:
   m_ObjectHideFlags: 0
@@ -6779,6 +7067,7 @@ GameObject:
   - component: {fileID: 680792566}
   - component: {fileID: 680792568}
   - component: {fileID: 680792567}
+  - component: {fileID: 680792569}
   m_Layer: 0
   m_Name: Enemyteam_Character_stat (5)
   m_TagString: Untagged
@@ -6853,6 +7142,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 680792565}
   m_CullTransparentMesh: 1
+--- !u!114 &680792569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 680792565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a31270c81cb444438b5d8f9aa00c0c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PickCardUI
+  portrait: {fileID: 1126493811}
+  nameLabel: {fileID: 0}
+  atkText: {fileID: 0}
+  hpText: {fileID: 0}
+  defText: {fileID: 0}
+  rangeText: {fileID: 0}
+  moveSpeedText: {fileID: 0}
+  atkSpeedText: {fileID: 0}
+  skillDescButton: {fileID: 0}
+  ultDescButton: {fileID: 0}
+  tooltipPanel: {fileID: 0}
+  tooltipText: {fileID: 0}
+  allyTint: {r: 0.4, g: 0.7, b: 1, a: 1}
+  enemyTint: {r: 1, g: 0.4, b: 0.4, a: 1}
+  isAlly: 0
+  colorFrame: {fileID: 0}
 --- !u!1 &694836165
 GameObject:
   m_ObjectHideFlags: 0
@@ -7076,6 +7393,7 @@ GameObject:
   - component: {fileID: 728453984}
   - component: {fileID: 728453986}
   - component: {fileID: 728453985}
+  - component: {fileID: 728453987}
   m_Layer: 0
   m_Name: ourteam_Character_stat (1)
   m_TagString: Untagged
@@ -7150,6 +7468,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 728453983}
   m_CullTransparentMesh: 1
+--- !u!114 &728453987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 728453983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a31270c81cb444438b5d8f9aa00c0c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PickCardUI
+  portrait: {fileID: 470604400}
+  nameLabel: {fileID: 0}
+  atkText: {fileID: 0}
+  hpText: {fileID: 0}
+  defText: {fileID: 0}
+  rangeText: {fileID: 0}
+  moveSpeedText: {fileID: 0}
+  atkSpeedText: {fileID: 0}
+  skillDescButton: {fileID: 0}
+  ultDescButton: {fileID: 0}
+  tooltipPanel: {fileID: 0}
+  tooltipText: {fileID: 0}
+  allyTint: {r: 0.4, g: 0.7, b: 1, a: 1}
+  enemyTint: {r: 1, g: 0.4, b: 0.4, a: 1}
+  isAlly: 1
+  colorFrame: {fileID: 0}
 --- !u!1 &757440725
 GameObject:
   m_ObjectHideFlags: 0
@@ -7846,6 +8192,7 @@ GameObject:
   - component: {fileID: 826280815}
   - component: {fileID: 826280814}
   - component: {fileID: 826280813}
+  - component: {fileID: 826280817}
   m_Layer: 0
   m_Name: Card_02
   m_TagString: Untagged
@@ -7957,6 +8304,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 826280811}
   m_CullTransparentMesh: 1
+--- !u!114 &826280817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 826280811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 826280815}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &831463216
 GameObject:
   m_ObjectHideFlags: 0
@@ -9089,6 +9480,7 @@ GameObject:
   - component: {fileID: 949625067}
   - component: {fileID: 949625066}
   - component: {fileID: 949625065}
+  - component: {fileID: 949625069}
   m_Layer: 0
   m_Name: Card_07
   m_TagString: Untagged
@@ -9200,6 +9592,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 949625063}
   m_CullTransparentMesh: 1
+--- !u!114 &949625069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 949625063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 949625067}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &973927962
 GameObject:
   m_ObjectHideFlags: 0
@@ -9955,6 +10391,7 @@ GameObject:
   - component: {fileID: 1098127949}
   - component: {fileID: 1098127948}
   - component: {fileID: 1098127947}
+  - component: {fileID: 1098127951}
   m_Layer: 0
   m_Name: Card_03
   m_TagString: Untagged
@@ -10066,6 +10503,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1098127945}
   m_CullTransparentMesh: 1
+--- !u!114 &1098127951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1098127945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1098127949}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1101166639
 GameObject:
   m_ObjectHideFlags: 0
@@ -10652,6 +11133,65 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1127978188}
   m_CullTransparentMesh: 1
+--- !u!1 &1132762606
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1132762608}
+  - component: {fileID: 1132762607}
+  m_Layer: 0
+  m_Name: EnemyTeamSlot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1132762607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1132762606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35d609bc043d90348bfe0e9e90d8cd3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamSlotUI
+  side: 1
+  teamLabel: {fileID: 0}
+  allyColor: {r: 0.4, g: 0.7, b: 1, a: 1}
+  enemyColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  banSlots:
+  - {fileID: 774180102}
+  pickSlots: []
+  pickCards:
+  - {fileID: 1664120526}
+  - {fileID: 1543167201}
+  - {fileID: 680792569}
+  emptySlotSprite: {fileID: 0}
+  emptySlotColor: {r: 1, g: 1, b: 1, a: 0.15}
+  bannedXSprite: {fileID: 0}
+  bannedTint: {r: 1, g: 1, b: 1, a: 1}
+--- !u!4 &1132762608
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1132762606}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1863118414}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1152245950
 GameObject:
   m_ObjectHideFlags: 0
@@ -11208,6 +11748,8 @@ RectTransform:
   - {fileID: 1664120523}
   - {fileID: 1543167198}
   - {fileID: 680792566}
+  - {fileID: 1863118414}
+  - {fileID: 1325938751}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -11918,6 +12460,61 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1325938750
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1325938751}
+  - component: {fileID: 1325938752}
+  m_Layer: 0
+  m_Name: BanPickHUD
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1325938751
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1325938750}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1233788421}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1325938752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1325938750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 245938359c9678a4db6bb61ad01b3e20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BanPickHUD
+  phaseLabel: {fileID: 2008581532}
+  turnLabel: {fileID: 1876967135}
+  turnSideIndicator: {fileID: 0}
+  allyColor: {r: 0.4, g: 0.7, b: 1, a: 1}
+  enemyColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  timerFill: {fileID: 1662579264}
+  timerLabel: {fileID: 1516323544}
+  doneOverlay: {fileID: 0}
+  doneLabel: {fileID: 0}
+  allySlotUI: {fileID: 335505158}
+  enemySlotUI: {fileID: 1132762607}
 --- !u!1 &1334433548
 GameObject:
   m_ObjectHideFlags: 0
@@ -14209,6 +14806,7 @@ GameObject:
   - component: {fileID: 1543167198}
   - component: {fileID: 1543167200}
   - component: {fileID: 1543167199}
+  - component: {fileID: 1543167201}
   m_Layer: 0
   m_Name: Enemyteam_Character_stat (4)
   m_TagString: Untagged
@@ -14283,6 +14881,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1543167197}
   m_CullTransparentMesh: 1
+--- !u!114 &1543167201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1543167197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a31270c81cb444438b5d8f9aa00c0c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PickCardUI
+  portrait: {fileID: 23088368}
+  nameLabel: {fileID: 0}
+  atkText: {fileID: 0}
+  hpText: {fileID: 0}
+  defText: {fileID: 0}
+  rangeText: {fileID: 0}
+  moveSpeedText: {fileID: 0}
+  atkSpeedText: {fileID: 0}
+  skillDescButton: {fileID: 0}
+  ultDescButton: {fileID: 0}
+  tooltipPanel: {fileID: 0}
+  tooltipText: {fileID: 0}
+  allyTint: {r: 0.4, g: 0.7, b: 1, a: 1}
+  enemyTint: {r: 1, g: 0.4, b: 0.4, a: 1}
+  isAlly: 0
+  colorFrame: {fileID: 0}
 --- !u!1 &1561208172
 GameObject:
   m_ObjectHideFlags: 0
@@ -14973,6 +15599,7 @@ GameObject:
   - component: {fileID: 1664120523}
   - component: {fileID: 1664120525}
   - component: {fileID: 1664120524}
+  - component: {fileID: 1664120526}
   m_Layer: 0
   m_Name: Enemyteam_Character_stat (3)
   m_TagString: Untagged
@@ -15047,6 +15674,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1664120522}
   m_CullTransparentMesh: 1
+--- !u!114 &1664120526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1664120522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a31270c81cb444438b5d8f9aa00c0c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PickCardUI
+  portrait: {fileID: 1914555231}
+  nameLabel: {fileID: 0}
+  atkText: {fileID: 0}
+  hpText: {fileID: 0}
+  defText: {fileID: 0}
+  rangeText: {fileID: 0}
+  moveSpeedText: {fileID: 0}
+  atkSpeedText: {fileID: 0}
+  skillDescButton: {fileID: 0}
+  ultDescButton: {fileID: 0}
+  tooltipPanel: {fileID: 0}
+  tooltipText: {fileID: 0}
+  allyTint: {r: 0.4, g: 0.7, b: 1, a: 1}
+  enemyTint: {r: 1, g: 0.4, b: 0.4, a: 1}
+  isAlly: 0
+  colorFrame: {fileID: 0}
 --- !u!1 &1681607517
 GameObject:
   m_ObjectHideFlags: 0
@@ -16429,6 +17084,7 @@ GameObject:
   - component: {fileID: 1813010414}
   - component: {fileID: 1813010413}
   - component: {fileID: 1813010412}
+  - component: {fileID: 1813010416}
   m_Layer: 0
   m_Name: Card_08
   m_TagString: Untagged
@@ -16540,6 +17196,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1813010410}
   m_CullTransparentMesh: 1
+--- !u!114 &1813010416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1813010410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1813010414}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1842238597
 GameObject:
   m_ObjectHideFlags: 0
@@ -16774,6 +17474,39 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1861274809}
   m_CullTransparentMesh: 1
+--- !u!1 &1863118413
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1863118414}
+  m_Layer: 0
+  m_Name: TeamSlotRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1863118414
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1863118413}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 335505159}
+  - {fileID: 1132762608}
+  m_Father: {fileID: 1233788421}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1863889449
 GameObject:
   m_ObjectHideFlags: 0
@@ -18631,6 +19364,7 @@ GameObject:
   - component: {fileID: 2044268701}
   - component: {fileID: 2044268700}
   - component: {fileID: 2044268699}
+  - component: {fileID: 2044268703}
   m_Layer: 0
   m_Name: Card_05
   m_TagString: Untagged
@@ -18742,6 +19476,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2044268697}
   m_CullTransparentMesh: 1
+--- !u!114 &2044268703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2044268697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 2044268701}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2071943570
 GameObject:
   m_ObjectHideFlags: 0
