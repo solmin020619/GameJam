@@ -247,9 +247,6 @@ public partial class ChampionUnit
         // 2초간 배후 상태 (평타 +30%)
         ApplyBackAttack(2f);
 
-        // 0.4초 burst lock — 텔레포트 직후 위치 고정 + 평타 (자연스러운 burst 시퀀스)
-        ApplyBurstLock(0.4f);
-
         return true;
     }
 
