@@ -215,64 +215,33 @@ public partial class ChampionUnit : MonoBehaviour
         }
     }
 
-    /// <summary>닌자: Backstab CD 차있을 때만 다이브 / HP 낮으면 후퇴 / 평소엔 거리 유지</summary>
+    /// <summary>닌자: 평소엔 melee 추격, HP 낮을 때만 후퇴 (Backstab 은 Update 에서 자동 발동)</summary>
     void BehaveAssassin()
     {
         float hpPct = CurrentHp / Data.MaxHp;
-        var nearest = GetNearestAliveEnemy();
-        if (nearest == null) { BehaveMelee(); return; }
-        float distToNearest = Vector2.Distance(transform.position, nearest.transform.position);
 
-        // 1) HP 35% 미만 + Backstab 못 쓰면 후퇴 (살아남기 우선)
-        if (hpPct < 0.35f && _basicCd > 1.5f)
+        // HP 35% 미만 + Backstab 쿨 차있으면 후퇴 (생존 우선)
+        // Backstab 쿨이 곧 차면 그걸로 도주/burst 가능하니까 그냥 melee 진행
+        if (hpPct < 0.35f && _basicCd > 1f)
         {
-            if (distToNearest < 2.5f)
+            var nearest = GetNearestAliveEnemy();
+            if (nearest != null)
             {
-                if (IsRooted) { _rb.linearVelocity = Vector2.zero; return; }
-                Vector2 away = ((Vector2)transform.position - (Vector2)nearest.transform.position).normalized;
-                _rb.linearVelocity = away * GetEffectiveMoveSpeed();
-                FaceTarget(_currentTarget.transform.position);
-                PlayAnim(PlayerState.MOVE);
-                return;
+                float distToNearest = Vector2.Distance(transform.position, nearest.transform.position);
+                if (distToNearest < 2.5f)
+                {
+                    if (IsRooted) { _rb.linearVelocity = Vector2.zero; return; }
+                    Vector2 away = ((Vector2)transform.position - (Vector2)nearest.transform.position).normalized;
+                    _rb.linearVelocity = away * GetEffectiveMoveSpeed();
+                    FaceTarget(_currentTarget.transform.position);
+                    PlayAnim(PlayerState.MOVE);
+                    return;
+                }
             }
-            // 멀어졌으면 그 자리에서 IDLE (낮은 HP 로 안 들이대기)
-            _rb.linearVelocity = Vector2.zero;
-            FaceTarget(_currentTarget.transform.position);
-            PlayAnim(PlayerState.IDLE);
-            return;
         }
 
-        // 2) Backstab CD 차있으면 다이브 (BehaveMelee → 자동으로 backstab 발동 + 추격)
-        if (_basicCd <= 0f)
-        {
-            BehaveMelee();
-            return;
-        }
-
-        // 3) Backstab CD 안 차있으면 안전거리 유지 — 적이 가까우면 살짝 후퇴
-        if (distToNearest < 2.5f)
-        {
-            if (IsRooted) { _rb.linearVelocity = Vector2.zero; return; }
-            Vector2 away = ((Vector2)transform.position - (Vector2)nearest.transform.position).normalized;
-            _rb.linearVelocity = away * GetEffectiveMoveSpeed() * 0.7f;  // 살짝 느리게 후퇴
-            FaceTarget(_currentTarget.transform.position);
-            PlayAnim(PlayerState.MOVE);
-            return;
-        }
-
-        // 4) 적당히 거리 두고 IDLE — Backstab 쿨 차길 기다림 (평타 사거리 안이면 평타)
-        float distToTarget = Vector2.Distance(transform.position, _currentTarget.transform.position);
-        if (distToTarget <= Data.AttackRange)
-        {
-            _rb.linearVelocity = Vector2.zero;
-            TryAttack();
-        }
-        else
-        {
-            _rb.linearVelocity = Vector2.zero;
-            FaceTarget(_currentTarget.transform.position);
-            PlayAnim(PlayerState.IDLE);
-        }
+        // 평상시 — 일반 melee 추격 + 평타. Backstab 은 Update 의 TryCastBasicSkill 이 쿨 차면 자동 발동
+        BehaveMelee();
     }
 
     // ========== 행동 패턴 ==========
@@ -463,6 +432,18 @@ public partial class ChampionUnit : MonoBehaviour
                 var inRange = alive.Where(e => Vector2.Distance(transform.position, e.transform.position) <= Data.AttackRange).ToList();
                 if (inRange.Count > 0)
                     return inRange.OrderBy(e => e.CurrentHp / e.Data.MaxHp).First();
+                return GetNearestFrom(alive);
+
+            case ChampionRole.Assassin:
+                // 닌자: 백라인 (원딜/마법사/힐러) 우선 — 암살자 본업
+                // 1순위: 백라인 squishy 중 HP 가장 낮은 적
+                // 2순위: 나머지 적 중 가장 가까운 적
+                var squishy = alive.Where(e =>
+                    e.Data.Role == ChampionRole.Marksman ||
+                    e.Data.Role == ChampionRole.Mage ||
+                    e.Data.Role == ChampionRole.Healer).ToList();
+                if (squishy.Count > 0)
+                    return squishy.OrderBy(e => e.CurrentHp / e.Data.MaxHp).First();
                 return GetNearestFrom(alive);
 
             case ChampionRole.Tank:
