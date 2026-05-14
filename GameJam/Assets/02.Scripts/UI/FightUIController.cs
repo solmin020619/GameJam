@@ -771,6 +771,90 @@ public class FightUIController : MonoBehaviour
             portrait.color = Color.white;
             portrait.preserveAspect = true;
         }
+
+        // ★ 사망 표시 — X 오버레이 + OUT 라벨 (살아있으면 숨김)
+        UpdateDeathOverlay(card, portrait, unit.IsDead);
+    }
+
+    // ============ 사망 X / OUT 오버레이 ============
+    static Sprite _xSprite, _outSprite;
+    static bool _deathSpritesTried;
+
+    static void EnsureDeathSprites()
+    {
+        if (_deathSpritesTried) return;
+        _deathSpritesTried = true;
+        // Runtime + Build 둘 다 작동 — Resources/X.png + Resources/Out.png 사용
+        _xSprite = Resources.Load<Sprite>("X");
+        _outSprite = Resources.Load<Sprite>("Out");
+        if (_xSprite == null) Debug.LogWarning("[FightUI] Resources/X.png 로드 실패 — sprite type 으로 import 되어있는지 확인");
+        if (_outSprite == null) Debug.LogWarning("[FightUI] Resources/Out.png 로드 실패");
+    }
+
+    void UpdateDeathOverlay(Transform card, Image portrait, bool isDead)
+    {
+        // X 오버레이 — 카드 자식으로 "DeadXOverlay" 검색, 없으면 생성
+        Transform xT = card.Find("DeadXOverlay");
+        Transform outT = card.Find("OutLabel");
+
+        if (!isDead)
+        {
+            if (xT != null) xT.gameObject.SetActive(false);
+            if (outT != null) outT.gameObject.SetActive(false);
+            return;
+        }
+
+        // 사망 상태 — 오버레이 생성/활성
+        EnsureDeathSprites();
+
+        if (xT == null && _xSprite != null && portrait != null)
+        {
+            // portrait 와 같은 부모/위치/크기로 X 이미지 생성
+            var go = new GameObject("DeadXOverlay", typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(portrait.transform.parent, false);
+            var rt = (RectTransform)go.transform;
+            var pRt = portrait.rectTransform;
+            rt.anchorMin = pRt.anchorMin;
+            rt.anchorMax = pRt.anchorMax;
+            rt.pivot = pRt.pivot;
+            rt.anchoredPosition = pRt.anchoredPosition;
+            rt.sizeDelta = pRt.sizeDelta;
+            rt.localScale = pRt.localScale;
+            rt.SetAsLastSibling();
+            var img = go.GetComponent<Image>();
+            img.sprite = _xSprite;
+            img.color = new Color(1f, 0.2f, 0.2f, 1f);
+            img.raycastTarget = false;
+            img.preserveAspect = true;
+            xT = rt;
+            // 카드 안에 그대로 두기 위해 다시 card 자식으로 reparent
+            go.transform.SetParent(card, true);
+            // 이름으로 찾을 수 있게 다시 한번 부모 설정 후 worldPositionStays=true 유지
+        }
+
+        if (outT == null && _outSprite != null && portrait != null)
+        {
+            var go = new GameObject("OutLabel", typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(card, false);
+            var rt = (RectTransform)go.transform;
+            var pRt = portrait.rectTransform;
+            rt.anchorMin = pRt.anchorMin;
+            rt.anchorMax = pRt.anchorMax;
+            rt.pivot = pRt.pivot;
+            // portrait 아래로 살짝 (높이의 절반만큼)
+            rt.anchoredPosition = pRt.anchoredPosition + new Vector2(0, -pRt.sizeDelta.y * 0.55f);
+            rt.sizeDelta = new Vector2(pRt.sizeDelta.x * 0.7f, pRt.sizeDelta.y * 0.25f);
+            rt.SetAsLastSibling();
+            var img = go.GetComponent<Image>();
+            img.sprite = _outSprite;
+            img.color = Color.white;
+            img.raycastTarget = false;
+            img.preserveAspect = true;
+            outT = rt;
+        }
+
+        if (xT != null) xT.gameObject.SetActive(true);
+        if (outT != null) outT.gameObject.SetActive(true);
     }
 
     static readonly System.Collections.Generic.HashSet<string> _excludeImageNames = new()

@@ -29,7 +29,11 @@
       "Bash(awk '/m_Name: ResultButton/{flag=1; count=0} flag{print; count++; if \\(count > 15\\) {flag=0; print \"---\"}}' Assets/01.Scenes/AScene_FightUI.unity)",
       "Bash(grep -B1 -A12 \"m_Name: ResultButton$\" Assets/01.Scenes/AScene_FightUI.unity)",
       "Bash(grep -B1 -A20 \"m_Name: ResultButton$\" Assets/01.Scenes/AScene_FightUI.unity)",
-      "Bash(awk '/^GameObject:/{flag=1;buffer=\"\"} flag{buffer=buffer \"\\\\n\" $0} /m_Name: ResultButton$/ && flag{print buffer; flag=0}' Assets/01.Scenes/AScene_FightUI.unity)"
+      "Bash(awk '/^GameObject:/{flag=1;buffer=\"\"} flag{buffer=buffer \"\\\\n\" $0} /m_Name: ResultButton$/ && flag{print buffer; flag=0}' Assets/01.Scenes/AScene_FightUI.unity)",
+      "Bash(grep -iE \"\\\\.\\(png|jpg|jpeg|psd\\)$\")",
+      "Bash(python -c ' *)",
+      "Read(//proc/sys/kernel/random/**)",
+      "Read(//proc/sys/kernel/**)"
     ]
   }
 }
