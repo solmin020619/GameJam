@@ -240,6 +240,10 @@ public partial class ChampionUnit
         float dmg = CalcDamage(Data.AttackDamage * 1.8f, target.GetEffectiveDefense());
         target.TakeDamage(dmg, DamageType.Skill, this);
 
+        // 0.7초 스턴 — 원거리 챔프 (저격수/마법사) 가 즉시 반격 못 하게
+        // 닌자가 burst 마무리 시간 확보
+        target.ApplyStun(0.7f);
+
         // 2초간 배후 상태 (평타 +30%)
         ApplyBackAttack(2f);
 

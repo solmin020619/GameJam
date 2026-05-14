@@ -21,7 +21,7 @@ MonoBehaviour:
   maxHealth: 360
   attackDamage: 65
   attackSpeed: 1.3
-  attackRange: 1.3
+  attackRange: 1.5
   defense: 5
   moveSpeed: 5
   unitPrefab: {fileID: 1373908190539689936, guid: 3cf202bd6cdccea479af4eb37cc65965, type: 3}
