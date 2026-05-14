@@ -19,8 +19,8 @@ MonoBehaviour:
   themeColor: {r: 1, g: 0.4, b: 0.3, a: 1}
   description: 
   maxHealth: 500
-  attackDamage: 50
-  attackSpeed: 1
+  attackDamage: 55
+  attackSpeed: 1.1
   attackRange: 1.5
   defense: 15
   moveSpeed: 4

@@ -18,8 +18,8 @@ MonoBehaviour:
   portrait: {fileID: 21300000, guid: 4515bdf58be54094f8d28beff327cba0, type: 3}
   themeColor: {r: 0.9, g: 0.7, b: 0.3, a: 1}
   description: 
-  maxHealth: 500
-  attackDamage: 55
+  maxHealth: 530
+  attackDamage: 60
   attackSpeed: 0.9
   attackRange: 1.6
   defense: 10
