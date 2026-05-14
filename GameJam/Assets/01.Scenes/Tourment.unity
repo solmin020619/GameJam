@@ -130,7 +130,6 @@ GameObject:
   - component: {fileID: 23905506}
   - component: {fileID: 23905508}
   - component: {fileID: 23905507}
-  - component: {fileID: 23905509}
   m_Layer: 5
   m_Name: Text (TMP) (14)
   m_TagString: Untagged
@@ -257,22 +256,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 23905505}
   m_CullTransparentMesh: 1
---- !u!114 &23905509
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 23905505}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 833cc1076a5e8d34cb0f9ab6c6b65c03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DropTextAnimator
-  charInterval: 0
-  dropDuration: 0.4
-  fallHeight: 80
-  startDelay: 1.5499998
 --- !u!1 &284178440
 GameObject:
   m_ObjectHideFlags: 0
@@ -421,7 +404,6 @@ GameObject:
   - component: {fileID: 446666549}
   - component: {fileID: 446666551}
   - component: {fileID: 446666550}
-  - component: {fileID: 446666552}
   m_Layer: 5
   m_Name: Text (TMP) (12)
   m_TagString: Untagged
@@ -548,22 +530,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 446666548}
   m_CullTransparentMesh: 1
---- !u!114 &446666552
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 446666548}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 833cc1076a5e8d34cb0f9ab6c6b65c03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DropTextAnimator
-  charInterval: 0
-  dropDuration: 0.4
-  fallHeight: 80
-  startDelay: 1.2499999
 --- !u!1 &554151722
 GameObject:
   m_ObjectHideFlags: 0
@@ -712,7 +678,6 @@ GameObject:
   - component: {fileID: 633886362}
   - component: {fileID: 633886364}
   - component: {fileID: 633886363}
-  - component: {fileID: 633886365}
   m_Layer: 5
   m_Name: Text (TMP) (11)
   m_TagString: Untagged
@@ -839,22 +804,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 633886361}
   m_CullTransparentMesh: 1
---- !u!114 &633886365
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 633886361}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 833cc1076a5e8d34cb0f9ab6c6b65c03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DropTextAnimator
-  charInterval: 0
-  dropDuration: 0.4
-  fallHeight: 80
-  startDelay: 1.0999999
 --- !u!1 &660905657
 GameObject:
   m_ObjectHideFlags: 0
@@ -866,7 +815,6 @@ GameObject:
   - component: {fileID: 660905658}
   - component: {fileID: 660905660}
   - component: {fileID: 660905659}
-  - component: {fileID: 660905661}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -993,22 +941,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 660905657}
   m_CullTransparentMesh: 1
---- !u!114 &660905661
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 660905657}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 833cc1076a5e8d34cb0f9ab6c6b65c03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DropTextAnimator
-  charInterval: 0.15
-  dropDuration: 0.4
-  fallHeight: 80
-  startDelay: 1
 --- !u!1 &721227185
 GameObject:
   m_ObjectHideFlags: 0
@@ -1020,7 +952,6 @@ GameObject:
   - component: {fileID: 721227186}
   - component: {fileID: 721227188}
   - component: {fileID: 721227187}
-  - component: {fileID: 721227189}
   m_Layer: 5
   m_Name: Text (TMP) (13)
   m_TagString: Untagged
@@ -1147,22 +1078,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 721227185}
   m_CullTransparentMesh: 1
---- !u!114 &721227189
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 721227185}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 833cc1076a5e8d34cb0f9ab6c6b65c03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DropTextAnimator
-  charInterval: 0
-  dropDuration: 0.4
-  fallHeight: 80
-  startDelay: 1.3999999
 --- !u!1 &769107688
 GameObject:
   m_ObjectHideFlags: 0
@@ -1265,6 +1180,7 @@ RectTransform:
   - {fileID: 1083435636}
   - {fileID: 554151723}
   - {fileID: 284178441}
+  - {fileID: 1696197878}
   - {fileID: 1595395166}
   - {fileID: 1545452416}
   - {fileID: 1463275417}
@@ -1373,52 +1289,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &851434682
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 851434684}
-  - component: {fileID: 851434683}
-  m_Layer: 0
-  m_Name: TourmentSceneController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &851434683
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 851434682}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b65bbd9aa650f834f951c34346d0f160, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TourmentSceneController
-  autoNextSeconds: 5
-  nextScene: AScene_BanPick
---- !u!4 &851434684
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 851434682}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &941342128
 GameObject:
   m_ObjectHideFlags: 0
@@ -1430,7 +1300,6 @@ GameObject:
   - component: {fileID: 941342129}
   - component: {fileID: 941342131}
   - component: {fileID: 941342130}
-  - component: {fileID: 941342132}
   m_Layer: 5
   m_Name: Text (TMP) (1)
   m_TagString: Untagged
@@ -1557,22 +1426,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 941342128}
   m_CullTransparentMesh: 1
---- !u!114 &941342132
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 941342128}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 833cc1076a5e8d34cb0f9ab6c6b65c03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DropTextAnimator
-  charInterval: 0.15
-  dropDuration: 0.4
-  fallHeight: 80
-  startDelay: 0
 --- !u!1 &1083435635
 GameObject:
   m_ObjectHideFlags: 0
@@ -1659,7 +1512,6 @@ GameObject:
   - component: {fileID: 1463275417}
   - component: {fileID: 1463275419}
   - component: {fileID: 1463275418}
-  - component: {fileID: 1463275420}
   m_Layer: 5
   m_Name: Text (TMP) (7)
   m_TagString: Untagged
@@ -1786,22 +1638,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1463275416}
   m_CullTransparentMesh: 1
---- !u!114 &1463275420
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1463275416}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 833cc1076a5e8d34cb0f9ab6c6b65c03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DropTextAnimator
-  charInterval: 0
-  dropDuration: 0.4
-  fallHeight: 80
-  startDelay: 0.5
 --- !u!1 &1478685552
 GameObject:
   m_ObjectHideFlags: 0
@@ -1813,7 +1649,6 @@ GameObject:
   - component: {fileID: 1478685553}
   - component: {fileID: 1478685555}
   - component: {fileID: 1478685554}
-  - component: {fileID: 1478685556}
   m_Layer: 5
   m_Name: Text (TMP) (8)
   m_TagString: Untagged
@@ -1940,22 +1775,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1478685552}
   m_CullTransparentMesh: 1
---- !u!114 &1478685556
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1478685552}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 833cc1076a5e8d34cb0f9ab6c6b65c03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DropTextAnimator
-  charInterval: 0
-  dropDuration: 0.4
-  fallHeight: 80
-  startDelay: 0.65
 --- !u!1 &1545452415
 GameObject:
   m_ObjectHideFlags: 0
@@ -2241,7 +2060,6 @@ GameObject:
   - component: {fileID: 1618078269}
   - component: {fileID: 1618078271}
   - component: {fileID: 1618078270}
-  - component: {fileID: 1618078272}
   m_Layer: 5
   m_Name: Text (TMP) (10)
   m_TagString: Untagged
@@ -2368,22 +2186,143 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1618078268}
   m_CullTransparentMesh: 1
---- !u!114 &1618078272
+--- !u!1 &1696197877
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1696197878}
+  - component: {fileID: 1696197880}
+  - component: {fileID: 1696197879}
+  m_Layer: 5
+  m_Name: Text (TMP) (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1696197878
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696197877}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 769107692}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -0, y: 111}
+  m_SizeDelta: {x: 200, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1696197879
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1618078268}
+  m_GameObject: {fileID: 1696197877}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 833cc1076a5e8d34cb0f9ab6c6b65c03, type: 3}
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DropTextAnimator
-  charInterval: 0
-  dropDuration: 0.4
-  fallHeight: 80
-  startDelay: 0.9499999
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: BO1
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 504ba823708f8b34db228fa804765161, type: 2}
+  m_sharedMaterial: {fileID: 4225475373432427181, guid: 504ba823708f8b34db228fa804765161, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4279900698
+  m_fontColor: {r: 0.1, g: 0.1, b: 0.1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 26
+  m_fontSizeBase: 26
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 256
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_characterHorizontalScale: 1
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &1696197880
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696197877}
+  m_CullTransparentMesh: 1
 --- !u!1 &1728320337
 GameObject:
   m_ObjectHideFlags: 0
@@ -2761,7 +2700,6 @@ GameObject:
   - component: {fileID: 2030140547}
   - component: {fileID: 2030140549}
   - component: {fileID: 2030140548}
-  - component: {fileID: 2030140550}
   m_Layer: 5
   m_Name: Text (TMP) (9)
   m_TagString: Untagged
@@ -2888,22 +2826,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2030140546}
   m_CullTransparentMesh: 1
---- !u!114 &2030140550
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2030140546}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 833cc1076a5e8d34cb0f9ab6c6b65c03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DropTextAnimator
-  charInterval: 0
-  dropDuration: 0.4
-  fallHeight: 80
-  startDelay: 0.79999995
 --- !u!1 &2078711288
 GameObject:
   m_ObjectHideFlags: 0
@@ -3265,8 +3187,6 @@ GameObject:
   - component: {fileID: 5634645732576850995}
   - component: {fileID: 7483293716717987043}
   - component: {fileID: 2047527056883054332}
-  - component: {fileID: 3248456007641424869}
-  - component: {fileID: 7483293716717987044}
   m_Layer: 5
   m_Name: fighter_02
   m_TagString: Untagged
@@ -3588,7 +3508,6 @@ GameObject:
   - component: {fileID: 7572329841006003435}
   - component: {fileID: 2318048541468423682}
   - component: {fileID: 1005927298000439593}
-  - component: {fileID: 7572329841006003436}
   m_Layer: 5
   m_Name: marksman_02
   m_TagString: Untagged
@@ -5387,7 +5306,6 @@ GameObject:
   - component: {fileID: 4462289913515012123}
   - component: {fileID: 5065360775330517025}
   - component: {fileID: 1785493389771389023}
-  - component: {fileID: 5065360775330517026}
   m_Layer: 5
   m_Name: tank_04
   m_TagString: Untagged
@@ -9597,7 +9515,6 @@ GameObject:
   - component: {fileID: 1371497131536609964}
   - component: {fileID: 4678387040273005139}
   - component: {fileID: 4119865753563208440}
-  - component: {fileID: 4678387040273005140}
   m_Layer: 5
   m_Name: fighter_01
   m_TagString: Untagged
@@ -9787,7 +9704,6 @@ GameObject:
   - component: {fileID: 7988909841460920926}
   - component: {fileID: 6684919195676303052}
   - component: {fileID: 7010754154935680309}
-  - component: {fileID: 7988909841460920927}
   m_Layer: 5
   m_Name: tank_01
   m_TagString: Untagged
@@ -13258,7 +13174,6 @@ GameObject:
   - component: {fileID: 91106671810691885}
   - component: {fileID: 2207501636157687391}
   - component: {fileID: 4592757160173409629}
-  - component: {fileID: 4592757160173409630}
   m_Layer: 5
   m_Name: tank_05
   m_TagString: Untagged
@@ -26356,8 +26271,6 @@ GameObject:
   - component: {fileID: 2674197714704773476}
   - component: {fileID: 5381497530024481511}
   - component: {fileID: 8126113054176933500}
-  - component: {fileID: 9135408449021437316}
-  - component: {fileID: 9135408449021437317}
   m_Layer: 5
   m_Name: marksman_03
   m_TagString: Untagged
@@ -34714,7 +34627,6 @@ GameObject:
   - component: {fileID: 3843141279674375810}
   - component: {fileID: 3499523770600654249}
   - component: {fileID: 7218040276243764126}
-  - component: {fileID: 7218040276243764127}
   m_Layer: 5
   m_Name: tank_02
   m_TagString: Untagged
@@ -34998,18 +34910,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8145605776843939985}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3248456007641424869
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 61482254500747970}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ChampionUnit
 --- !u!1 &3253411292085747829
 GameObject:
   m_ObjectHideFlags: 0
@@ -44163,7 +44063,6 @@ GameObject:
   - component: {fileID: 5082835034525726468}
   - component: {fileID: 5006474264960426290}
   - component: {fileID: 7567246883139161950}
-  - component: {fileID: 7567246883139161951}
   m_Layer: 5
   m_Name: marksman_01
   m_TagString: Untagged
@@ -48926,18 +48825,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.8, y: 1.4}
   m_EdgeRadius: 0
---- !u!114 &4592757160173409630
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1506186767321655264}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57724762db6831e469ddb00d41621a12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpumIdlePlayer
 --- !u!4 &4592849810422502138
 Transform:
   m_ObjectHideFlags: 0
@@ -52484,18 +52371,6 @@ MonoBehaviour:
   - {fileID: 7400000, guid: 4c70df3312bb83346a1bf065b30d3467, type: 2}
   - {fileID: 7400000, guid: 1ef525d53ae254f7d82ef364ced85490, type: 2}
   - {fileID: 7400000, guid: fabe4f140fdb9cb448bc941c7c93e8b6, type: 2}
---- !u!114 &4678387040273005140
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 998227776027381695}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57724762db6831e469ddb00d41621a12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpumIdlePlayer
 --- !u!4 &4679403603688623555
 Transform:
   m_ObjectHideFlags: 0
@@ -60884,18 +60759,6 @@ MonoBehaviour:
   - {fileID: 7400000, guid: 4c70df3312bb83346a1bf065b30d3467, type: 2}
   - {fileID: 7400000, guid: 1ef525d53ae254f7d82ef364ced85490, type: 2}
   - {fileID: 7400000, guid: fabe4f140fdb9cb448bc941c7c93e8b6, type: 2}
---- !u!114 &5065360775330517026
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 406635613121084877}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57724762db6831e469ddb00d41621a12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpumIdlePlayer
 --- !u!114 &5066847155220537679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76635,7 +76498,6 @@ GameObject:
   - component: {fileID: 8665710015109620922}
   - component: {fileID: 5572547885912196481}
   - component: {fileID: 6086182986028201303}
-  - component: {fileID: 8665710015109620923}
   m_Layer: 5
   m_Name: tank_07
   m_TagString: Untagged
@@ -76654,7 +76516,6 @@ GameObject:
   - component: {fileID: 8665710016119138558}
   - component: {fileID: 5572547887190149573}
   - component: {fileID: 6086182987035621651}
-  - component: {fileID: 8665710016119138559}
   m_Layer: 5
   m_Name: tank_07
   m_TagString: Untagged
@@ -91646,18 +91507,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.8, y: 1.4}
   m_EdgeRadius: 0
---- !u!114 &7218040276243764127
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3174667240837821375}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57724762db6831e469ddb00d41621a12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpumIdlePlayer
 --- !u!4 &7219242493387276453
 Transform:
   m_ObjectHideFlags: 0
@@ -92908,7 +92757,6 @@ GameObject:
   - component: {fileID: 3817021639336201086}
   - component: {fileID: 5489518192565478620}
   - component: {fileID: 9137570381112515033}
-  - component: {fileID: 9137570381112515034}
   m_Layer: 5
   m_Name: tank_06
   m_TagString: Untagged
@@ -96111,18 +95959,6 @@ MonoBehaviour:
   - {fileID: 7400000, guid: 4c70df3312bb83346a1bf065b30d3467, type: 2}
   - {fileID: 7400000, guid: 1ef525d53ae254f7d82ef364ced85490, type: 2}
   - {fileID: 7400000, guid: fabe4f140fdb9cb448bc941c7c93e8b6, type: 2}
---- !u!114 &7483293716717987044
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 61482254500747970}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57724762db6831e469ddb00d41621a12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpumIdlePlayer
 --- !u!4 &7486600805025548741
 Transform:
   m_ObjectHideFlags: 0
@@ -97070,18 +96906,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.8, y: 1.4}
   m_EdgeRadius: 0
---- !u!114 &7567246883139161951
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4054213833828195025}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57724762db6831e469ddb00d41621a12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpumIdlePlayer
 --- !u!1 &7568423207807607198
 GameObject:
   m_ObjectHideFlags: 0
@@ -97171,18 +96995,6 @@ RectTransform:
   m_AnchoredPosition: {x: -4.59, y: -8.92}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7572329841006003436
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 130436779220392519}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57724762db6831e469ddb00d41621a12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpumIdlePlayer
 --- !u!4 &7575515520994896378
 Transform:
   m_ObjectHideFlags: 0
@@ -100318,18 +100130,6 @@ RectTransform:
   m_AnchoredPosition: {x: -14.95, y: -8.6}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7988909841460920927
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1043131204315337714}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57724762db6831e469ddb00d41621a12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpumIdlePlayer
 --- !u!1 &7991134002631080925
 GameObject:
   m_ObjectHideFlags: 0
@@ -104347,18 +104147,6 @@ RectTransform:
   m_AnchoredPosition: {x: -2.22, y: -6.03764}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &8665710015109620923
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5630011428424491613}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57724762db6831e469ddb00d41621a12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpumIdlePlayer
 --- !u!224 &8665710016119138558
 RectTransform:
   m_ObjectHideFlags: 0
@@ -104379,18 +104167,6 @@ RectTransform:
   m_AnchoredPosition: {x: 10.91, y: -8.69}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &8665710016119138559
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5630011429434535449}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57724762db6831e469ddb00d41621a12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpumIdlePlayer
 --- !u!95 &8666753676446098419
 Animator:
   serializedVersion: 7
@@ -107377,7 +107153,6 @@ GameObject:
   - component: {fileID: 1106770552913745824}
   - component: {fileID: 3038816479624087893}
   - component: {fileID: 6585737042857098228}
-  - component: {fileID: 9122144070241157155}
   m_Layer: 5
   m_Name: tank_03
   m_TagString: Untagged
@@ -107385,18 +107160,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &9122144070241157155
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9122144070241157154}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57724762db6831e469ddb00d41621a12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpumIdlePlayer
 --- !u!4 &9122443860033524077
 Transform:
   m_ObjectHideFlags: 0
@@ -107482,30 +107245,6 @@ Transform:
   - {fileID: 8766627155549253402}
   m_Father: {fileID: 6695280241865534450}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -3.285}
---- !u!114 &9135408449021437316
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2392807676637704322}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ChampionUnit
---- !u!114 &9135408449021437317
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2392807676637704322}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57724762db6831e469ddb00d41621a12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpumIdlePlayer
 --- !u!1 &9135491740293930688
 GameObject:
   m_ObjectHideFlags: 0
@@ -107584,18 +107323,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.8, y: 1.4}
   m_EdgeRadius: 0
---- !u!114 &9137570381112515034
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7461762269351304226}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57724762db6831e469ddb00d41621a12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpumIdlePlayer
 --- !u!4 &9141425637553650159
 Transform:
   m_ObjectHideFlags: 0
@@ -107967,4 +107694,3 @@ SceneRoots:
   - {fileID: 8665710015109620922}
   - {fileID: 8665710016119138558}
   - {fileID: 1850123464}
-  - {fileID: 851434684}
