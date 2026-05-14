@@ -222,10 +222,14 @@ public partial class ChampionUnit
         var target = _currentTarget;
         if (target == null || target.IsDead) return false;
 
-        // 배후 위치 = 적 너머 1.5 unit (separation minDist 0.7 보다 충분히 여유 → 떨림 방지)
+        // 배후 위치 = 적 너머 0.8 unit (사거리 1.3 안 + separation 0.55 보다 멀어서 안전)
         Vector3 dirFromNinjaToTarget = (target.transform.position - transform.position).normalized;
         if (dirFromNinjaToTarget.sqrMagnitude < 0.01f) dirFromNinjaToTarget = Vector3.right;
-        Vector3 backPos = target.transform.position + dirFromNinjaToTarget * 1.5f;
+        Vector3 backPos = target.transform.position + dirFromNinjaToTarget * 0.8f;
+
+        // ★ 벽 검사 — backPos 가 맵 콜라이더 (벽) 안이면 fallback (적 앞으로)
+        // 닌자가 맵 밖으로 튕겨나가는 현상 fix
+        backPos = ClampToPlayableArea(backPos, target.transform.position, dirFromNinjaToTarget);
 
         // 잔상 (출발지)
         BattleVfx.SpawnAfterImage(gameObject, new Color(0.6f, 0.6f, 0.6f, 0.4f), 0.2f);
@@ -262,10 +266,12 @@ public partial class ChampionUnit
             // 출발지 잔상
             BattleVfx.SpawnAfterImage(gameObject, new Color(0.6f, 0.6f, 0.6f, 0.4f), 0.2f);
 
-            // 적 뒤로 순간이동 (1.5 unit — 떨림 방지)
+            // 적 뒤로 순간이동 (0.8 unit — 사거리 안 + 떨림 방지)
             Vector3 dirToEnemy = (e.transform.position - transform.position).normalized;
             if (dirToEnemy.sqrMagnitude < 0.01f) dirToEnemy = Vector3.right;
-            TeleportTo(e.transform.position + dirToEnemy * 1.5f);
+            // 벽 검사 — backPos 가 맵 밖이면 적 앞으로 fallback
+            Vector3 dest = ClampToPlayableArea(e.transform.position + dirToEnemy * 0.8f, e.transform.position, dirToEnemy);
+            TeleportTo(dest);
             FaceTarget(e.transform.position);
             PlayAnim(PlayerState.ATTACK);
 
@@ -550,5 +556,27 @@ public partial class ChampionUnit
             if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.08f, 0.07f);
             yield return new WaitForSeconds(0.25f);
         }
+    }
+
+    /// <summary>
+    /// 텔레포트 위치가 맵 콜라이더(벽) 안에 있으면 안전한 위치로 fallback.
+    /// 닌자 Backstab/Shadow Dance, 검사 SwiftBlade/FiveStrike 등 텔레포트 스킬 공용 헬퍼.
+    /// </summary>
+    Vector3 ClampToPlayableArea(Vector3 desiredPos, Vector3 fallbackAnchor, Vector3 dirFromAttackerToAnchor)
+    {
+        // OverlapPoint 로 desiredPos 가 벽 콜라이더 안에 있는지 검사
+        // (맵의 PolygonCollider2D 는 '벽 밖'을 채우므로, desiredPos 가 collider 안이면 맵 밖)
+        var hits = Physics2D.OverlapPointAll(desiredPos);
+        foreach (var h in hits)
+        {
+            if (h == null) continue;
+            // 캐릭터 콜라이더는 무시 (밀어내기 separation 으로 해결)
+            if (h.GetComponent<ChampionUnit>() != null) continue;
+            // 그 외 collider = 벽 → 적 앞으로 fallback
+            Vector3 frontPos = fallbackAnchor - dirFromAttackerToAnchor * 0.5f;
+            Debug.Log($"[Teleport Safety] '{h.gameObject.name}' (벽) 안으로 텔레포트 시도 → 적 앞 fallback");
+            return frontPos;
+        }
+        return desiredPos;
     }
 }

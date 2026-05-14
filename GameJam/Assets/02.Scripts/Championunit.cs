@@ -329,23 +329,10 @@ public partial class ChampionUnit : MonoBehaviour
         }
         else
         {
-            // chase — 사거리 밖이면 접근. 단, 벽에 막혀 stuck 이면 그냥 공격 시도 (멀리서라도 쏘기 시도)
-            float moved = Vector3.Distance(transform.position, _lastKitePos);
+            // chase — 사거리 밖이면 접근. 항상 movetoward (stuck IDLE 제거 — 마법사 가만히 있는 버그 fix)
+            // 카이팅 stuck (구석 몰림) 만 별도 처리, chase 는 무조건 추격
+            _kiteStuckTimer = 0f;
             _lastKitePos = transform.position;
-            float expectedMove = GetEffectiveMoveSpeed() * Time.deltaTime * 0.3f;
-            if (moved < expectedMove) _kiteStuckTimer += Time.deltaTime;
-            else _kiteStuckTimer = 0f;
-
-            // 0.6s stuck (chase 는 카이팅보다 좀 더 인내) → 멈추고 사거리 닿으면 공격
-            if (_kiteStuckTimer > 0.6f)
-            {
-                _rb.linearVelocity = Vector2.zero;
-                FaceTarget(_currentTarget.transform.position);
-                // 사거리 보너스 +0.5 줘서 stuck 일 때 어느정도 멀어도 발사
-                if (distToTarget <= Data.AttackRange + 0.5f) TryAttack();
-                else PlayAnim(PlayerState.IDLE);
-                return;
-            }
             MoveToward(_currentTarget.transform.position);
         }
     }
