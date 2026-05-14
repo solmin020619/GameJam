@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿// 빌드(player) 시엔 UnityEditor 네임스페이스 없으므로 전체 컴파일 제외 — Editor 모드 전용
+#if UNITY_EDITOR
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -341,4 +343,5 @@ public class SPUM_SpriteEditManager : MonoBehaviour
 #endif
 
     #endif
+#endif // UNITY_EDITOR
 }

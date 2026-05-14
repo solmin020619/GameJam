@@ -2,7 +2,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 public partial class SPUM_PaginationManager : MonoBehaviour
 {
     public GameObject itemPrefab;

@@ -72,6 +72,17 @@ public class BanPickHUD : MonoBehaviour
         }
     }
 
+    // self-poll — wirer 가 중복 BanPickHUD 만들었을 때 mgr.hud 가 가리키지 않는 HUD 도
+    // 매 프레임 BanPickManager.Instance 에서 직접 값 가져와 timer/phase/turn 갱신
+    void Update()
+    {
+        var mgr = BanPickManager.Instance;
+        if (mgr == null || mgr.config == null) return;
+        // phase 가 Idle/Done 이면 timer 갱신 안 함 (BanPickManager 와 동일 동작)
+        if (mgr.Phase == BanPickPhase.Idle || mgr.Phase == BanPickPhase.Done) return;
+        UpdateTimer(mgr.TurnRemaining);
+    }
+
     public void ShowDone()
     {
         if (doneOverlay != null) doneOverlay.SetActive(true);
