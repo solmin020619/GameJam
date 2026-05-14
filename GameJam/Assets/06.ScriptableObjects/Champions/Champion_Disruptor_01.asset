@@ -20,7 +20,7 @@ MonoBehaviour:
   description: 
   maxHealth: 600
   attackDamage: 45
-  attackSpeed: 0.6
+  attackSpeed: 0.7
   attackRange: 1.4
   defense: 22
   moveSpeed: 3.2

@@ -40,19 +40,28 @@ public class BanPickAI : MonoBehaviour
         };
     }
 
-    [Header("밴 가중치 — 위협적인 역할 위주")]
+    [Header("밴 가중치 — 위협적인 역할 위주 (밸런스 패치 반영)")]
     public RoleWeights banWeights = new RoleWeights {
-        Healer = 3f, Mage = 2.5f, Marksman = 2.5f,
-        Disruptor = 1.5f, Assassin = 1.5f,
-        Tank = 1f, Fighter = 1f, Skirmisher = 1f, Duelist = 1f,
+        Mage = 3f,        // AoE 궁 (250%) 학살급
+        Healer = 2.5f,    // 한 게임 좌우
+        Disruptor = 2f,   // Crushing Blow 350% + 2s 스턴
+        Marksman = 2f,    // 사거리 4.5 카이팅
+        Duelist = 1.8f,   // Five Strike 350%
+        Assassin = 1.5f,  // 너프 됐지만 여전히 burst
+        Tank = 1f, Fighter = 1f, Skirmisher = 1f,
     };
 
-    [Header("픽 가중치 — 균형있는 조합 위주")]
+    [Header("픽 가중치 — 균형있는 조합 위주 (밸런스 패치 반영)")]
     public RoleWeights pickWeights = new RoleWeights {
-        Tank = 3f, Healer = 2.5f, Marksman = 2.5f,
-        Mage = 2f, Fighter = 2f,
-        Disruptor = 1.5f, Skirmisher = 1.5f, Duelist = 1.5f,
-        Assassin = 1f,
+        Tank = 3f,        // 안정적 핵심
+        Healer = 2.5f,    // 팀 생존력
+        Marksman = 2.5f,  // 안정적 DPS
+        Mage = 2.2f,      // AoE 강력
+        Skirmisher = 2f,  // HP 550 + MOV 5.5
+        Fighter = 2f,     // 표준 전사
+        Duelist = 2f,     // burst
+        Disruptor = 1.8f, // CC + 강한 궁
+        Assassin = 1.8f,  // 너프 됐지만 backstab burst 여전
     };
 
     public ChampionData Choose(BanPickManager mgr)
