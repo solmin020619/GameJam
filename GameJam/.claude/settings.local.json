@@ -15,7 +15,10 @@
       "Bash(grep -B 2 \"m_Text:\\\\|Icon_Weapon\\\\|m_Name: RedBG\\\\|m_Name: Red$\")",
       "Bash(grep -B 2 -A 25 \"m_Name: Canvas$\" \"C:/Users/user/OneDrive - 신구대학교/바탕 화면/5-13 게임잼/GameJam_0513/GameJam/Assets/01.Scenes/AScene_Wait.unity\")",
       "Bash(grep -A 5 \"m_Name: BG$\" \"C:/Users/user/OneDrive - 신구대학교/바탕 화면/5-13 게임잼/GameJam_0513/GameJam/Assets/01.Scenes/AScene_Wait.unity\")",
-      "Bash(awk '/m_Name: BattleManager$/,/^---/' \"C:/Users/user/OneDrive - 신구대학교/바탕 화면/5-13 게임잼/GameJam_0513/GameJam/Assets/01.Scenes/InGame.unity\")"
+      "Bash(awk '/m_Name: BattleManager$/,/^---/' \"C:/Users/user/OneDrive - 신구대학교/바탕 화면/5-13 게임잼/GameJam_0513/GameJam/Assets/01.Scenes/InGame.unity\")",
+      "Bash(grep -E \"SettingsMenuController|PauseMenuController|m_Name: Setting$\" \"C:/Users/user/OneDrive - 신구대학교/바탕 화면/5-13 게임잼/GameJam_0513/GameJam/Assets/01.Scenes/Lobby.unity\")",
+      "Bash(grep -B 3 -A 5 \"m_Name: Setting$\" \"C:/Users/user/OneDrive - 신구대학교/바탕 화면/5-13 게임잼/GameJam_0513/GameJam/Assets/01.Scenes/Lobby.unity\")",
+      "Bash(grep -B 30 'm_Text: \"\\\\\\\\\\\\\\\\uBC30\\\\\\\\\\\\\\\\uACBD \\\\\\\\\\\\\\\\uC74C\\\\\\\\\\\\\\\\uC545\"' \"C:/Users/user/OneDrive - 신구대학교/바탕 화면/5-13 게임잼/GameJam_0513/GameJam/Assets/01.Scenes/AScene.unity\")"
     ]
   }
 }
