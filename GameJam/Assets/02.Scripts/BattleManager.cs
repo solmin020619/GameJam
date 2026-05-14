@@ -285,18 +285,54 @@ public class BattleManager : MonoBehaviour
         int alive0 = _team0.FindAll(u => !u.IsDead).Count;
         int alive1 = _team1.FindAll(u => !u.IsDead).Count;
 
+        int winnerTeam = -1;
+        if (alive0 > alive1) winnerTeam = 0;
+        else if (alive1 > alive0) winnerTeam = 1;
+        // DRAW 면 winnerTeam = -1, 점수 안 올라감
+
+        // 세트 결과 기록 — 3판 2선
+        if (winnerTeam >= 0) MatchResult.AddWin(winnerTeam);
+
         string result;
         Color resultColor;
-        if (alive0 > alive1) { result = "VICTORY!"; resultColor = new Color(1f, 0.9f, 0.3f); }
-        else if (alive1 > alive0) { result = "DEFEAT"; resultColor = new Color(1f, 0.4f, 0.4f); }
+        if (winnerTeam == 0) { result = "VICTORY!"; resultColor = new Color(1f, 0.9f, 0.3f); }
+        else if (winnerTeam == 1) { result = "DEFEAT"; resultColor = new Color(1f, 0.4f, 0.4f); }
         else { result = "DRAW"; resultColor = Color.white; }
 
         ResultPanel.SetActive(true);
-        ResultText.text = $"{result}\nSurvivors: {alive0} vs {alive1}";
+        ResultText.text = $"{result}\nSurvivors: {alive0} vs {alive1}\nSet: {MatchResult.team0Wins} - {MatchResult.team1Wins}";
         ResultText.color = resultColor;
 
-        // 결과 화면 등장 시 큰 카메라 셰이크
         if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.4f, 0.25f);
+
+        // 다음 씬으로 자동 전환 (2초 후)
+        StartCoroutine(NextSetOrVictory());
+    }
+
+    IEnumerator NextSetOrVictory()
+    {
+        yield return new WaitForSecondsRealtime(2.0f);
+
+        if (MatchResult.IsMatchOver)
+        {
+            // 최종 우승 — Victory 씬 (나중에 만들 예정. 우선 Lobby 로 fallback)
+            int winner = MatchResult.WinningTeam;
+            Debug.Log($"[BM] 매치 종료 — Team{winner} 우승. 우승씬 로드 (없으면 Lobby fallback)");
+            string victoryScene = "Victory"; // 사용자가 나중에 만들 씬
+            if (Application.CanStreamedLevelBeLoaded(victoryScene))
+                UnityEngine.SceneManagement.SceneManager.LoadScene(victoryScene);
+            else
+                UnityEngine.SceneManagement.SceneManager.LoadScene("Lobby");
+            // 다음 매치 위해 점수 reset (우승씬 본 후 다시 시작 가능)
+            MatchResult.Clear();
+        }
+        else
+        {
+            // 다음 세트 — BanPick 로 다시
+            Debug.Log($"[BM] 세트 종료 — 점수 {MatchResult.team0Wins}:{MatchResult.team1Wins}. 다음 세트 BanPick 로 이동");
+            PickResult.Clear(); // 새 밴픽 위해
+            UnityEngine.SceneManagement.SceneManager.LoadScene("BanPick");
+        }
     }
 
     void TogglePause()

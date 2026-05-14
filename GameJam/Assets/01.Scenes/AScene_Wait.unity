@@ -1172,7 +1172,7 @@ MonoBehaviour:
   pauseMin: 0.4
   pauseMax: 1.5
   labelColor: {r: 1, g: 1, b: 1, a: 1}
-  labelFontSize: 1
+  labelFontSize: 3
   labelYOffset: 0.9
   sortingOrder: 100
   sortingLayerName: 
@@ -1321,7 +1321,7 @@ MonoBehaviour:
   pauseMin: 0.4
   pauseMax: 1.5
   labelColor: {r: 1, g: 1, b: 1, a: 1}
-  labelFontSize: 1
+  labelFontSize: 3
   labelYOffset: 0.9
   sortingOrder: 100
   sortingLayerName: 
@@ -1691,7 +1691,7 @@ MonoBehaviour:
   pauseMin: 0.4
   pauseMax: 1.5
   labelColor: {r: 1, g: 1, b: 1, a: 1}
-  labelFontSize: 1
+  labelFontSize: 3
   labelYOffset: 0.9
   sortingOrder: 100
   sortingLayerName: 

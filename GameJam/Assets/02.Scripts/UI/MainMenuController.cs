@@ -30,6 +30,9 @@ public class MainMenuController : MonoBehaviour
 
     public void OnStartClicked()
     {
+        // 새 매치 시작 — 이전 세트 점수 리셋
+        MatchResult.Clear();
+        PickResult.Clear();
         SceneManager.LoadScene(hSceneName);
     }
 

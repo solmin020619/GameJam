@@ -125,6 +125,52 @@ public class FightUIController : MonoBehaviour
         }
     }
 
+    // Ball 점등 — 세트 승수만큼 ball 색 밝게 (왼쪽 Blue, 오른쪽 Red 진영)
+    List<RectTransform> _leftBalls;
+    List<RectTransform> _rightBalls;
+    void UpdateBallLights(int blueWins, int redWins)
+    {
+        // 첫 호출 시 ball 들 캐싱 (왼쪽/오른쪽 분류)
+        if (_leftBalls == null || _rightBalls == null)
+        {
+            _leftBalls = new List<RectTransform>();
+            _rightBalls = new List<RectTransform>();
+            var scene = SceneManager.GetSceneByName(uiSceneName);
+            if (!scene.IsValid()) return;
+            var all = new List<RectTransform>();
+            foreach (var root in scene.GetRootGameObjects())
+            {
+                foreach (var t in root.GetComponentsInChildren<Transform>(true))
+                {
+                    if (t.name == "Ball_1" || t.name == "Ball_2")
+                    {
+                        var rt = t as RectTransform;
+                        if (rt != null) all.Add(rt);
+                    }
+                }
+            }
+            all.Sort((a, b) => a.position.x.CompareTo(b.position.x));
+            int half = all.Count / 2;
+            for (int i = 0; i < half; i++) _leftBalls.Add(all[i]);
+            for (int i = half; i < all.Count; i++) _rightBalls.Add(all[i]);
+        }
+
+        // 왼쪽 = blue 진영, 오른쪽 = red 진영
+        var onColor  = new Color(1f, 1f, 0.3f, 1f);  // 노란빛 (점등)
+        var offColor = new Color(0.15f, 0.15f, 0.15f, 1f); // 어두운 회색
+
+        for (int i = 0; i < _leftBalls.Count; i++)
+        {
+            var img = _leftBalls[i].GetComponent<Image>();
+            if (img != null) img.color = (i < blueWins) ? onColor : offColor;
+        }
+        for (int i = 0; i < _rightBalls.Count; i++)
+        {
+            var img = _rightBalls[i].GetComponent<Image>();
+            if (img != null) img.color = (i < redWins) ? onColor : offColor;
+        }
+    }
+
     // Ball_1 / Ball_2 들을 점수 박스 기준 offset 위치에 배치 (인스펙터에서 자유 조절)
     void RepositionBalls(Scene scene, Transform leftScore, Transform rightScore)
     {
@@ -602,13 +648,16 @@ public class FightUIController : MonoBehaviour
             UpdateCard(_redCards[i],  team1 != null && i < team1.Count ? team1[i] : null);
         }
 
-        // 스코어 표시 (TMP 또는 Legacy 둘 중 와이어링된 거)
-        int k0 = BattleManager.Instance.Team0Kills;
-        int k1 = BattleManager.Instance.Team1Kills;
-        if (_team0ScoreText != null) _team0ScoreText.text = k0.ToString();
-        if (_team1ScoreText != null) _team1ScoreText.text = k1.ToString();
-        if (_team0ScoreLegacy != null) _team0ScoreLegacy.text = k0.ToString();
-        if (_team1ScoreLegacy != null) _team1ScoreLegacy.text = k1.ToString();
+        // 스코어 표시 — 3판 2선 세트 점수 (킬 수 아님)
+        int s0 = MatchResult.team0Wins;
+        int s1 = MatchResult.team1Wins;
+        if (_team0ScoreText != null) _team0ScoreText.text = s0.ToString();
+        if (_team1ScoreText != null) _team1ScoreText.text = s1.ToString();
+        if (_team0ScoreLegacy != null) _team0ScoreLegacy.text = s0.ToString();
+        if (_team1ScoreLegacy != null) _team1ScoreLegacy.text = s1.ToString();
+
+        // Ball 점등 — 세트 승수만큼 ball 켜짐
+        UpdateBallLights(s0, s1);
     }
 
     /// <summary>한 카드에 해당 챔프 데이터 표시</summary>
