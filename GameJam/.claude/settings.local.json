@@ -33,7 +33,8 @@
       "Bash(grep -iE \"\\\\.\\(png|jpg|jpeg|psd\\)$\")",
       "Bash(python -c ' *)",
       "Read(//proc/sys/kernel/random/**)",
-      "Read(//proc/sys/kernel/**)"
+      "Read(//proc/sys/kernel/**)",
+      "Bash(grep -n \"public void TeleportTo\" /c/Users/user/OneDrive*/바탕*/5-13*/GameJam_0513/GameJam/Assets/02.Scripts/Championunit.cs)"
     ]
   }
 }

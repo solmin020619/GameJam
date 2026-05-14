@@ -127,12 +127,19 @@ public partial class ChampionUnit
         }
     }
 
-    /// <summary>마법탄 — 가장 먼 적 1명 180%</summary>
+    /// <summary>마법탄 — 사거리 안 HP 가장 낮은 적 1명 180% (또는 _currentTarget)</summary>
     bool CastFireball()
     {
-        var target = GetFarthestAliveEnemy();
+        // _currentTarget 사용 — Mage 의 GetTarget 이 이미 "사거리 안 HP 낮은 적" 우선 처리
+        // 없으면 사거리 안 HP 가장 낮은 적 직접 찾기
+        ChampionUnit target = _currentTarget;
+        if (target == null || target.IsDead || Vector2.Distance(transform.position, target.transform.position) > Data.AttackRange * 1.2f)
+        {
+            var inRange = AliveEnemies().Where(e => Vector2.Distance(transform.position, e.transform.position) <= Data.AttackRange * 1.2f).ToList();
+            if (inRange.Count == 0) return false;
+            target = inRange.OrderBy(e => e.CurrentHp / e.Data.MaxHp).First();
+        }
         if (target == null) return false;
-        if (Vector2.Distance(transform.position, target.transform.position) > Data.AttackRange * 1.5f) return false;
 
         FaceTarget(target.transform.position);
         PlayAnim(PlayerState.ATTACK);
@@ -215,10 +222,15 @@ public partial class ChampionUnit
         var target = _currentTarget;
         if (target == null || target.IsDead) return false;
 
-        // 배후 위치 = 적 너머 1.5 unit (separation minDist 0.7 보다 충분히 여유 → 떨림 방지)
+        // 배후 위치 = 적 너머 1.0 unit (사거리 1.5 안 + separation 0.55 안전 마진 충분)
+        // 0.8 였을 때 target chase 시 sep 경계에 가까워 미세 떨림 발생
         Vector3 dirFromNinjaToTarget = (target.transform.position - transform.position).normalized;
         if (dirFromNinjaToTarget.sqrMagnitude < 0.01f) dirFromNinjaToTarget = Vector3.right;
-        Vector3 backPos = target.transform.position + dirFromNinjaToTarget * 1.5f;
+        Vector3 backPos = target.transform.position + dirFromNinjaToTarget * 1.0f;
+
+        // ★ 벽 검사 — backPos 가 맵 콜라이더 (벽) 안이면 fallback (적 앞으로)
+        // 닌자가 맵 밖으로 튕겨나가는 현상 fix
+        backPos = ClampToPlayableArea(backPos, target.transform.position, dirFromNinjaToTarget);
 
         // 잔상 (출발지)
         BattleVfx.SpawnAfterImage(gameObject, new Color(0.6f, 0.6f, 0.6f, 0.4f), 0.2f);
@@ -229,8 +241,14 @@ public partial class ChampionUnit
         float dmg = CalcDamage(Data.AttackDamage * 1.8f, target.GetEffectiveDefense());
         target.TakeDamage(dmg, DamageType.Skill, this);
 
+        // 0.7초 스턴 — 원거리 챔프 (저격수/마법사) 가 즉시 반격 못 하게
+        target.ApplyStun(0.7f);
+
         // 2초간 배후 상태 (평타 +30%)
         ApplyBackAttack(2f);
+
+        // 0.4초 burst lock — 텔레포트 직후 위치 고정 + 평타 (자연스러운 burst 시퀀스)
+        ApplyBurstLock(0.4f);
 
         return true;
     }
@@ -255,10 +273,12 @@ public partial class ChampionUnit
             // 출발지 잔상
             BattleVfx.SpawnAfterImage(gameObject, new Color(0.6f, 0.6f, 0.6f, 0.4f), 0.2f);
 
-            // 적 뒤로 순간이동 (1.5 unit — 떨림 방지)
+            // 적 뒤로 순간이동 (0.8 unit — 사거리 안 + 떨림 방지)
             Vector3 dirToEnemy = (e.transform.position - transform.position).normalized;
             if (dirToEnemy.sqrMagnitude < 0.01f) dirToEnemy = Vector3.right;
-            TeleportTo(e.transform.position + dirToEnemy * 1.5f);
+            // 벽 검사 — backPos 가 맵 밖이면 적 앞으로 fallback
+            Vector3 dest = ClampToPlayableArea(e.transform.position + dirToEnemy * 0.8f, e.transform.position, dirToEnemy);
+            TeleportTo(dest);
             FaceTarget(e.transform.position);
             PlayAnim(PlayerState.ATTACK);
 
@@ -543,5 +563,53 @@ public partial class ChampionUnit
             if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.08f, 0.07f);
             yield return new WaitForSeconds(0.25f);
         }
+    }
+
+    /// <summary>
+    /// 텔레포트 위치가 맵 콜라이더(벽) 안 또는 벽 너머에 있으면 안전한 위치로 fallback.
+    /// 닌자 Backstab/Shadow Dance, 검사 SwiftBlade/FiveStrike 등 텔레포트 스킬 공용 헬퍼.
+    /// </summary>
+    Vector3 ClampToPlayableArea(Vector3 desiredPos, Vector3 fallbackAnchor, Vector3 dirFromAttackerToAnchor)
+    {
+        // fallback 위치 — 적 앞 0.8 unit (separation minDist 0.55 보다 멀어서 떨림 방지)
+        Vector3 frontPos = fallbackAnchor - dirFromAttackerToAnchor * 0.8f;
+
+        // 검사 1 — desiredPos 가 벽 콜라이더 안에 있는지 (OverlapPoint)
+        var hits = Physics2D.OverlapPointAll(desiredPos);
+        foreach (var h in hits)
+        {
+            if (h == null) continue;
+            if (h.GetComponent<ChampionUnit>() != null) continue;
+            Debug.Log($"[Teleport Safety] backPos 가 벽 '{h.gameObject.name}' 안 → 적 앞 fallback");
+            return frontPos;
+        }
+
+        // 검사 2 — fallbackAnchor (적 위치) → desiredPos 경로 사이에 벽 있는지 (Raycast)
+        // OverlapPoint 가 폴리곤 가장자리에서 놓치는 케이스 대비
+        Vector3 fromAnchorToBack = desiredPos - fallbackAnchor;
+        float dist = fromAnchorToBack.magnitude;
+        if (dist > 0.01f)
+        {
+            var rayHit = Physics2D.Raycast(fallbackAnchor, fromAnchorToBack.normalized, dist);
+            if (rayHit.collider != null && rayHit.collider.GetComponent<ChampionUnit>() == null)
+            {
+                Debug.Log($"[Teleport Safety] 적→backPos 경로에 벽 '{rayHit.collider.gameObject.name}' → 적 앞 fallback");
+                return frontPos;
+            }
+        }
+
+        // 검사 3 — desiredPos 주변 0.3 unit 반경에 벽 있는지 (OverlapCircle)
+        // 캐릭터 콜라이더 크기 고려한 안전망
+        var circleHits = Physics2D.OverlapCircleAll(desiredPos, 0.3f);
+        foreach (var h in circleHits)
+        {
+            if (h == null) continue;
+            if (h.GetComponent<ChampionUnit>() != null) continue;
+            // 벽이 가까이 있으면 — physics 가 푸시할 수 있어 fallback
+            Debug.Log($"[Teleport Safety] backPos 근처 (0.3) 벽 '{h.gameObject.name}' → 적 앞 fallback");
+            return frontPos;
+        }
+
+        return desiredPos;
     }
 }

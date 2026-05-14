@@ -32,5 +32,5 @@ MonoBehaviour:
   basicSkillCooldown: 5
   basicSkillIcon: {fileID: 21300000, guid: 2475e19682b65694a9efd026f67ca6c1, type: 3}
   ultimateName: "\uC5F0\uCC38"
-  ultimateCooldown: 20
+  ultimateCooldown: 15
   ultimateIcon: {fileID: 21300000, guid: 595728169e5e88545951ad460f8c6805, type: 3}
