@@ -127,12 +127,19 @@ public partial class ChampionUnit
         }
     }
 
-    /// <summary>마법탄 — 가장 먼 적 1명 180%</summary>
+    /// <summary>마법탄 — 사거리 안 HP 가장 낮은 적 1명 180% (또는 _currentTarget)</summary>
     bool CastFireball()
     {
-        var target = GetFarthestAliveEnemy();
+        // _currentTarget 사용 — Mage 의 GetTarget 이 이미 "사거리 안 HP 낮은 적" 우선 처리
+        // 없으면 사거리 안 HP 가장 낮은 적 직접 찾기
+        ChampionUnit target = _currentTarget;
+        if (target == null || target.IsDead || Vector2.Distance(transform.position, target.transform.position) > Data.AttackRange * 1.2f)
+        {
+            var inRange = AliveEnemies().Where(e => Vector2.Distance(transform.position, e.transform.position) <= Data.AttackRange * 1.2f).ToList();
+            if (inRange.Count == 0) return false;
+            target = inRange.OrderBy(e => e.CurrentHp / e.Data.MaxHp).First();
+        }
         if (target == null) return false;
-        if (Vector2.Distance(transform.position, target.transform.position) > Data.AttackRange * 1.5f) return false;
 
         FaceTarget(target.transform.position);
         PlayAnim(PlayerState.ATTACK);

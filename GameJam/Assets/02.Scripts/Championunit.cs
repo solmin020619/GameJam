@@ -206,9 +206,72 @@ public partial class ChampionUnit : MonoBehaviour
             case ChampionRole.Healer:
                 BehaveHealer();
                 break;
+            case ChampionRole.Assassin:
+                BehaveAssassin();
+                break;
             default:
                 BehaveMelee();
                 break;
+        }
+    }
+
+    /// <summary>닌자: Backstab CD 차있을 때만 다이브 / HP 낮으면 후퇴 / 평소엔 거리 유지</summary>
+    void BehaveAssassin()
+    {
+        float hpPct = CurrentHp / Data.MaxHp;
+        var nearest = GetNearestAliveEnemy();
+        if (nearest == null) { BehaveMelee(); return; }
+        float distToNearest = Vector2.Distance(transform.position, nearest.transform.position);
+
+        // 1) HP 35% 미만 + Backstab 못 쓰면 후퇴 (살아남기 우선)
+        if (hpPct < 0.35f && _basicCd > 1.5f)
+        {
+            if (distToNearest < 2.5f)
+            {
+                if (IsRooted) { _rb.linearVelocity = Vector2.zero; return; }
+                Vector2 away = ((Vector2)transform.position - (Vector2)nearest.transform.position).normalized;
+                _rb.linearVelocity = away * GetEffectiveMoveSpeed();
+                FaceTarget(_currentTarget.transform.position);
+                PlayAnim(PlayerState.MOVE);
+                return;
+            }
+            // 멀어졌으면 그 자리에서 IDLE (낮은 HP 로 안 들이대기)
+            _rb.linearVelocity = Vector2.zero;
+            FaceTarget(_currentTarget.transform.position);
+            PlayAnim(PlayerState.IDLE);
+            return;
+        }
+
+        // 2) Backstab CD 차있으면 다이브 (BehaveMelee → 자동으로 backstab 발동 + 추격)
+        if (_basicCd <= 0f)
+        {
+            BehaveMelee();
+            return;
+        }
+
+        // 3) Backstab CD 안 차있으면 안전거리 유지 — 적이 가까우면 살짝 후퇴
+        if (distToNearest < 2.5f)
+        {
+            if (IsRooted) { _rb.linearVelocity = Vector2.zero; return; }
+            Vector2 away = ((Vector2)transform.position - (Vector2)nearest.transform.position).normalized;
+            _rb.linearVelocity = away * GetEffectiveMoveSpeed() * 0.7f;  // 살짝 느리게 후퇴
+            FaceTarget(_currentTarget.transform.position);
+            PlayAnim(PlayerState.MOVE);
+            return;
+        }
+
+        // 4) 적당히 거리 두고 IDLE — Backstab 쿨 차길 기다림 (평타 사거리 안이면 평타)
+        float distToTarget = Vector2.Distance(transform.position, _currentTarget.transform.position);
+        if (distToTarget <= Data.AttackRange)
+        {
+            _rb.linearVelocity = Vector2.zero;
+            TryAttack();
+        }
+        else
+        {
+            _rb.linearVelocity = Vector2.zero;
+            FaceTarget(_currentTarget.transform.position);
+            PlayAnim(PlayerState.IDLE);
         }
     }
 
@@ -391,9 +454,16 @@ public partial class ChampionUnit : MonoBehaviour
         switch (Data.Role)
         {
             case ChampionRole.Marksman:
-            case ChampionRole.Mage:
-                // 마무리: HP 비율 가장 낮은 적
+                // 저격수: HP 낮은 적 마무리 (빠른 이속으로 도달 가능)
                 return alive.OrderBy(e => e.CurrentHp / e.Data.MaxHp).First();
+
+            case ChampionRole.Mage:
+                // 마법사: 사거리 안 가장 가까운 적 — 느려서 멀리 추격 위험.
+                // 사거리 안 적 중 HP 낮은 거 우선, 없으면 가장 가까운 적
+                var inRange = alive.Where(e => Vector2.Distance(transform.position, e.transform.position) <= Data.AttackRange).ToList();
+                if (inRange.Count > 0)
+                    return inRange.OrderBy(e => e.CurrentHp / e.Data.MaxHp).First();
+                return GetNearestFrom(alive);
 
             case ChampionRole.Tank:
             case ChampionRole.Fighter:

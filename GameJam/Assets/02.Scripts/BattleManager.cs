@@ -112,12 +112,11 @@ public class BattleManager : MonoBehaviour
             so.UltimateSfx = d.ultimateSfx;
 
             // 카이팅 거리 — role 별 자동 계산
-            // 원거리: AttackRange * 0.7 (사거리 끝에서 살짝 안쪽으로 들어오면 카이팅 시작)
-            // 그 외: 사용 안 됨 (BehaveMelee/Healer 라 카이팅 X)
+            // 원거리: AttackRange 비율로 — 사거리 끝에서 살짝 안쪽으로 들어오면 카이팅 시작
             so.KitingDistance = d.role switch
             {
-                ChampionRole.Marksman => d.attackRange * 0.7f,  // 4.5 * 0.7 = 3.15
-                ChampionRole.Mage     => d.attackRange * 0.7f,  // 4.0 * 0.7 = 2.8
+                ChampionRole.Marksman => d.attackRange * 0.7f,  // 4.5 * 0.7 = 3.15 (빠른 캐릭)
+                ChampionRole.Mage     => d.attackRange * 0.9f,  // 4.0 * 0.9 = 3.6 (느려서 일찍 도주)
                 ChampionRole.Healer   => d.attackRange * 0.5f,  // 3.5 * 0.5 = 1.75
                 _ => 2.5f, // 기본값 (사용 안 됨)
             };
