@@ -229,46 +229,13 @@ public partial class ChampionUnit : MonoBehaviour
         }
     }
 
-    /// <summary>닌자: 평소엔 melee 추격, HP 낮을 때만 후퇴 (Backstab 은 Update 에서 자동 발동)</summary>
+    /// <summary>
+    /// 닌자 — 단순화 버전. 다른 melee 와 동일하게 추격 + 평타.
+    /// Backstab (텔레포트) 은 Update 의 TryCastBasicSkill 이 쿨 차면 자동 발동.
+    /// 백라인 우선 타게팅은 GetTarget 에서 처리.
+    /// </summary>
     void BehaveAssassin()
     {
-        // ★ Burst lock — Backstab 직후 0.4초 동안 위치 고정 + 평타만 (텔레포트 후 자연스러운 burst)
-        if (_burstLockTimer > 0f)
-        {
-            _rb.linearVelocity = Vector2.zero;
-            if (_currentTarget != null && !_currentTarget.IsDead)
-            {
-                FaceTarget(_currentTarget.transform.position);
-                // 사거리 안 (텔레포트 위치 1.0 < 사거리 1.5 라 항상 in range) — 평타
-                if (Vector2.Distance(transform.position, _currentTarget.transform.position) <= Data.AttackRange)
-                    TryAttack();
-            }
-            return;
-        }
-
-        float hpPct = CurrentHp / Data.MaxHp;
-
-        // HP 35% 미만 + Backstab 쿨 차있으면 후퇴 (생존 우선)
-        // Backstab 쿨이 곧 차면 그걸로 도주/burst 가능하니까 그냥 melee 진행
-        if (hpPct < 0.35f && _basicCd > 1f)
-        {
-            var nearest = GetNearestAliveEnemy();
-            if (nearest != null)
-            {
-                float distToNearest = Vector2.Distance(transform.position, nearest.transform.position);
-                if (distToNearest < 2.5f)
-                {
-                    if (IsRooted) { _rb.linearVelocity = Vector2.zero; return; }
-                    Vector2 away = ((Vector2)transform.position - (Vector2)nearest.transform.position).normalized;
-                    _rb.linearVelocity = away * GetEffectiveMoveSpeed();
-                    FaceTarget(_currentTarget.transform.position);
-                    PlayAnim(PlayerState.MOVE);
-                    return;
-                }
-            }
-        }
-
-        // 평상시 — 일반 melee 추격 + 평타. Backstab 은 Update 의 TryCastBasicSkill 이 쿨 차면 자동 발동
         BehaveMelee();
     }
 
