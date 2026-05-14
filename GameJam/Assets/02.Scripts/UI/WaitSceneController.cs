@@ -9,8 +9,14 @@ using UnityEngine.UI;
 public class WaitSceneController : MonoBehaviour
 {
     [Header("Scene Names")]
-    public string forwardScene = "BanPick";   // 경기장 이동
+    public string forwardScene = "AScene_BanPick";   // 경기장 이동 (ashyun1 디자인 사용)
     public string backScene    = "Lobby";     // 뒤로가기
+
+    void Reset()
+    {
+        forwardScene = "AScene_BanPick";
+        backScene = "Lobby";
+    }
 
     [Header("Buttons (인스펙터에서 wire 또는 자동검색)")]
     public Button moveButton;     // → BanPick 으로
@@ -107,7 +113,16 @@ public class WaitSceneController : MonoBehaviour
         Debug.Log($"[WaitScene] moveButton:{(moveButton != null ? moveButton.name : "null")}, backButton:{(backButton != null ? backButton.name : "null")}");
     }
 
-    public void OnMoveClicked() => SceneManager.LoadScene(forwardScene);
+    public void OnMoveClicked()
+    {
+        // Wait → Tourment (10s) → AScene_BanPick 순서. Tourment 없으면 AScene_BanPick 직진
+        string target;
+        if (Application.CanStreamedLevelBeLoaded("Tourment")) target = "Tourment";
+        else if (Application.CanStreamedLevelBeLoaded("AScene_BanPick")) target = "AScene_BanPick";
+        else target = forwardScene;
+        Debug.Log($"[Wait] OnMoveClicked — target:{target}");
+        SceneManager.LoadScene(target);
+    }
     public void OnBackClicked() => SceneManager.LoadScene(backScene);
 
     static Button FindButtonByName(string n)

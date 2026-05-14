@@ -9,7 +9,8 @@ public static class BattleVfx
 {
     static Sprite _circle;
     static Sprite _arrowWood, _arrowIron, _arrowFire, _arrowMagic;
-    static bool _arrowsLoaded;
+    static Sprite _magicOrb, _healAura;
+    static bool _arrowsLoaded, _customVfxLoaded;
 
     static void LoadArrows()
     {
@@ -28,6 +29,79 @@ public static class BattleVfx
 #else
         return Resources.Load<Sprite>(path);
 #endif
+    }
+
+    static void LoadCustomVfx()
+    {
+        if (_customVfxLoaded) return;
+        _customVfxLoaded = true;
+        _magicOrb = Resources.Load<Sprite>("VFX/magic_orb") ?? Resources.Load<Sprite>("VFX/MagicOrb");
+        _healAura = Resources.Load<Sprite>("VFX/heal_aura") ?? Resources.Load<Sprite>("VFX/HealAura") ?? Resources.Load<Sprite>("VFX/heal_ring");
+    }
+
+    /// <summary>마법사 평타 — 보라색 마법구 (없으면 magic 화살 fallback)</summary>
+    public static void SpawnMagicOrb(Vector3 from, Vector3 to, float duration = 0.24f)
+    {
+        LoadCustomVfx();
+        if (_magicOrb == null)
+        {
+            SpawnArrowProjectile(from, to, isMagic: true, duration: duration);
+            return;
+        }
+        var go = new GameObject("MagicOrb_Projectile");
+        var sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = _magicOrb;
+        sr.sortingOrder = 70;
+        go.transform.position = from;
+        go.transform.localScale = Vector3.one * 0.45f;
+        var helper = go.AddComponent<ArrowProjectileHelper>();
+        helper.Init(from, to, duration);
+    }
+
+    /// <summary>스킬/궁극기 VFX 일반 — Resources/VFX/{name}.png 로드 + 위치에 띄우기 + 페이드아웃</summary>
+    static System.Collections.Generic.Dictionary<string, Sprite> _vfxCache = new();
+    public static void SpawnSkillVfx(string spriteName, Vector3 pos, float duration = 0.7f, float scale = 1.5f)
+    {
+        if (string.IsNullOrEmpty(spriteName)) return;
+        if (!_vfxCache.TryGetValue(spriteName, out var sprite))
+        {
+            // 다양한 케이스 시도 — 사용자가 어떤 형식으로 저장했는지 모름
+            sprite = Resources.Load<Sprite>($"VFX/{spriteName}")
+                  ?? Resources.Load<Sprite>($"VFX/{spriteName.ToLower()}")
+                  ?? Resources.Load<Sprite>($"VFX/{Capitalize(spriteName)}");
+            _vfxCache[spriteName] = sprite;
+        }
+        if (sprite == null) return;
+
+        var go = new GameObject($"VFX_{spriteName}");
+        go.transform.position = pos;
+        go.transform.localScale = Vector3.one * scale;
+        var sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 80;
+        var fader = go.AddComponent<HealAuraFader>(); // 기존 fader 재활용 (커지면서 fade out)
+        fader.duration = duration;
+    }
+
+    static string Capitalize(string s) => string.IsNullOrEmpty(s) ? s : char.ToUpper(s[0]) + s.Substring(1);
+
+    /// <summary>힐 받은 대상 발 밑에 oval aura — 1초 fade out (sprite 없으면 생략)</summary>
+    public static void SpawnHealAura(Transform target, float duration = 1.0f)
+    {
+        if (target == null) return;
+        LoadCustomVfx();
+        if (_healAura == null) return; // sprite 없으면 VFX 안 띄움 (화살 fallback 제거)
+
+        var go = new GameObject("HealAura");
+        go.transform.SetParent(target, false);
+        go.transform.localPosition = new Vector3(0, -0.05f, 0);
+        go.transform.localScale = Vector3.one * 1.2f;
+        var sr = go.AddComponent<SpriteRenderer>();
+        sr.sortingOrder = 5;
+        sr.sprite = _healAura;
+
+        var fader = go.AddComponent<HealAuraFader>();
+        fader.duration = duration;
     }
 
     /// <summary>실제 화살 sprite 가 날아가는 발사체 (Marksman 용)</summary>
@@ -181,6 +255,30 @@ class AfterImageHelper : MonoBehaviour
             if (r == null) continue;
             var c = _tint; c.a = a;
             r.color = c;
+        }
+    }
+}
+
+class HealAuraFader : MonoBehaviour
+{
+    public float duration = 1.0f;
+    SpriteRenderer _sr;
+    float _elapsed;
+
+    void Awake() { _sr = GetComponent<SpriteRenderer>(); }
+
+    void Update()
+    {
+        _elapsed += Time.deltaTime;
+        float t = _elapsed / duration;
+        if (t >= 1f) { Destroy(gameObject); return; }
+        // 살짝 커지면서 fade out
+        transform.localScale = Vector3.one * (1.2f + t * 0.3f);
+        if (_sr != null)
+        {
+            var c = _sr.color;
+            c.a = Mathf.Lerp(0.8f, 0f, t);
+            _sr.color = c;
         }
     }
 }

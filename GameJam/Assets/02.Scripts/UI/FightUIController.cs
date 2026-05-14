@@ -70,6 +70,10 @@ public class FightUIController : MonoBehaviour
 
     void Start()
     {
+        Debug.Log($"[FightUI] Start — 현재 active 씬:{SceneManager.GetActiveScene().name}, 로드된 씬 수:{SceneManager.sceneCount}");
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+            Debug.Log($"  scene[{i}]: {SceneManager.GetSceneAt(i).name}, loaded:{SceneManager.GetSceneAt(i).isLoaded}");
+
         ApplyCameraZoom();
 
         var scene = SceneManager.GetSceneByName(uiSceneName);
@@ -155,20 +159,63 @@ public class FightUIController : MonoBehaviour
             for (int i = half; i < all.Count; i++) _rightBalls.Add(all[i]);
         }
 
-        // 왼쪽 = blue 진영, 오른쪽 = red 진영
-        var onColor  = new Color(1f, 1f, 0.3f, 1f);  // 노란빛 (점등)
-        var offColor = new Color(0.15f, 0.15f, 0.15f, 1f); // 어두운 회색
+        // 점등 시 ashyun1 의 ball sprite → 사용자가 뽑을 초록 ball sprite 로 교체
+        // off 는 원본 sprite 그대로 (씬 reload 마다 자동 reset)
+        EnsureBallOnSprite();
 
         for (int i = 0; i < _leftBalls.Count; i++)
         {
             var img = _leftBalls[i].GetComponent<Image>();
-            if (img != null) img.color = (i < blueWins) ? onColor : offColor;
+            if (img == null) continue;
+            if (i < blueWins && _ballOnSprite != null)
+            {
+                img.sprite = _ballOnSprite;
+                img.color = Color.white;
+            }
         }
         for (int i = 0; i < _rightBalls.Count; i++)
         {
             var img = _rightBalls[i].GetComponent<Image>();
-            if (img != null) img.color = (i < redWins) ? onColor : offColor;
+            if (img == null) continue;
+            if (i < redWins && _ballOnSprite != null)
+            {
+                img.sprite = _ballOnSprite;
+                img.color = Color.white;
+            }
         }
+    }
+
+    static Sprite _ballOnSprite;
+    static bool _ballOnTried;
+    static void EnsureBallOnSprite()
+    {
+        if (_ballOnTried) return;
+        _ballOnTried = true;
+        // 정확한 이름 시도
+        _ballOnSprite = Resources.Load<Sprite>("VFX/ball_on")
+                     ?? Resources.Load<Sprite>("VFX/Ball_On")
+                     ?? Resources.Load<Sprite>("VFX/green_ball")
+                     ?? Resources.Load<Sprite>("VFX/GreenBall")
+                     ?? Resources.Load<Sprite>("VFX/GreenBall (1)")
+                     ?? Resources.Load<Sprite>("VFX/GreenBall_1");
+
+        // 못 찾으면 — VFX 폴더 안 모든 sprite 중 'green' 또는 'ball' 포함 검색
+        if (_ballOnSprite == null)
+        {
+            var all = Resources.LoadAll<Sprite>("VFX");
+            foreach (var s in all)
+            {
+                if (s == null) continue;
+                string n = s.name.ToLower();
+                if (n.Contains("green") || n.Contains("ball_on") || n.Contains("ballon"))
+                {
+                    _ballOnSprite = s;
+                    Debug.Log($"[FightUI] Ball On sprite 자동 검색: {s.name}");
+                    break;
+                }
+            }
+        }
+        if (_ballOnSprite == null) Debug.LogWarning("[FightUI] Ball On sprite 못 찾음 — Resources/VFX/ 폴더 + 이름 확인");
     }
 
     // Ball_1 / Ball_2 들을 점수 박스 기준 offset 위치에 배치 (인스펙터에서 자유 조절)
@@ -399,15 +446,27 @@ public class FightUIController : MonoBehaviour
             }
         }
 
-        // 2) AScene_FightUI 안 ResultPanel 강제 비활성 — 화면 전체 덮는 흰색 반투명 = 시작 시 안개 효과
+        // 2) AScene_FightUI 안 ResultPanel + "경기 결과" 라벨 panel 강제 비활성 — 시작 시 안 보이게
         foreach (var root in scene.GetRootGameObjects())
         {
             foreach (var t in root.GetComponentsInChildren<Transform>(true))
             {
+                // ResultPanel 이름의 GO
                 if (t.name == "ResultPanel" && t.gameObject.activeSelf)
                 {
-                    Debug.Log("[FightUI] AScene_FightUI 안 ResultPanel 강제 비활성 (시작 시 안개 제거)");
+                    Debug.Log("[FightUI] AScene_FightUI 안 ResultPanel 강제 비활성");
                     t.gameObject.SetActive(false);
+                }
+                // "경기 결과" 텍스트 가진 GO 의 부모 panel
+                var tmp = t.GetComponent<TMPro.TextMeshProUGUI>();
+                if (tmp != null && tmp.text != null && tmp.text.Contains("경기 결과"))
+                {
+                    var panel = t.parent != null ? t.parent.gameObject : t.gameObject;
+                    if (panel.activeSelf)
+                    {
+                        Debug.Log($"[FightUI] '경기 결과' panel '{panel.name}' 시작 시 비활성");
+                        panel.SetActive(false);
+                    }
                 }
             }
         }
@@ -550,6 +609,14 @@ public class FightUIController : MonoBehaviour
                 if (_redCards[i] != null) CloneBlueCardToRed(_blueCards[0], _redCards[i]);
             }
             Debug.Log("[FightUI] RedCard 의 자식을 BlueCard 복제 + RGB swap (파랑→빨강)");
+        }
+
+        // VictoryScreenController 자동 추가 (AScene_FightUI 의 ResultPanel + ResultButton wire)
+        if (Object.FindFirstObjectByType<VictoryScreenController>() == null)
+        {
+            var vcGo = new GameObject("VictoryScreenController");
+            vcGo.AddComponent<VictoryScreenController>();
+            Debug.Log("[FightUI] VictoryScreenController 자동 추가");
         }
 
         _wired = true;

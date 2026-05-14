@@ -36,8 +36,16 @@ public class ChampionData : ScriptableObject
     public float basicSkillCooldown = 6f;
     public Sprite basicSkillIcon;
 
-    [Header("Ultimate (필살기)")]
-    public string ultimateName = "필살기";
+    [Header("Ultimate (궁극기)")]
+    public string ultimateName = "궁극기";
     public float ultimateCooldown = 20f;
     public Sprite ultimateIcon;
+
+    [Header("Sounds (드래그앤드롭)")]
+    [Tooltip("평타 (기본 공격) 사운드 — 평타 1회 시 재생")]
+    public AudioClip autoAttackSfx;
+    [Tooltip("기본 스킬 사운드 — 기본 스킬 발동 시 재생")]
+    public AudioClip basicSkillSfx;
+    [Tooltip("궁극기 사운드 — 궁극기 발동 시 재생")]
+    public AudioClip ultimateSfx;
 }

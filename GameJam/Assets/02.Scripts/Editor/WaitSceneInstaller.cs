@@ -28,7 +28,7 @@ public static class WaitSceneInstaller
     };
     const float CharacterScale = 2.5f; // SPUM 기본 1 → 화면에 보일 만한 크기로
 
-    [MenuItem("TFM/Setup Wait Scene (한종욱/안승현/김솔민 등장)")]
+    [MenuItem("TFM/Setup Wait Scene (한종욱/안승현/김솔민 등장)", priority = -48)]
     public static void Setup()
     {
         if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;

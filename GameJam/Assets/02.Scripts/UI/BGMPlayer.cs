@@ -11,7 +11,8 @@ public class BGMPlayer : MonoBehaviour
 
     [Header("Clip (또는 Resources 자동)")]
     public AudioClip lobbyBgm;
-    public AudioClip waitBgm;      // AScene_Wait 전용 (사용자가 별도 BGM 줄 예정)
+    public AudioClip waitBgm;      // AScene_Wait 전용
+    public AudioClip tourmentBgm;  // Tourment 전용 (Tourment_Screaming)
     public AudioClip fightBgm;
     public AudioClip banPickBgm;
 
@@ -34,7 +35,8 @@ public class BGMPlayer : MonoBehaviour
 
         // Resources 자동 로드 — OnSceneLoaded 전에
         if (lobbyBgm == null) lobbyBgm = Resources.Load<AudioClip>("BGM/Lobby_bgm") ?? Resources.Load<AudioClip>("BGM/LobbyBGM") ?? Resources.Load<AudioClip>("BGM/MainBGM");
-        if (waitBgm == null)  waitBgm  = Resources.Load<AudioClip>("BGM/Wait_bgm") ?? Resources.Load<AudioClip>("BGM/WaitBgm") ?? Resources.Load<AudioClip>("BGM/Wait_Bgm") ?? Resources.Load<AudioClip>("BGM/SelectBGM");
+        if (waitBgm == null)  waitBgm  = Resources.Load<AudioClip>("BGM/SelectBGM") ?? Resources.Load<AudioClip>("BGM/Wait_bgm") ?? Resources.Load<AudioClip>("BGM/WaitBgm");
+        if (tourmentBgm == null) tourmentBgm = Resources.Load<AudioClip>("BGM/Tourment_Screaming") ?? Resources.Load<AudioClip>("BGM/Tourment");
         if (fightBgm == null) fightBgm = Resources.Load<AudioClip>("BGM/Fight_Bgm") ?? Resources.Load<AudioClip>("BGM/FightBGM");
         if (banPickBgm == null) banPickBgm = Resources.Load<AudioClip>("BGM/ban_bgm") ?? Resources.Load<AudioClip>("BGM/SelectBGM");
 
@@ -56,7 +58,9 @@ public class BGMPlayer : MonoBehaviour
 
         AudioClip clip = null;
         if (scene.name == "AScene_Wait")
-            clip = waitBgm != null ? waitBgm : lobbyBgm; // wait 전용 BGM 없으면 lobby 로 fallback
+            clip = waitBgm != null ? waitBgm : lobbyBgm;
+        else if (scene.name == "Tourment")
+            clip = tourmentBgm != null ? tourmentBgm : waitBgm;
         else if (scene.name == "Lobby" || scene.name == "AScene")
             clip = lobbyBgm;
         else if (scene.name == "InGame")

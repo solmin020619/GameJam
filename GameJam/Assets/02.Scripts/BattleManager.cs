@@ -60,7 +60,7 @@ public class BattleManager : MonoBehaviour
 
     void Start()
     {
-        ResultPanel.SetActive(false);
+        if (ResultPanel != null) ResultPanel.SetActive(false);
 
         // 셀프 주입 — Bridge 콜백 타이밍 의존 안 하고 여기서 직접 PickResult 흡수
         if (PickResult.AllyPicks != null && PickResult.AllyPicks.Count > 0 &&
@@ -107,6 +107,9 @@ public class BattleManager : MonoBehaviour
             so.UltimateName = d.ultimateName;
             so.UltimateCooldown = d.ultimateCooldown;
             so.UltimateIcon = d.ultimateIcon;
+            so.AutoAttackSfx = d.autoAttackSfx;
+            so.BasicSkillSfx = d.basicSkillSfx;
+            so.UltimateSfx = d.ultimateSfx;
             arr[i] = so;
         }
         return arr;
@@ -115,6 +118,14 @@ public class BattleManager : MonoBehaviour
     void StartBattle()
     {
         _timer = BattleDuration;
+
+        // 전투 시작 사운드 — Fight.mp3
+        var fightClip = Resources.Load<AudioClip>("Fight");
+        if (fightClip != null)
+        {
+            var camPos = Camera.main != null ? Camera.main.transform.position : Vector3.zero;
+            AudioSource.PlayClipAtPoint(fightClip, camPos, Mathf.Clamp01(VolumeSettings.SfxVolume));
+        }
 
         for (int i = 0; i < Team0Champions.Length; i++)
         {
@@ -293,15 +304,9 @@ public class BattleManager : MonoBehaviour
         // 세트 결과 기록 — 3판 2선
         if (winnerTeam >= 0) MatchResult.AddWin(winnerTeam);
 
-        string result;
-        Color resultColor;
-        if (winnerTeam == 0) { result = "VICTORY!"; resultColor = new Color(1f, 0.9f, 0.3f); }
-        else if (winnerTeam == 1) { result = "DEFEAT"; resultColor = new Color(1f, 0.4f, 0.4f); }
-        else { result = "DRAW"; resultColor = Color.white; }
-
-        ResultPanel.SetActive(true);
-        ResultText.text = $"{result}\nSurvivors: {alive0} vs {alive1}\nSet: {MatchResult.team0Wins} - {MatchResult.team1Wins}";
-        ResultText.color = resultColor;
+        // 세트 중간엔 결과 텍스트 안 띄움 — Ball 점등으로 표시됨
+        // 매치 종료 시는 VictoryScreenController 가 AScene_FightUI 의 ResultPanel 사용
+        if (ResultPanel != null) ResultPanel.SetActive(false);
 
         if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.4f, 0.25f);
 
@@ -315,23 +320,25 @@ public class BattleManager : MonoBehaviour
 
         if (MatchResult.IsMatchOver)
         {
-            // 최종 우승 — Victory 씬 (나중에 만들 예정. 우선 Lobby 로 fallback)
-            int winner = MatchResult.WinningTeam;
-            Debug.Log($"[BM] 매치 종료 — Team{winner} 우승. 우승씬 로드 (없으면 Lobby fallback)");
-            string victoryScene = "Victory"; // 사용자가 나중에 만들 씬
-            if (Application.CanStreamedLevelBeLoaded(victoryScene))
-                UnityEngine.SceneManagement.SceneManager.LoadScene(victoryScene);
+            // 최종 우승 — AScene_FightUI 안 ResultPanel (승리 화면) 활성화
+            Debug.Log($"[BM] 매치 종료 — Team{MatchResult.WinningTeam} 우승. ResultPanel 표시");
+            if (VictoryScreenController.Instance != null)
+                VictoryScreenController.Instance.Show(MatchResult.team0Wins, MatchResult.team1Wins);
             else
+            {
+                // fallback — Lobby
+                MatchResult.Clear();
                 UnityEngine.SceneManagement.SceneManager.LoadScene("Lobby");
-            // 다음 매치 위해 점수 reset (우승씬 본 후 다시 시작 가능)
-            MatchResult.Clear();
+            }
         }
         else
         {
-            // 다음 세트 — BanPick 로 다시
-            Debug.Log($"[BM] 세트 종료 — 점수 {MatchResult.team0Wins}:{MatchResult.team1Wins}. 다음 세트 BanPick 로 이동");
-            PickResult.Clear(); // 새 밴픽 위해
-            UnityEngine.SceneManagement.SceneManager.LoadScene("BanPick");
+            // 다음 세트 — BanPick 로 다시 (ashyun1 의 AScene_BanPick 있으면 그쪽으로)
+            PickResult.Clear();
+            bool canA = Application.CanStreamedLevelBeLoaded("AScene_BanPick");
+            string banPickScene = canA ? "AScene_BanPick" : "BanPick";
+            Debug.Log($"[BM] 세트 종료 — 점수 {MatchResult.team0Wins}:{MatchResult.team1Wins}. canAScene_BanPick:{canA}, target:{banPickScene}");
+            UnityEngine.SceneManagement.SceneManager.LoadScene(banPickScene);
         }
     }
 

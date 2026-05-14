@@ -25,14 +25,15 @@ public static class MainMenuSetup
         Debug.Log("[TFM] MainMenuController 추가 완료. Start → BanPick / Exit → 종료 자동 와이어링.");
     }
 
-    [MenuItem("TFM/Add All Scenes To Build Settings")]
+    [MenuItem("TFM/Add All Scenes To Build Settings", priority = -46)]
     public static void AddScenesToBuild()
     {
-        // 게임 흐름: Lobby(메인) → AScene_Wait(대기) → BanPick(밴픽) → InGame(전투) + AScene_FightUI(전투 UI 오버레이)
+        // 게임 흐름: Lobby(메인) → AScene_Wait(대기) → AScene_BanPick(밴픽) → InGame(전투) + AScene_FightUI(전투 UI 오버레이)
         string[] scenes = {
             "Assets/01.Scenes/AScene.unity",
             "Assets/01.Scenes/Lobby.unity",
             "Assets/01.Scenes/AScene_Wait.unity",
+            "Assets/01.Scenes/AScene_BanPick.unity",
             "Assets/01.Scenes/BanPick.unity",
             "Assets/01.Scenes/InGame.unity",
             "Assets/01.Scenes/AScene_FightUI.unity",

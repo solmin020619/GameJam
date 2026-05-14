@@ -15,7 +15,7 @@ public static class SettingsPauseInstaller
     const string LobbyPath = "Assets/01.Scenes/Lobby.unity";
     const string InGamePath = "Assets/01.Scenes/InGame.unity";
 
-    [MenuItem("TFM/Install SettingsUI to Lobby + StopUI to InGame")]
+    [MenuItem("TFM/Install SettingsUI to Lobby + StopUI to InGame", priority = -47)]
     public static void Install()
     {
         if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;

@@ -19,7 +19,7 @@ public static class ChampionPoolBuilder
     const string ConfigPath = "Assets/06.ScriptableObjects/BanPickConfig.asset";
     const int CopiesPerPrefab = 1;  // prefab 1개당 ChampionData N개 (1 = 역할별 1챔 → 풀 9개)
 
-    [MenuItem("TFM/Rebuild Champion Pool (From 03.Prefabs)")]
+    [MenuItem("TFM/Rebuild Champion Pool (From 03.Prefabs)", priority = -50)]
     public static void Rebuild()
     {
         if (!AssetDatabase.IsValidFolder(ChampionDataDir))

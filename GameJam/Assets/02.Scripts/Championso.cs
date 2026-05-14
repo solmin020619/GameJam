@@ -33,8 +33,13 @@ public class ChampionSO : ScriptableObject
     public float BasicSkillCooldown = 6f;
     public Sprite BasicSkillIcon;
 
-    [Header("Ultimate (필살기)")]
-    public string UltimateName = "필살기";
+    [Header("Ultimate (궁극기)")]
+    public string UltimateName = "궁극기";
     public float UltimateCooldown = 20f;
     public Sprite UltimateIcon;
+
+    [Header("Sounds")]
+    public AudioClip AutoAttackSfx;
+    public AudioClip BasicSkillSfx;
+    public AudioClip UltimateSfx;
 }

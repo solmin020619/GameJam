@@ -80,6 +80,9 @@ public class PickResultBridge : MonoBehaviour
         so.UltimateName = d.ultimateName;
         so.UltimateCooldown = d.ultimateCooldown;
         so.UltimateIcon = d.ultimateIcon;
+        so.AutoAttackSfx = d.autoAttackSfx;
+        so.BasicSkillSfx = d.basicSkillSfx;
+        so.UltimateSfx = d.ultimateSfx;
         return so;
     }
 }

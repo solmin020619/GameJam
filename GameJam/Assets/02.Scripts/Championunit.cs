@@ -50,9 +50,24 @@ public partial class ChampionUnit : MonoBehaviour
 
     public void ApplyStun(float duration) { _stunTimer = Mathf.Max(_stunTimer, duration); }
     public void ApplyRoot(float duration) { _rootTimer = Mathf.Max(_rootTimer, duration); }
-    public void ApplyAttackSpeedBuff(float percent, float duration) { _atkSpeedBuffPct = percent; _atkSpeedBuffEnd = Time.time + duration; }
-    public void ApplyMoveSpeedBuff(float percent, float duration) { _moveSpeedBuffPct = percent; _moveSpeedBuffEnd = Time.time + duration; }
-    public void ApplyDefenseBuff(float percent, float duration) { _defenseBuffPct = percent; _defenseBuffEnd = Time.time + duration; }
+    public void ApplyAttackSpeedBuff(float percent, float duration)
+    {
+        float newEnd = Time.time + duration;
+        if (_atkSpeedBuffEnd > Time.time) { _atkSpeedBuffPct = Mathf.Max(_atkSpeedBuffPct, percent); _atkSpeedBuffEnd = Mathf.Max(_atkSpeedBuffEnd, newEnd); }
+        else { _atkSpeedBuffPct = percent; _atkSpeedBuffEnd = newEnd; }
+    }
+    public void ApplyMoveSpeedBuff(float percent, float duration)
+    {
+        float newEnd = Time.time + duration;
+        if (_moveSpeedBuffEnd > Time.time) { _moveSpeedBuffPct = Mathf.Max(_moveSpeedBuffPct, percent); _moveSpeedBuffEnd = Mathf.Max(_moveSpeedBuffEnd, newEnd); }
+        else { _moveSpeedBuffPct = percent; _moveSpeedBuffEnd = newEnd; }
+    }
+    public void ApplyDefenseBuff(float percent, float duration)
+    {
+        float newEnd = Time.time + duration;
+        if (_defenseBuffEnd > Time.time) { _defenseBuffPct = Mathf.Max(_defenseBuffPct, percent); _defenseBuffEnd = Mathf.Max(_defenseBuffEnd, newEnd); }
+        else { _defenseBuffPct = percent; _defenseBuffEnd = newEnd; }
+    }
 
     float GetEffectiveAttackSpeed() => Data.AttackSpeed * (1f + (_atkSpeedBuffEnd > Time.time ? _atkSpeedBuffPct : 0f));
     float GetEffectiveMoveSpeed() => Data.MoveSpeed * (1f + (_moveSpeedBuffEnd > Time.time ? _moveSpeedBuffPct : 0f));
@@ -141,7 +156,8 @@ public partial class ChampionUnit : MonoBehaviour
 
     void Update()
     {
-        if (IsDead || !BattleManager.Instance.IsBattleRunning) return;
+        if (IsDead) return;
+        if (BattleManager.Instance == null || !BattleManager.Instance.IsBattleRunning) return;
 
         // 매 프레임 velocity reset → 단체 미끄러짐 방지
         _rb.linearVelocity = Vector2.zero;
@@ -198,13 +214,21 @@ public partial class ChampionUnit : MonoBehaviour
 
     // ========== 행동 패턴 ==========
 
-    /// <summary>탱커/전사: 타겟에게 직진 → 사거리 내면 공격</summary>
+    /// <summary>탱커/전사: 타겟에게 직진 → 사거리 내면 공격. Hysteresis 적용으로 떨림 방지</summary>
+    bool _inMeleeRange;
     void BehaveMelee()
     {
         float dist = Vector2.Distance(transform.position, _currentTarget.transform.position);
-        if (dist <= Data.AttackRange)
+        // Hysteresis: 들어올 땐 0.85x, 나갈 땐 1.15x — 경계 위 핑퐁 방지
+        float enterRange = Data.AttackRange * 0.85f;
+        float exitRange  = Data.AttackRange * 1.15f;
+        if (_inMeleeRange && dist > exitRange) _inMeleeRange = false;
+        else if (!_inMeleeRange && dist < enterRange) _inMeleeRange = true;
+
+        if (_inMeleeRange)
         {
             _rb.linearVelocity = Vector2.zero;
+            FaceTarget(_currentTarget.transform.position);
             TryAttack();
         }
         else MoveToward(_currentTarget.transform.position);
@@ -384,15 +408,23 @@ public partial class ChampionUnit : MonoBehaviour
 
     void FaceDirection(Vector2 dir)
     {
-        if (Mathf.Abs(dir.x) < 0.01f) return;
-        transform.localScale = new Vector3(dir.x > 0 ? -1 : 1, 1, 1);
+        // Hysteresis flip — 현재 향한 방향 기준 비대칭 임계값으로 와리가리 완전 제거
+        // (scale.x < 0  →  오른쪽 보는 중 / scale.x > 0  →  왼쪽 보는 중)
+        const float flipThreshold = 0.3f;
+        bool facingRight = transform.localScale.x < 0f;
+        if (facingRight && dir.x < -flipThreshold)
+            transform.localScale = new Vector3(1f, 1f, 1f);
+        else if (!facingRight && dir.x > flipThreshold)
+            transform.localScale = new Vector3(-1f, 1f, 1f);
+        // 그 외엔 유지 (데드존)
     }
 
     void TryAttack()
     {
         if (_attackTimer > 0f)
         {
-            PlayAnim(PlayerState.IDLE);
+            // 쿨다운 중엔 애니메이션 강제로 바꾸지 않음 — ATTACK 클립이 자연스레 끝나게 둠
+            // (이전엔 IDLE 로 강제했지만 다음 프레임에 즉시 끊겨서 떨림 발생)
             return;
         }
         FaceTarget(_currentTarget.transform.position);
@@ -400,10 +432,19 @@ public partial class ChampionUnit : MonoBehaviour
         PlayAnim(PlayerState.ATTACK);
 
         SpawnRangedVfx();
+        PlaySfx(Data.AutoAttackSfx);  // 평타 사운드
 
         float atkMul = IsBackAttacking ? 1.3f : 1f;   // 닌자 배후 상태 평타 +30%
         float dmg = CalcDamage(Data.AttackDamage * atkMul, _currentTarget.GetEffectiveDefense());
         _currentTarget.TakeDamage(dmg, DamageType.Basic, this);
+    }
+
+    // 사운드 헬퍼 — 평타/기본스킬/궁극기 공통
+    public void PlaySfx(AudioClip clip, float volumeScale = 1f)
+    {
+        if (clip == null) return;
+        var pos = Camera.main != null ? Camera.main.transform.position : transform.position;
+        AudioSource.PlayClipAtPoint(clip, pos, Mathf.Clamp01(VolumeSettings.SfxVolume * volumeScale));
     }
 
     /// <summary>카이팅 중 평타 (애니 안 바꿈, 데미지만)</summary>
@@ -412,9 +453,23 @@ public partial class ChampionUnit : MonoBehaviour
         if (_attackTimer > 0f) return;
         _attackTimer = 1f / GetEffectiveAttackSpeed();
         SpawnRangedVfx();
+        PlaySfx(Data.AutoAttackSfx);  // 평타 사운드
         float atkMul = IsBackAttacking ? 1.3f : 1f;
         float dmg = CalcDamage(Data.AttackDamage * atkMul, _currentTarget.GetEffectiveDefense());
         _currentTarget.TakeDamage(dmg, DamageType.Basic, this);
+    }
+
+    /// <summary>
+    /// 텔레포트 스킬용 — Rigidbody2D 와 transform 동시에 옮겨서 물리 시뮬레이션 떨림 방지.
+    /// </summary>
+    public void TeleportTo(Vector3 pos)
+    {
+        transform.position = pos;
+        if (_rb != null)
+        {
+            _rb.position = pos;
+            _rb.linearVelocity = Vector2.zero;
+        }
     }
 
     void SpawnRangedVfx()
@@ -429,16 +484,23 @@ public partial class ChampionUnit : MonoBehaviour
         }
         else if (Data.Role == ChampionRole.Mage)
         {
-            BattleVfx.SpawnArrowProjectile(
+            BattleVfx.SpawnMagicOrb(
                 transform.position + Vector3.up * 0.7f,
-                _currentTarget.transform.position + Vector3.up * 0.7f,
-                isMagic: true);
+                _currentTarget.transform.position + Vector3.up * 0.7f);
         }
     }
 
     // damage formula: ATK * (100 / (100 + DEF * 1.8))
     float CalcDamage(float atk, float def)
         => atk * (100f / (100f + def * 1.8f));
+
+    static float _lastHurtSoundTime;
+    static AudioClip _hurtClip;
+    static bool _hurtClipTried;
+
+    Coroutine _hitFlashRoutine;
+    Color[] _flashOriginals;  // 처음 한 번만 캡쳐 — 동시 호출 시 빨간색 캡쳐 방지
+    SpriteRenderer[] _flashRenderers;
 
     public void TakeDamage(float amount, DamageType type = DamageType.Basic, ChampionUnit attacker = null)
     {
@@ -448,12 +510,40 @@ public partial class ChampionUnit : MonoBehaviour
         CurrentHp -= amount;
         BattleManager.Instance.SpawnDamageText(transform.position, amount, type);
 
-        // 큰 피해(HP 20% 이상)는 작은 셰이크
+        // 피격 사운드 — 전역 쿨다운 0.4s + 볼륨 0.3 (다른 사운드 비해 작게)
+        if (Time.unscaledTime - _lastHurtSoundTime > 0.4f)
+        {
+            if (!_hurtClipTried) { _hurtClipTried = true; _hurtClip = Resources.Load<AudioClip>("hurt_sound"); }
+            if (_hurtClip != null)
+            {
+                _lastHurtSoundTime = Time.unscaledTime;
+                var camPos = Camera.main != null ? Camera.main.transform.position : transform.position;
+                AudioSource.PlayClipAtPoint(_hurtClip, camPos, Mathf.Clamp01(VolumeSettings.SfxVolume * 0.3f));
+            }
+        }
+
         if (Data != null && amount >= Data.MaxHp * 0.2f && CameraShake.Instance != null)
             CameraShake.Instance.Shake(0.08f, 0.05f);
 
         if (CurrentHp <= 0f) Die();
-        else StartCoroutine(HitFlash());
+        else
+        {
+            // 기존 HitFlash 진행 중이면 중단하고 즉시 색 복구 → 새로 시작
+            // (동시 호출 시 originals 가 빨간색으로 캡쳐되어 영구 빨강 고정되는 버그 방지)
+            if (_hitFlashRoutine != null)
+            {
+                StopCoroutine(_hitFlashRoutine);
+                RestoreFlashColors();
+            }
+            _hitFlashRoutine = StartCoroutine(HitFlash());
+        }
+    }
+
+    void RestoreFlashColors()
+    {
+        if (_flashRenderers == null || _flashOriginals == null) return;
+        for (int i = 0; i < _flashRenderers.Length; i++)
+            if (_flashRenderers[i] != null) _flashRenderers[i].color = _flashOriginals[i];
     }
 
     public void Heal(float amount)
@@ -461,6 +551,8 @@ public partial class ChampionUnit : MonoBehaviour
         if (IsDead) return;
         CurrentHp = Mathf.Min(Data.MaxHp, CurrentHp + amount);
         BattleManager.Instance.SpawnDamageText(transform.position, amount, isHeal: true);
+        // 힐 받은 대상 발 밑에 oval aura 1초
+        BattleVfx.SpawnHealAura(transform, duration: 1.0f);
     }
 
     void Die()
@@ -494,24 +586,38 @@ public partial class ChampionUnit : MonoBehaviour
 
     IEnumerator HitFlash()
     {
-        var renderers = GetComponentsInChildren<SpriteRenderer>();
-        var originals = new Color[renderers.Length];
-        for (int i = 0; i < renderers.Length; i++) originals[i] = renderers[i].color;
+        // renderers / originals 는 인스턴스 변수 — 첫 호출에만 캡쳐 (이후 호출은 정상색 캐시 유지)
+        if (_flashRenderers == null)
+        {
+            _flashRenderers = GetComponentsInChildren<SpriteRenderer>();
+            _flashOriginals = new Color[_flashRenderers.Length];
+            for (int i = 0; i < _flashRenderers.Length; i++) _flashOriginals[i] = _flashRenderers[i].color;
+        }
 
         // 빨강 깜빡
         var flash = new Color(1f, 0.4f, 0.4f, 1f);
-        foreach (var r in renderers) r.color = flash;
+        foreach (var r in _flashRenderers) if (r != null) r.color = flash;
         PlayAnim(PlayerState.DAMAGED);
         yield return new WaitForSeconds(0.08f);
 
         // 원래 색 복구
-        for (int i = 0; i < renderers.Length; i++)
-            if (renderers[i] != null) renderers[i].color = originals[i];
+        RestoreFlashColors();
+        _hitFlashRoutine = null;
+
+        // _currentAnim 을 IDLE 로 리셋 — SPUM Animator 가 DAMAGED 클립 끝나면 자연스레 IDLE 로 돌아가므로 동기 맞음
+        // 다음 PlayAnim(ATTACK) 호출이 제대로 트리거되도록 함 (DAMAGED 로 stuck 방지)
+        _currentAnim = PlayerState.IDLE;
     }
 
     void PlayAnim(PlayerState state)
     {
-        if (_currentAnim == state || _spum == null) return;
+        if (_spum == null) return;
+        // ATTACK/DAMAGED/OTHER 는 SPUM 의 Trigger 기반 one-shot 이므로 매번 재발동
+        // (캐싱하면 같은 state 호출 시 SetTrigger 가 안 불려서 두 번째 공격부턴 애니 안 나옴)
+        bool isOneShot = state == PlayerState.ATTACK
+                      || state == PlayerState.DAMAGED
+                      || state == PlayerState.OTHER;
+        if (!isOneShot && _currentAnim == state) return;
         _currentAnim = state;
         _spum.PlayAnimation(state, 0);
     }
@@ -568,8 +674,8 @@ public partial class ChampionUnit : MonoBehaviour
 
         if (BattleManager.Instance == null || !BattleManager.Instance.IsBattleRunning) return;
 
-        const float minDist = 0.7f;        // 이 거리 이하면 분리 적용
-        const float weight = 3.0f;          // 분리 속도 (이속 단위)
+        const float minDist = 0.55f;        // 0.7 → 0.55: 캐릭터끼리 좀 더 가까워질 수 있음 (진동 감소)
+        const float weight = 1.5f;          // 3.0 → 1.5: 더 부드럽게 분리 (떨림 방지)
 
         Vector2 separation = Vector2.zero;
         int neighbors = 0;
@@ -634,20 +740,22 @@ public partial class ChampionUnit : MonoBehaviour
 
         // 별도 root (부모-자식 X → flipX 영향 안 받음)
         _infoUiRoot = new GameObject($"ChampInfo_{name}");
-        _infoUiRoot.transform.localScale = Vector3.one * 0.01f;
+        _infoUiRoot.transform.localScale = Vector3.one * 0.013f; // TFM 참고 — 더 잘 보이게 1.3배
 
         var canvas = _infoUiRoot.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.WorldSpace;
         canvas.sortingOrder = 200;
+        // 픽셀 아트 필터 — sharp 픽셀
+        var scaler = _infoUiRoot.AddComponent<UnityEngine.UI.CanvasScaler>();
+        scaler.dynamicPixelsPerUnit = 100f;
+        scaler.referencePixelsPerUnit = 100f;
 
-        // ============ 레이아웃 ============
-        // 캐릭터 아래에 가로형 — 왼쪽에 큰 정사각 궁극기 박스, 오른쪽에 [이름 / HP / 스킬CD] 세로 스택
-        // 모든 좌표는 root 중심 기준 (root 자체는 캐릭터 아래로 이동)
-        const float ultSize = 26f;
-        const float panelW  = 96f;
-        const float gap     = 4f;            // 박스–패널 사이
-        const float barH    = 8f;            // HP / CD 바 두께
-        const float nameH   = 10f;           // 이름 라벨 높이
+        // ============ 레이아웃 ============ 사이즈 50% 정도 키움 (TFM 참고 기준)
+        const float ultSize = 40f;          // 26 → 40 (궁극기 박스 잘 보이게)
+        const float panelW  = 130f;         // 96 → 130
+        const float gap     = 5f;
+        const float barH    = 11f;          // 8 → 11
+        const float nameH   = 14f;          // 10 → 14
 
         // 전체 가로폭 중앙정렬 → 캐릭터 정중앙 아래 위치
         float totalHalf = (ultSize + gap + panelW) * 0.5f;
@@ -688,7 +796,7 @@ public partial class ChampionUnit : MonoBehaviour
         int sp = nm.LastIndexOf(' ');
         if (sp > 0 && int.TryParse(nm.Substring(sp + 1), out _)) nm = nm.Substring(0, sp);
         _nameLabel.text = nm;
-        _nameLabel.fontSize = 10;
+        _nameLabel.fontSize = 14;
         _nameLabel.fontStyle = TMPro.FontStyles.Bold;
         _nameLabel.color = Color.white;
         _nameLabel.alignment = TMPro.TextAlignmentOptions.Left;
@@ -815,7 +923,12 @@ public partial class ChampionUnit : MonoBehaviour
             ChampionRole.Assassin   => CastBackstab(),
             _ => false
         };
-        if (casted) _basicCd = Data.BasicSkillCooldown;
+        if (casted)
+        {
+            _basicCd = Data.BasicSkillCooldown;
+            PlaySfx(Data.BasicSkillSfx);  // 기본 스킬 사운드
+            SpawnBasicSkillVfx();         // 기본 스킬 VFX
+        }
     }
 
     void TryCastUltimate()
@@ -836,6 +949,47 @@ public partial class ChampionUnit : MonoBehaviour
             ChampionRole.Assassin   => CastUltShadowDance(),
             _ => false
         };
-        if (casted) _ultCd = Data.UltimateCooldown;
+        if (casted)
+        {
+            _ultCd = Data.UltimateCooldown;
+            PlaySfx(Data.UltimateSfx);  // 궁극기 사운드
+            SpawnUltVfx();              // 궁극기 VFX
+        }
+    }
+
+    // Role 별 기본 스킬 VFX — sprite name + 위치 (타겟 또는 자기)
+    void SpawnBasicSkillVfx()
+    {
+        Vector3 targetPos = _currentTarget != null ? _currentTarget.transform.position : transform.position;
+        switch (Data.Role)
+        {
+            case ChampionRole.Tank:       BattleVfx.SpawnSkillVfx("guardian_skill", targetPos, 0.6f, 1.6f); break;
+            case ChampionRole.Fighter:    BattleVfx.SpawnSkillVfx("berserker_skill", transform.position, 0.6f, 1.8f); break;
+            case ChampionRole.Marksman:   BattleVfx.SpawnSkillVfx("sniper_skill", targetPos, 0.5f, 1.4f); break;
+            case ChampionRole.Mage:       BattleVfx.SpawnSkillVfx("mage_skill", targetPos, 0.7f, 1.7f); break;
+            case ChampionRole.Healer:     BattleVfx.SpawnSkillVfx("cleric_skill", targetPos, 0.7f, 1.5f); break;
+            case ChampionRole.Disruptor:  BattleVfx.SpawnSkillVfx("crusher_skill", transform.position, 0.7f, 2.0f); break;
+            case ChampionRole.Skirmisher: BattleVfx.SpawnSkillVfx("horse_skill", transform.position, 0.5f, 1.5f); break;
+            case ChampionRole.Duelist:    BattleVfx.SpawnSkillVfx("swordman_skill", targetPos, 0.4f, 1.5f); break;
+            case ChampionRole.Assassin:   BattleVfx.SpawnSkillVfx("ninja_skill", targetPos, 0.5f, 1.4f); break;
+        }
+    }
+
+    // Role 별 궁극기 VFX
+    void SpawnUltVfx()
+    {
+        Vector3 targetPos = _currentTarget != null ? _currentTarget.transform.position : transform.position;
+        switch (Data.Role)
+        {
+            case ChampionRole.Tank:       BattleVfx.SpawnSkillVfx("guardian_ult", transform.position, 1.2f, 2.0f); break;
+            case ChampionRole.Fighter:    BattleVfx.SpawnSkillVfx("berserker_ult", transform.position, 1.5f, 2.0f); break;
+            case ChampionRole.Marksman:   BattleVfx.SpawnSkillVfx("sniper_ult", targetPos, 1.2f, 2.5f); break;
+            case ChampionRole.Mage:       BattleVfx.SpawnSkillVfx("mage_ult", targetPos, 1.0f, 2.8f); break;
+            case ChampionRole.Healer:     BattleVfx.SpawnSkillVfx("cleric_ult", transform.position, 1.5f, 2.5f); break;
+            case ChampionRole.Disruptor:  BattleVfx.SpawnSkillVfx("crusher_ult", targetPos, 1.0f, 2.2f); break;
+            case ChampionRole.Skirmisher: BattleVfx.SpawnSkillVfx("horse_ult", transform.position, 1.0f, 2.5f); break;
+            case ChampionRole.Duelist:    BattleVfx.SpawnSkillVfx("swordman_ult", targetPos, 0.8f, 2.0f); break;
+            case ChampionRole.Assassin:   BattleVfx.SpawnSkillVfx("ninja_ult", transform.position, 1.0f, 2.2f); break;
+        }
     }
 }

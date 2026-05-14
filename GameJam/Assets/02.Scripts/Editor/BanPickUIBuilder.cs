@@ -10,7 +10,7 @@ public static class BanPickUIBuilder
 {
     const string ConfigPath = "Assets/06.ScriptableObjects/BanPickConfig.asset";
 
-    [MenuItem("TFM/Build BanPick UI in Current Scene")]
+    [MenuItem("TFM/Build BanPick UI in Current Scene", priority = -49)]
     public static void Build()
     {
         var config = AssetDatabase.LoadAssetAtPath<BanPickConfig>(ConfigPath);

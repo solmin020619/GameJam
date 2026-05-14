@@ -196,7 +196,7 @@ public partial class ChampionUnit
         // 잔상 — 출발 위치에 자기 sprite 잔상 (이동 직전)
         BattleVfx.SpawnAfterImage(gameObject, new Color(0.85f, 0.95f, 1f, 0.45f), 0.15f);
         BattleVfx.SpawnProjectileLine(origPos, dest, new Color(0.85f, 0.95f, 1f, 1f), 0.15f);
-        transform.position = dest;
+        TeleportTo(dest);
 
         FaceTarget(target.transform.position);
         PlayAnim(PlayerState.ATTACK);
@@ -222,7 +222,7 @@ public partial class ChampionUnit
 
         // 잔상 (출발지)
         BattleVfx.SpawnAfterImage(gameObject, new Color(0.6f, 0.6f, 0.6f, 0.4f), 0.2f);
-        transform.position = backPos;
+        TeleportTo(backPos);
         FaceTarget(target.transform.position);
         PlayAnim(PlayerState.ATTACK);
 
@@ -258,7 +258,7 @@ public partial class ChampionUnit
             // 적 뒤로 순간이동 (1.5 unit — 떨림 방지)
             Vector3 dirToEnemy = (e.transform.position - transform.position).normalized;
             if (dirToEnemy.sqrMagnitude < 0.01f) dirToEnemy = Vector3.right;
-            transform.position = e.transform.position + dirToEnemy * 1.5f;
+            TeleportTo(e.transform.position + dirToEnemy * 1.5f);
             FaceTarget(e.transform.position);
             PlayAnim(PlayerState.ATTACK);
 
@@ -272,7 +272,7 @@ public partial class ChampionUnit
         if (!IsDead)
         {
             BattleVfx.SpawnAfterImage(gameObject, new Color(0.6f, 0.6f, 0.6f, 0.4f), 0.2f);
-            transform.position = startPos;
+            TeleportTo(startPos);
             PlayAnim(PlayerState.IDLE);
         }
     }
@@ -311,7 +311,7 @@ public partial class ChampionUnit
             transform.position,
             transform.position + (Vector3)(dir * maxDist),
             new Color(1f, 0.85f, 0.4f, 1f), 0.25f);
-        transform.position += (Vector3)(dir * Mathf.Min(1.2f, maxDist * 0.4f));
+        TeleportTo(transform.position + (Vector3)(dir * Mathf.Min(1.2f, maxDist * 0.4f)));
         if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.15f, 0.12f);
         return true;
     }
@@ -485,7 +485,7 @@ public partial class ChampionUnit
         if (Vector2.Distance(transform.position, target.transform.position) > Data.AttackRange + 0.5f)
         {
             Vector3 dir = (target.transform.position - transform.position).normalized;
-            transform.position = target.transform.position - dir * 0.5f;
+            TeleportTo(target.transform.position - dir * 0.5f);
         }
 
         for (int i = 0; i < 5; i++)
@@ -532,7 +532,7 @@ public partial class ChampionUnit
             Vector3 origPos = transform.position;
             Vector3 dest = e.transform.position - (e.transform.position - origPos).normalized * 0.5f;
             BattleVfx.SpawnProjectileLine(origPos, dest, new Color(1f, 0.85f, 0.4f, 1f), 0.15f);
-            transform.position = dest;
+            TeleportTo(dest);
             PlayAnim(PlayerState.ATTACK);
 
             float dmg = CalcDamage(Data.AttackDamage * 1.0f, e.GetEffectiveDefense());
