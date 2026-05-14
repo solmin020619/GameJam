@@ -3187,7 +3187,6 @@ GameObject:
   - component: {fileID: 5634645732576850995}
   - component: {fileID: 7483293716717987043}
   - component: {fileID: 2047527056883054332}
-  - component: {fileID: 3248456007641424869}
   m_Layer: 5
   m_Name: fighter_02
   m_TagString: Untagged
@@ -26272,7 +26271,6 @@ GameObject:
   - component: {fileID: 2674197714704773476}
   - component: {fileID: 5381497530024481511}
   - component: {fileID: 8126113054176933500}
-  - component: {fileID: 9135408449021437316}
   m_Layer: 5
   m_Name: marksman_03
   m_TagString: Untagged
@@ -34912,18 +34910,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8145605776843939985}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3248456007641424869
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 61482254500747970}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ChampionUnit
 --- !u!1 &3253411292085747829
 GameObject:
   m_ObjectHideFlags: 0
@@ -107259,18 +107245,6 @@ Transform:
   - {fileID: 8766627155549253402}
   m_Father: {fileID: 6695280241865534450}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -3.285}
---- !u!114 &9135408449021437316
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2392807676637704322}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ChampionUnit
 --- !u!1 &9135491740293930688
 GameObject:
   m_ObjectHideFlags: 0
