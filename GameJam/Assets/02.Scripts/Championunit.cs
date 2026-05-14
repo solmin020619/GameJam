@@ -304,6 +304,14 @@ public partial class ChampionUnit : MonoBehaviour
                 if (Vector2.Distance(transform.position, _currentTarget.transform.position) <= Data.AttackRange)
                     TryAttack();
                 else PlayAnim(PlayerState.IDLE);
+
+                // 1s 누적되면 _isKiting 강제 false → 다음 프레임 normal 분기로 재평가
+                // (적이 멀어졌거나 공간 생겼을 때 다시 움직일 수 있게)
+                if (_kiteStuckTimer > 1.0f)
+                {
+                    _isKiting = false;
+                    _kiteStuckTimer = 0f;
+                }
                 return;
             }
 

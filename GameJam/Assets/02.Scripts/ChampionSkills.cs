@@ -568,7 +568,8 @@ public partial class ChampionUnit
     /// </summary>
     Vector3 ClampToPlayableArea(Vector3 desiredPos, Vector3 fallbackAnchor, Vector3 dirFromAttackerToAnchor)
     {
-        Vector3 frontPos = fallbackAnchor - dirFromAttackerToAnchor * 0.5f;
+        // fallback 위치 — 적 앞 0.8 unit (separation minDist 0.55 보다 멀어서 떨림 방지)
+        Vector3 frontPos = fallbackAnchor - dirFromAttackerToAnchor * 0.8f;
 
         // 검사 1 — desiredPos 가 벽 콜라이더 안에 있는지 (OverlapPoint)
         var hits = Physics2D.OverlapPointAll(desiredPos);
