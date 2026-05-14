@@ -34,11 +34,17 @@ public partial class ChampionUnit : MonoBehaviour
     private float _stunTimer;          // > 0 이면 모든 행동 정지
     private float _rootTimer;          // > 0 이면 이동만 정지 (공격은 OK)
     private float _backAttackTimer;    // > 0 이면 닌자 배후 상태 (평타 1.3배)
+    private float _burstLockTimer;     // > 0 이면 텔레포트 후 위치 고정 + 평타만 (target switch 방지)
+
+    // 타게팅 stickiness — HP 변동으로 target 자주 바꿔서 와리가리 하는 거 방지
+    private ChampionUnit _lastTarget;
+    private float _targetSwitchCooldown;
 
     // 킬로그용 — 마지막으로 데미지 입힌 attacker 추적
     public ChampionUnit LastAttacker { get; private set; }
     public bool IsBackAttacking => _backAttackTimer > 0f;
     public void ApplyBackAttack(float duration) { _backAttackTimer = Mathf.Max(_backAttackTimer, duration); }
+    public void ApplyBurstLock(float duration) { _burstLockTimer = Mathf.Max(_burstLockTimer, duration); }
 
     // 버프 (남은 시간 + 배수)
     private float _atkSpeedBuffEnd;  private float _atkSpeedBuffPct;
@@ -113,7 +119,13 @@ public partial class ChampionUnit : MonoBehaviour
         _basicCd = data.BasicSkillCooldown * 0.6f;
         _ultCd = data.UltimateCooldown * 0.8f;
 
-        if (_spum != null) _spum.OverrideControllerInit();
+        if (_spum != null)
+        {
+            _spum.OverrideControllerInit();
+            // ★ DAMAGED 애니메이션 root motion 이 캐릭터를 뒤로 밀어내는 거 방지
+            // (velocity 기반 이동이라 root motion 은 안 씀)
+            if (_spum._anim != null) _spum._anim.applyRootMotion = false;
+        }
         CreateInfoUI();
         CreateFootRing();
         PlayAnim(PlayerState.IDLE);
@@ -169,6 +181,8 @@ public partial class ChampionUnit : MonoBehaviour
         _stunTimer -= Time.deltaTime;
         _rootTimer -= Time.deltaTime;
         _backAttackTimer -= Time.deltaTime;
+        _burstLockTimer -= Time.deltaTime;
+        _targetSwitchCooldown -= Time.deltaTime;
 
         UpdateInfoUI();
 
@@ -218,6 +232,20 @@ public partial class ChampionUnit : MonoBehaviour
     /// <summary>닌자: 평소엔 melee 추격, HP 낮을 때만 후퇴 (Backstab 은 Update 에서 자동 발동)</summary>
     void BehaveAssassin()
     {
+        // ★ Burst lock — Backstab 직후 0.4초 동안 위치 고정 + 평타만 (텔레포트 후 자연스러운 burst)
+        if (_burstLockTimer > 0f)
+        {
+            _rb.linearVelocity = Vector2.zero;
+            if (_currentTarget != null && !_currentTarget.IsDead)
+            {
+                FaceTarget(_currentTarget.transform.position);
+                // 사거리 안 (텔레포트 위치 1.0 < 사거리 1.5 라 항상 in range) — 평타
+                if (Vector2.Distance(transform.position, _currentTarget.transform.position) <= Data.AttackRange)
+                    TryAttack();
+            }
+            return;
+        }
+
         float hpPct = CurrentHp / Data.MaxHp;
 
         // HP 35% 미만 + Backstab 쿨 차있으면 후퇴 (생존 우선)
@@ -414,39 +442,72 @@ public partial class ChampionUnit : MonoBehaviour
         // 1) 플레이어 우선타겟 지정
         if (PriorityTarget != null && !PriorityTarget.IsDead) return PriorityTarget;
 
-        // 2) 역할별
+        // 2) 역할별 — HP 기반 타게팅은 stickiness 적용 (자주 바꾸지 않음)
+        ChampionUnit candidate;
         switch (Data.Role)
         {
             case ChampionRole.Marksman:
-                // 저격수: HP 낮은 적 마무리 (빠른 이속으로 도달 가능)
-                return alive.OrderBy(e => e.CurrentHp / e.Data.MaxHp).First();
+                candidate = alive.OrderBy(e => e.CurrentHp / e.Data.MaxHp).First();
+                return StickyTarget(candidate);
 
             case ChampionRole.Mage:
-                // 마법사: 사거리 안 가장 가까운 적 — 느려서 멀리 추격 위험.
-                // 사거리 안 적 중 HP 낮은 거 우선, 없으면 가장 가까운 적
                 var inRange = alive.Where(e => Vector2.Distance(transform.position, e.transform.position) <= Data.AttackRange).ToList();
                 if (inRange.Count > 0)
-                    return inRange.OrderBy(e => e.CurrentHp / e.Data.MaxHp).First();
-                return GetNearestFrom(alive);
+                    candidate = inRange.OrderBy(e => e.CurrentHp / e.Data.MaxHp).First();
+                else
+                    candidate = GetNearestFrom(alive);
+                return StickyTarget(candidate);
 
             case ChampionRole.Assassin:
-                // 닌자: 백라인 (원딜/마법사/힐러) 우선 — 암살자 본업
-                // 1순위: 백라인 squishy 중 HP 가장 낮은 적
-                // 2순위: 나머지 적 중 가장 가까운 적
                 var squishy = alive.Where(e =>
                     e.Data.Role == ChampionRole.Marksman ||
                     e.Data.Role == ChampionRole.Mage ||
                     e.Data.Role == ChampionRole.Healer).ToList();
                 if (squishy.Count > 0)
-                    return squishy.OrderBy(e => e.CurrentHp / e.Data.MaxHp).First();
-                return GetNearestFrom(alive);
+                    candidate = squishy.OrderBy(e => e.CurrentHp / e.Data.MaxHp).First();
+                else
+                    candidate = GetNearestFrom(alive);
+                return StickyTarget(candidate);
 
             case ChampionRole.Tank:
             case ChampionRole.Fighter:
             case ChampionRole.Healer:
             default:
+                // 가장 가까운 적 — 거리 기반은 자연스럽게 안정적이라 stickiness 불필요
                 return GetNearestFrom(alive);
         }
+    }
+
+    /// <summary>
+    /// 타겟 stickiness — 마지막 타겟이 살아있으면 가급적 유지.
+    /// HP 가 크게 다르거나 (15% 이상) 쿨다운 지나면 새 타겟으로 전환.
+    /// </summary>
+    ChampionUnit StickyTarget(ChampionUnit candidate)
+    {
+        if (candidate == null) return null;
+
+        // 마지막 타겟이 살아있고, switch 쿨다운 안 끝났으면 → 유지
+        if (_lastTarget != null && !_lastTarget.IsDead && _targetSwitchCooldown > 0f)
+        {
+            return _lastTarget;
+        }
+
+        // 마지막 타겟 살아있으면, candidate 의 HP 가 의미있게 낮은 경우만 switch
+        if (_lastTarget != null && !_lastTarget.IsDead && _lastTarget != candidate)
+        {
+            float lastHpPct = _lastTarget.CurrentHp / _lastTarget.Data.MaxHp;
+            float newHpPct  = candidate.CurrentHp / candidate.Data.MaxHp;
+            // candidate HP 가 마지막 타겟의 85% 이하면 switch (의미있는 차이)
+            if (newHpPct > lastHpPct * 0.85f) return _lastTarget;
+        }
+
+        // switch 결정
+        if (_lastTarget != candidate)
+        {
+            _lastTarget = candidate;
+            _targetSwitchCooldown = 1.0f;  // 1초간 lock — 와리가리 방지
+        }
+        return candidate;
     }
 
     ChampionUnit GetNearestAliveEnemy()

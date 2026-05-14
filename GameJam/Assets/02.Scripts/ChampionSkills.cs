@@ -222,10 +222,11 @@ public partial class ChampionUnit
         var target = _currentTarget;
         if (target == null || target.IsDead) return false;
 
-        // 배후 위치 = 적 너머 0.8 unit (사거리 1.3 안 + separation 0.55 보다 멀어서 안전)
+        // 배후 위치 = 적 너머 1.0 unit (사거리 1.5 안 + separation 0.55 안전 마진 충분)
+        // 0.8 였을 때 target chase 시 sep 경계에 가까워 미세 떨림 발생
         Vector3 dirFromNinjaToTarget = (target.transform.position - transform.position).normalized;
         if (dirFromNinjaToTarget.sqrMagnitude < 0.01f) dirFromNinjaToTarget = Vector3.right;
-        Vector3 backPos = target.transform.position + dirFromNinjaToTarget * 0.8f;
+        Vector3 backPos = target.transform.position + dirFromNinjaToTarget * 1.0f;
 
         // ★ 벽 검사 — backPos 가 맵 콜라이더 (벽) 안이면 fallback (적 앞으로)
         // 닌자가 맵 밖으로 튕겨나가는 현상 fix
@@ -241,11 +242,13 @@ public partial class ChampionUnit
         target.TakeDamage(dmg, DamageType.Skill, this);
 
         // 0.7초 스턴 — 원거리 챔프 (저격수/마법사) 가 즉시 반격 못 하게
-        // 닌자가 burst 마무리 시간 확보
         target.ApplyStun(0.7f);
 
         // 2초간 배후 상태 (평타 +30%)
         ApplyBackAttack(2f);
+
+        // 0.4초 burst lock — 텔레포트 직후 위치 고정 + 평타 (자연스러운 burst 시퀀스)
+        ApplyBurstLock(0.4f);
 
         return true;
     }
