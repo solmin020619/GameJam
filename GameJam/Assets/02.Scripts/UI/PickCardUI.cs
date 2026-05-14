@@ -10,15 +10,24 @@ public class PickCardUI : MonoBehaviour
 {
     [Header("핵심 표시")]
     public Image portrait;                  // 흰 박스
-    public TextMeshProUGUI nameLabel;       // "캐릭터 이름"
+    public TextMeshProUGUI nameLabel;       // TMP 이름
+    public Text nameLabelLegacy;            // Legacy 이름 (Character_Name 등)
 
-    [Header("스탯 — 6종 (위→아래 순서: ATK / HP / DEF / RANGE / MOVE / ATKSPD)")]
-    public TextMeshProUGUI atkText;         // ⚔ AttackDamage
-    public TextMeshProUGUI hpText;          // ❤ MaxHp
-    public TextMeshProUGUI defText;         // 🛡 Defense
-    public TextMeshProUGUI rangeText;       // ⊕ AttackRange
-    public TextMeshProUGUI moveSpeedText;   // 👟 MoveSpeed
-    public TextMeshProUGUI atkSpeedText;    // ⚔ AttackSpeed
+    [Header("스탯 TMP — 6종 (위→아래 순서: ATK / HP / DEF / RANGE / MOVE / ATKSPD)")]
+    public TextMeshProUGUI atkText;
+    public TextMeshProUGUI hpText;
+    public TextMeshProUGUI defText;
+    public TextMeshProUGUI rangeText;
+    public TextMeshProUGUI moveSpeedText;
+    public TextMeshProUGUI atkSpeedText;
+
+    [Header("스탯 Legacy Text — 사용자 디자인이 UI.Text 일 때")]
+    public Text atkTextLegacy;
+    public Text hpTextLegacy;
+    public Text defTextLegacy;
+    public Text rangeTextLegacy;
+    public Text moveSpeedTextLegacy;
+    public Text atkSpeedTextLegacy;
 
     [Header("스킬/궁극 설명 버튼 (옵션)")]
     public Button skillDescButton;          // "스킬 설명"
@@ -47,13 +56,13 @@ public class PickCardUI : MonoBehaviour
     {
         _data = null;
         if (portrait != null) { portrait.sprite = null; portrait.color = new Color(1, 1, 1, 1f); }
-        if (nameLabel != null) nameLabel.text = "캐릭터 이름";
-        Set(atkText, "");
-        Set(hpText, "");
-        Set(defText, "");
-        Set(rangeText, "");
-        Set(moveSpeedText, "");
-        Set(atkSpeedText, "");
+        SetName("캐릭터 이름");
+        SetStat("atk", "");
+        SetStat("hp", "");
+        SetStat("def", "");
+        SetStat("range", "");
+        SetStat("move", "");
+        SetStat("atkSpd", "");
         if (tooltipPanel != null) tooltipPanel.SetActive(false);
     }
 
@@ -69,14 +78,14 @@ public class PickCardUI : MonoBehaviour
             portrait.color = d.portrait != null ? Color.white : d.themeColor;
             portrait.preserveAspect = true;
         }
-        if (nameLabel != null) nameLabel.text = d.displayName;
+        SetName(d.displayName);
 
-        Set(atkText, $"{Mathf.RoundToInt(d.attackDamage)}");
-        Set(hpText, $"{Mathf.RoundToInt(d.maxHealth)}");
-        Set(defText, $"{Mathf.RoundToInt(d.defense)}");
-        Set(rangeText, $"{d.attackRange:F1}");
-        Set(moveSpeedText, $"{d.moveSpeed:F1}");
-        Set(atkSpeedText, $"{d.attackSpeed:F2}");
+        SetStat("atk",    $"{Mathf.RoundToInt(d.attackDamage)}");
+        SetStat("hp",     $"{Mathf.RoundToInt(d.maxHealth)}");
+        SetStat("def",    $"{Mathf.RoundToInt(d.defense)}");
+        SetStat("range",  $"{d.attackRange:F1}");
+        SetStat("move",   $"{d.moveSpeed:F1}");
+        SetStat("atkSpd", $"{d.attackSpeed:F2}");
 
         if (skillDescButton != null)
         {
@@ -102,4 +111,25 @@ public class PickCardUI : MonoBehaviour
     }
 
     static void Set(TextMeshProUGUI t, string s) { if (t != null) t.text = s; }
+    static void Set(Text t, string s) { if (t != null) t.text = s; }
+
+    void SetName(string s)
+    {
+        if (nameLabel != null) nameLabel.text = s;
+        if (nameLabelLegacy != null) nameLabelLegacy.text = s;
+    }
+
+    /// <summary>스탯 텍스트 set — TMP 와 Legacy 둘 다 set</summary>
+    void SetStat(string key, string value)
+    {
+        switch (key)
+        {
+            case "atk":    Set(atkText, value);       Set(atkTextLegacy, value);       break;
+            case "hp":     Set(hpText, value);        Set(hpTextLegacy, value);        break;
+            case "def":    Set(defText, value);       Set(defTextLegacy, value);       break;
+            case "range":  Set(rangeText, value);     Set(rangeTextLegacy, value);     break;
+            case "move":   Set(moveSpeedText, value); Set(moveSpeedTextLegacy, value); break;
+            case "atkSpd": Set(atkSpeedText, value);  Set(atkSpeedTextLegacy, value);  break;
+        }
+    }
 }

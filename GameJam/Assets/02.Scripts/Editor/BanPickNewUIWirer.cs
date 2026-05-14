@@ -236,51 +236,54 @@ public static class BanPickNewUIWirer
         if (pc == null) pc = card.gameObject.AddComponent<PickCardUI>();
         pc.isAlly = isAlly;
 
-        // 1순위 — 명시적 자식 이름 (Character_stat 디자인) 매핑
-        // Attack_Text → atkText, HP_Text → hpText, Armor_Text → defText 등
-        TextMeshProUGUI byName(string n)
+        // 1순위 — 명시적 자식 이름 매핑 (TMP + Legacy Text 둘 다 시도)
+        // 사용자 디자인이 Legacy UI.Text 라서 TMP 만 보면 못 찾음 → 두 type 다 검사
+        TextMeshProUGUI byNameTmp(string n)
         {
             foreach (var t in card.GetComponentsInChildren<TextMeshProUGUI>(true))
             {
                 if (t.gameObject.name == n) return t;
-                // 자식의 자식이 TMP 면 그 자식도 매칭 ("Attack_Text" GO 안에 들어있는 TMP)
+                if (t.transform.parent != null && t.transform.parent.gameObject.name == n) return t;
+            }
+            return null;
+        }
+        Text byNameLegacy(string n)
+        {
+            foreach (var t in card.GetComponentsInChildren<Text>(true))
+            {
+                if (t.gameObject.name == n) return t;
                 if (t.transform.parent != null && t.transform.parent.gameObject.name == n) return t;
             }
             return null;
         }
 
-        pc.atkText       = byName("Attack_Text");
-        pc.hpText        = byName("HP_Text");
-        pc.defText       = byName("Armor_Text");
-        pc.rangeText     = byName("Attack_range_Text") ?? byName("AttackRange_Text") ?? byName("Range_Text");
-        pc.moveSpeedText = byName("Speed_Text") ?? byName("MoveSpeed_Text");
-        pc.atkSpeedText  = byName("AttackSpeed_Text") ?? byName("Atk_Speed_Text");
+        // 각 스탯 — TMP 와 Legacy 둘 다 wire (둘 중 한 쪽만 있을 거지만 안전하게)
+        pc.atkText       = byNameTmp("Attack_Text");
+        pc.atkTextLegacy = byNameLegacy("Attack_Text");
+        pc.hpText        = byNameTmp("HP_Text");
+        pc.hpTextLegacy  = byNameLegacy("HP_Text");
+        pc.defText       = byNameTmp("Armor_Text");
+        pc.defTextLegacy = byNameLegacy("Armor_Text");
+        pc.rangeText        = byNameTmp("Attack_range_Text")    ?? byNameTmp("AttackRange_Text")    ?? byNameTmp("Range_Text");
+        pc.rangeTextLegacy  = byNameLegacy("Attack_range_Text") ?? byNameLegacy("AttackRange_Text") ?? byNameLegacy("Range_Text");
+        pc.moveSpeedText        = byNameTmp("Speed_Text")    ?? byNameTmp("MoveSpeed_Text");
+        pc.moveSpeedTextLegacy  = byNameLegacy("Speed_Text") ?? byNameLegacy("MoveSpeed_Text");
+        pc.atkSpeedText        = byNameTmp("AttackSpeed_Text")    ?? byNameTmp("Atk_Speed_Text");
+        pc.atkSpeedTextLegacy  = byNameLegacy("AttackSpeed_Text") ?? byNameLegacy("Atk_Speed_Text");
 
-        // 이름 라벨 — "캐릭터 이름" / "Name" / "ChampionName" 등
-        pc.nameLabel = byName("캐릭터 이름") ?? byName("Name") ?? byName("ChampionName") ?? byName("Name_Text");
+        // 이름 라벨 — "Character_Name" (user 디자인), "캐릭터 이름", "Name" 등
+        pc.nameLabel       = byNameTmp("Character_Name")    ?? byNameTmp("캐릭터 이름")  ?? byNameTmp("Name")  ?? byNameTmp("ChampionName") ?? byNameTmp("Name_Text");
+        pc.nameLabelLegacy = byNameLegacy("Character_Name") ?? byNameLegacy("캐릭터 이름") ?? byNameLegacy("Name") ?? byNameLegacy("ChampionName") ?? byNameLegacy("Name_Text");
 
-        // 2순위 — 명시적 이름 못 찾으면 Y 정렬 heuristic
-        int filledCount = (pc.atkText != null ? 1 : 0) + (pc.hpText != null ? 1 : 0)
-                        + (pc.defText != null ? 1 : 0) + (pc.rangeText != null ? 1 : 0)
-                        + (pc.moveSpeedText != null ? 1 : 0) + (pc.atkSpeedText != null ? 1 : 0);
-        Debug.Log($"[WireCard] '{card.name}' 명시적 이름 매핑 결과: 스탯 {filledCount}/6, name:{pc.nameLabel != null}");
-
-        if (filledCount < 6)
-        {
-            // Y 내림차순 fallback
-            var tmps = new List<TextMeshProUGUI>();
-            foreach (var t in card.GetComponentsInChildren<TextMeshProUGUI>(true))
-                if (IsDescendantWithin(t.transform, card, 6)) tmps.Add(t);
-            tmps.Sort((a, b) => GetWorldY(b.rectTransform).CompareTo(GetWorldY(a.rectTransform)));
-
-            if (pc.nameLabel == null && tmps.Count > 0) pc.nameLabel = tmps[0];
-            if (pc.atkText == null && tmps.Count > 1) pc.atkText       = tmps[1];
-            if (pc.hpText == null && tmps.Count > 2) pc.hpText         = tmps[2];
-            if (pc.defText == null && tmps.Count > 3) pc.defText       = tmps[3];
-            if (pc.rangeText == null && tmps.Count > 4) pc.rangeText   = tmps[4];
-            if (pc.moveSpeedText == null && tmps.Count > 5) pc.moveSpeedText = tmps[5];
-            if (pc.atkSpeedText == null && tmps.Count > 6) pc.atkSpeedText  = tmps[6];
-        }
+        int filledCount = 0;
+        if (pc.atkText != null || pc.atkTextLegacy != null) filledCount++;
+        if (pc.hpText != null || pc.hpTextLegacy != null) filledCount++;
+        if (pc.defText != null || pc.defTextLegacy != null) filledCount++;
+        if (pc.rangeText != null || pc.rangeTextLegacy != null) filledCount++;
+        if (pc.moveSpeedText != null || pc.moveSpeedTextLegacy != null) filledCount++;
+        if (pc.atkSpeedText != null || pc.atkSpeedTextLegacy != null) filledCount++;
+        bool nameFilled = pc.nameLabel != null || pc.nameLabelLegacy != null;
+        Debug.Log($"[WireCard] '{card.name}' 명시적 이름 매핑: 스탯 {filledCount}/6, name:{nameFilled} (TMP+Legacy 둘 다 검사)");
 
         // 포트레이트 = 카드 안 Image 중 가장 큰 흰색 (혹은 가장 큰 거)
         Image portrait = null;
@@ -360,8 +363,13 @@ public static class BanPickNewUIWirer
 
     static void WireCardGrid(BanPickManager mgr, Canvas canvas, HashSet<Transform> excludeTransforms)
     {
-        // 가운데 카드 그리드 = pickCards 가 아닌, 화면 중앙 X 밴드의 사각형 RectTransform
+        // ★ GridLayoutGroup 등 layout 그룹이 자식 위치를 layout pass 에서 계산하므로,
+        // 우선 layout 을 강제 갱신해야 GetWorldCorners 가 실제 위치를 반환함
+        // (안 그러면 anchoredPosition=(0,0) 인 모든 자식이 같은 world 위치로 측정 → dedup 가 다 같은 카드로 오인)
         var canvasRt = canvas.transform as RectTransform;
+        Canvas.ForceUpdateCanvases();
+        UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(canvasRt);
+
         Vector3[] canvasCorners = new Vector3[4];
         canvasRt.GetWorldCorners(canvasCorners);
         float canvasLeft  = canvasCorners[0].x;

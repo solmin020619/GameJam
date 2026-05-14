@@ -235,6 +235,9 @@ public partial class ChampionUnit : MonoBehaviour
     }
 
     /// <summary>궁수/마법사: 카이팅 (적이 너무 가까우면 뒤로, 사거리 끝에서 공격)</summary>
+    // 카이팅 stuck 감지용 — 구석 몰리면 위치가 안 변하니까 멈춰서 공격으로 전환
+    Vector3 _lastKitePos;
+    float _kiteStuckTimer;
     void BehaveRanged()
     {
         var nearest = GetNearestAliveEnemy();
@@ -252,6 +255,26 @@ public partial class ChampionUnit : MonoBehaviour
         if (_isKiting)
         {
             if (IsRooted) { _rb.linearVelocity = Vector2.zero; return; }
+
+            // ★ stuck 감지 — 위치 변화량 누적해서 일정 시간 안 움직이면 카이팅 중지 (구석 몰림 fix)
+            float moved = Vector3.Distance(transform.position, _lastKitePos);
+            _lastKitePos = transform.position;
+            // 매 프레임 기대 이동량의 30% 미만이면 stuck 으로 간주
+            float expectedMove = GetEffectiveMoveSpeed() * Time.deltaTime * 0.3f;
+            if (moved < expectedMove) _kiteStuckTimer += Time.deltaTime;
+            else _kiteStuckTimer = 0f;
+
+            // 0.4s 이상 stuck → 카이팅 강제 종료. 사거리 안이면 그 자리에서 공격
+            if (_kiteStuckTimer > 0.4f)
+            {
+                _rb.linearVelocity = Vector2.zero;
+                FaceTarget(_currentTarget.transform.position);
+                if (Vector2.Distance(transform.position, _currentTarget.transform.position) <= Data.AttackRange)
+                    TryAttack();
+                else PlayAnim(PlayerState.IDLE);
+                return;
+            }
+
             Vector2 away = ((Vector2)transform.position - (Vector2)nearest.transform.position).normalized;
             _rb.linearVelocity = away * GetEffectiveMoveSpeed();
             FaceTarget(_currentTarget.transform.position);
@@ -261,6 +284,10 @@ public partial class ChampionUnit : MonoBehaviour
                 TryAttackNoAnim();
             return;
         }
+
+        // 카이팅 안 하는 상태에선 stuck 카운터 reset
+        _kiteStuckTimer = 0f;
+        _lastKitePos = transform.position;
 
         // 안전 거리 → 사거리 끝에서 공격
         float distToTarget = Vector2.Distance(transform.position, _currentTarget.transform.position);

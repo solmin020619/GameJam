@@ -735,19 +735,29 @@ public class FightUIController : MonoBehaviour
         // 챔프 없으면 카드 숨김 (옵션). 일단 그대로 두기.
         if (unit == null || unit.Data == null) return;
 
-        // 자식 이름으로 매핑
-        SetStatText(card, "HP", unit.IsDead ? "0" : Mathf.RoundToInt(unit.CurrentHp).ToString());
-        SetStatText(card, "Attack", Mathf.RoundToInt(unit.Data.AttackDamage).ToString());
-        SetStatText(card, "AttackSpeed", unit.Data.AttackSpeed.ToString("0.0"));
-        SetStatText(card, "Armor", Mathf.RoundToInt(unit.Data.Defense).ToString());
-        SetStatText(card, "Intersection", unit.Data.AttackRange.ToString("0.0"));   // 사거리
-        SetStatText(card, "Speed", unit.Data.MoveSpeed.ToString("0.0"));            // 이속
+        // 자식 이름으로 매핑 — 옛 이름 (HP/Attack/...) + 새 이름 (HP_Text/Attack_Text/...) 모두 시도
+        string hpVal       = unit.IsDead ? "0" : Mathf.RoundToInt(unit.CurrentHp).ToString();
+        string atkVal      = Mathf.RoundToInt(unit.Data.AttackDamage).ToString();
+        string atkSpdVal   = unit.Data.AttackSpeed.ToString("0.0");
+        string armorVal    = Mathf.RoundToInt(unit.Data.Defense).ToString();
+        string rangeVal    = unit.Data.AttackRange.ToString("0.0");
+        string moveSpdVal  = unit.Data.MoveSpeed.ToString("0.0");
+
+        SetStatText(card, "HP", hpVal);                SetStatText(card, "HP_Text", hpVal);
+        SetStatText(card, "Attack", atkVal);           SetStatText(card, "Attack_Text", atkVal);
+        SetStatText(card, "AttackSpeed", atkSpdVal);   SetStatText(card, "AttackSpeed_Text", atkSpdVal);
+        SetStatText(card, "Armor", armorVal);          SetStatText(card, "Armor_Text", armorVal);
+        SetStatText(card, "Intersection", rangeVal);   SetStatText(card, "Attack_range_Text", rangeVal);
+        SetStatText(card, "Speed", moveSpdVal);        SetStatText(card, "Speed_Text", moveSpdVal);
 
         // 이름 — 끝에 붙은 인덱스 " 1", " 2" 떼고 역할 이름만 ("수호기사 1" → "수호기사")
-        // 컨테이너가 좁으면 잘리니까 overflow 도 같이 켜기
+        // 옛 자식 이름 (Name / ChampionName) + 새 PickCard 자식 이름 (캐릭터 이름) 모두 시도
         string roleName = StripIndex(unit.Data.ChampionName);
         SetNameText(card, "Name", roleName);
         SetNameText(card, "ChampionName", roleName);
+        SetNameText(card, "캐릭터 이름", roleName);
+        SetNameText(card, "캐릭터_이름", roleName);
+        SetNameText(card, "CharacterName", roleName);
 
         // 역할 아이콘 — 카드 상단의 Icon_Weapon 을 role 별 sprite 로 교체 (검 → 방패/활/지팡이/...)
         ApplyRoleIcon(card, unit.Data.Role);

@@ -15,6 +15,7 @@ public class BGMPlayer : MonoBehaviour
     public AudioClip tourmentBgm;  // Tourment 전용 (Tourment_Screaming)
     public AudioClip fightBgm;
     public AudioClip banPickBgm;
+    public AudioClip winBgm;       // AScene_Win 전용 (시상식)
 
     AudioSource _src;
     string _currentScene = "";
@@ -39,6 +40,7 @@ public class BGMPlayer : MonoBehaviour
         if (tourmentBgm == null) tourmentBgm = Resources.Load<AudioClip>("BGM/Tourment_Screaming") ?? Resources.Load<AudioClip>("BGM/Tourment");
         if (fightBgm == null) fightBgm = Resources.Load<AudioClip>("BGM/Fight_Bgm") ?? Resources.Load<AudioClip>("BGM/FightBGM");
         if (banPickBgm == null) banPickBgm = Resources.Load<AudioClip>("BGM/ban_bgm") ?? Resources.Load<AudioClip>("BGM/SelectBGM");
+        if (winBgm == null) winBgm = Resources.Load<AudioClip>("BGM/Victory") ?? Resources.Load<AudioClip>("BGM/Win") ?? Resources.Load<AudioClip>("BGM/Victory_bgm");
 
         SceneManager.sceneLoaded += OnSceneLoaded;
         OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
@@ -67,6 +69,8 @@ public class BGMPlayer : MonoBehaviour
             clip = fightBgm;
         else if (scene.name == "BanPick" || scene.name == "AScene_BanPick")
             clip = banPickBgm;
+        else if (scene.name == "AScene_Win")
+            clip = winBgm != null ? winBgm : lobbyBgm;
 
         Debug.Log($"[BGM] 씬 '{scene.name}' 로드 — clip:{(clip != null ? clip.name : "null")}, lobbyBgm:{(lobbyBgm != null ? "ok" : "null")}, fightBgm:{(fightBgm != null ? "ok" : "null")}, vol:{VolumeSettings.BgmVolume:F2}");
 

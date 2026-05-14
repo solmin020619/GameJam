@@ -26,6 +26,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/01.Scenes/Tourment.unity
     guid: 570b863df64d94442835a5c1136d447f
+  - enabled: 1
+    path: Assets/01.Scenes/AScene_Win.unity
+    guid: e4c93f6a72a1b644f9f844d28574ae76
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

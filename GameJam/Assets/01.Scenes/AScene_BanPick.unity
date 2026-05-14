@@ -2522,12 +2522,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PickCardUI
   portrait: {fileID: 559436992}
   nameLabel: {fileID: 0}
+  nameLabelLegacy: {fileID: 577258348}
   atkText: {fileID: 0}
   hpText: {fileID: 0}
   defText: {fileID: 0}
   rangeText: {fileID: 0}
   moveSpeedText: {fileID: 0}
   atkSpeedText: {fileID: 0}
+  atkTextLegacy: {fileID: 383540481}
+  hpTextLegacy: {fileID: 2091757011}
+  defTextLegacy: {fileID: 1698472001}
+  rangeTextLegacy: {fileID: 111344115}
+  moveSpeedTextLegacy: {fileID: 1714521424}
+  atkSpeedTextLegacy: {fileID: 155322690}
   skillDescButton: {fileID: 0}
   ultDescButton: {fileID: 0}
   tooltipPanel: {fileID: 0}
@@ -2948,12 +2955,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PickCardUI
   portrait: {fileID: 757440727}
   nameLabel: {fileID: 0}
+  nameLabelLegacy: {fileID: 130761446}
   atkText: {fileID: 0}
   hpText: {fileID: 0}
   defText: {fileID: 0}
   rangeText: {fileID: 0}
   moveSpeedText: {fileID: 0}
   atkSpeedText: {fileID: 0}
+  atkTextLegacy: {fileID: 1984313066}
+  hpTextLegacy: {fileID: 387292464}
+  defTextLegacy: {fileID: 1863889451}
+  rangeTextLegacy: {fileID: 1205305436}
+  moveSpeedTextLegacy: {fileID: 975926065}
+  atkSpeedTextLegacy: {fileID: 982015909}
   skillDescButton: {fileID: 0}
   ultDescButton: {fileID: 0}
   tooltipPanel: {fileID: 0}
@@ -3022,7 +3036,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BanPickManager
   config: {fileID: 11400000, guid: 8ccef209fd1c7d04b8bad1f0c98c207a, type: 2}
-  hud: {fileID: 1325938752}
+  hud: {fileID: 1302710185}
   cards:
   - {fileID: 381782945}
   - {fileID: 630991698}
@@ -3033,8 +3047,8 @@ MonoBehaviour:
   - {fileID: 63559779}
   - {fileID: 949625066}
   - {fileID: 1813010413}
-  allySlots: {fileID: 335505158}
-  enemySlots: {fileID: 1132762607}
+  allySlots: {fileID: 1559598454}
+  enemySlots: {fileID: 1353504020}
   ai: {fileID: 230819073}
   autoLoadBattleSceneOnDone: 1
   battleSceneName: InGame
@@ -7156,12 +7170,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PickCardUI
   portrait: {fileID: 1126493811}
   nameLabel: {fileID: 0}
+  nameLabelLegacy: {fileID: 60908491}
   atkText: {fileID: 0}
   hpText: {fileID: 0}
   defText: {fileID: 0}
   rangeText: {fileID: 0}
   moveSpeedText: {fileID: 0}
   atkSpeedText: {fileID: 0}
+  atkTextLegacy: {fileID: 149129510}
+  hpTextLegacy: {fileID: 787874907}
+  defTextLegacy: {fileID: 1964524069}
+  rangeTextLegacy: {fileID: 442975765}
+  moveSpeedTextLegacy: {fileID: 1500511130}
+  atkSpeedTextLegacy: {fileID: 1029496102}
   skillDescButton: {fileID: 0}
   ultDescButton: {fileID: 0}
   tooltipPanel: {fileID: 0}
@@ -7482,12 +7503,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PickCardUI
   portrait: {fileID: 470604400}
   nameLabel: {fileID: 0}
+  nameLabelLegacy: {fileID: 667672406}
   atkText: {fileID: 0}
   hpText: {fileID: 0}
   defText: {fileID: 0}
   rangeText: {fileID: 0}
   moveSpeedText: {fileID: 0}
   atkSpeedText: {fileID: 0}
+  atkTextLegacy: {fileID: 1121519793}
+  hpTextLegacy: {fileID: 584011590}
+  defTextLegacy: {fileID: 325656426}
+  rangeTextLegacy: {fileID: 433983653}
+  moveSpeedTextLegacy: {fileID: 270408985}
+  atkSpeedTextLegacy: {fileID: 1782281622}
   skillDescButton: {fileID: 0}
   ultDescButton: {fileID: 0}
   tooltipPanel: {fileID: 0}
@@ -8103,6 +8131,65 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 811044933}
   m_CullTransparentMesh: 1
+--- !u!1 &812144336
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 812144338}
+  - component: {fileID: 812144337}
+  m_Layer: 0
+  m_Name: AllyTeamSlot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &812144337
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 812144336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35d609bc043d90348bfe0e9e90d8cd3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamSlotUI
+  side: 0
+  teamLabel: {fileID: 0}
+  allyColor: {r: 0.4, g: 0.7, b: 1, a: 1}
+  enemyColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  banSlots:
+  - {fileID: 1920667540}
+  pickSlots: []
+  pickCards:
+  - {fileID: 127947432}
+  - {fileID: 728453987}
+  - {fileID: 224967982}
+  emptySlotSprite: {fileID: 0}
+  emptySlotColor: {r: 1, g: 1, b: 1, a: 0.15}
+  bannedXSprite: {fileID: 0}
+  bannedTint: {r: 1, g: 1, b: 1, a: 1}
+--- !u!4 &812144338
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 812144336}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1059534414}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &825440300
 GameObject:
   m_ObjectHideFlags: 0
@@ -10165,6 +10252,39 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1046446491}
   m_CullTransparentMesh: 1
+--- !u!1 &1059534413
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1059534414}
+  m_Layer: 0
+  m_Name: TeamSlotRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1059534414
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1059534413}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 812144338}
+  - {fileID: 1749834550}
+  m_Father: {fileID: 1233788421}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1061888039
 GameObject:
   m_ObjectHideFlags: 0
@@ -10378,6 +10498,61 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1076121327}
   m_CullTransparentMesh: 1
+--- !u!1 &1078382797
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1078382798}
+  - component: {fileID: 1078382799}
+  m_Layer: 0
+  m_Name: BanPickHUD
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1078382798
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1078382797}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1233788421}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1078382799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1078382797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 245938359c9678a4db6bb61ad01b3e20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BanPickHUD
+  phaseLabel: {fileID: 2008581532}
+  turnLabel: {fileID: 1876967135}
+  turnSideIndicator: {fileID: 0}
+  allyColor: {r: 0.4, g: 0.7, b: 1, a: 1}
+  enemyColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  timerFill: {fileID: 1662579264}
+  timerLabel: {fileID: 1516323544}
+  doneOverlay: {fileID: 0}
+  doneLabel: {fileID: 0}
+  allySlotUI: {fileID: 812144337}
+  enemySlotUI: {fileID: 1749834549}
 --- !u!1 &1098127945
 GameObject:
   m_ObjectHideFlags: 0
@@ -11750,6 +11925,10 @@ RectTransform:
   - {fileID: 680792566}
   - {fileID: 1863118414}
   - {fileID: 1325938751}
+  - {fileID: 1059534414}
+  - {fileID: 1078382798}
+  - {fileID: 1421697627}
+  - {fileID: 1302710184}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -11974,6 +12153,61 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1279395808}
   m_CullTransparentMesh: 1
+--- !u!1 &1302710183
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1302710184}
+  - component: {fileID: 1302710185}
+  m_Layer: 0
+  m_Name: BanPickHUD
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1302710184
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1302710183}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1233788421}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1302710185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1302710183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 245938359c9678a4db6bb61ad01b3e20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BanPickHUD
+  phaseLabel: {fileID: 2008581532}
+  turnLabel: {fileID: 1876967135}
+  turnSideIndicator: {fileID: 0}
+  allyColor: {r: 0.4, g: 0.7, b: 1, a: 1}
+  enemyColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  timerFill: {fileID: 1662579264}
+  timerLabel: {fileID: 1516323544}
+  doneOverlay: {fileID: 0}
+  doneLabel: {fileID: 0}
+  allySlotUI: {fileID: 1559598454}
+  enemySlotUI: {fileID: 1353504020}
 --- !u!1 &1305200593
 GameObject:
   m_ObjectHideFlags: 0
@@ -12944,6 +13178,65 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1352060216}
   m_CullTransparentMesh: 1
+--- !u!1 &1353504019
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1353504021}
+  - component: {fileID: 1353504020}
+  m_Layer: 0
+  m_Name: EnemyTeamSlot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1353504020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1353504019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35d609bc043d90348bfe0e9e90d8cd3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamSlotUI
+  side: 1
+  teamLabel: {fileID: 0}
+  allyColor: {r: 0.4, g: 0.7, b: 1, a: 1}
+  enemyColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  banSlots:
+  - {fileID: 774180102}
+  pickSlots: []
+  pickCards:
+  - {fileID: 1664120526}
+  - {fileID: 1543167201}
+  - {fileID: 680792569}
+  emptySlotSprite: {fileID: 0}
+  emptySlotColor: {r: 1, g: 1, b: 1, a: 0.15}
+  bannedXSprite: {fileID: 0}
+  bannedTint: {r: 1, g: 1, b: 1, a: 1}
+--- !u!4 &1353504021
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1353504019}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1421697627}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1376412093
 GameObject:
   m_ObjectHideFlags: 0
@@ -13235,6 +13528,39 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1401879175}
   m_CullTransparentMesh: 1
+--- !u!1 &1421697626
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1421697627}
+  m_Layer: 0
+  m_Name: TeamSlotRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1421697627
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421697626}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1559598455}
+  - {fileID: 1353504021}
+  m_Father: {fileID: 1233788421}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1424266862
 GameObject:
   m_ObjectHideFlags: 0
@@ -14895,12 +15221,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PickCardUI
   portrait: {fileID: 23088368}
   nameLabel: {fileID: 0}
+  nameLabelLegacy: {fileID: 522868640}
   atkText: {fileID: 0}
   hpText: {fileID: 0}
   defText: {fileID: 0}
   rangeText: {fileID: 0}
   moveSpeedText: {fileID: 0}
   atkSpeedText: {fileID: 0}
+  atkTextLegacy: {fileID: 1681607519}
+  hpTextLegacy: {fileID: 545953418}
+  defTextLegacy: {fileID: 1184066673}
+  rangeTextLegacy: {fileID: 877749748}
+  moveSpeedTextLegacy: {fileID: 1393753338}
+  atkSpeedTextLegacy: {fileID: 1352060218}
   skillDescButton: {fileID: 0}
   ultDescButton: {fileID: 0}
   tooltipPanel: {fileID: 0}
@@ -14909,6 +15242,65 @@ MonoBehaviour:
   enemyTint: {r: 1, g: 0.4, b: 0.4, a: 1}
   isAlly: 0
   colorFrame: {fileID: 0}
+--- !u!1 &1559598453
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1559598455}
+  - component: {fileID: 1559598454}
+  m_Layer: 0
+  m_Name: AllyTeamSlot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1559598454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1559598453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35d609bc043d90348bfe0e9e90d8cd3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamSlotUI
+  side: 0
+  teamLabel: {fileID: 0}
+  allyColor: {r: 0.4, g: 0.7, b: 1, a: 1}
+  enemyColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  banSlots:
+  - {fileID: 1920667540}
+  pickSlots: []
+  pickCards:
+  - {fileID: 127947432}
+  - {fileID: 728453987}
+  - {fileID: 224967982}
+  emptySlotSprite: {fileID: 0}
+  emptySlotColor: {r: 1, g: 1, b: 1, a: 0.15}
+  bannedXSprite: {fileID: 0}
+  bannedTint: {r: 1, g: 1, b: 1, a: 1}
+--- !u!4 &1559598455
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1559598453}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1421697627}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1561208172
 GameObject:
   m_ObjectHideFlags: 0
@@ -15688,12 +16080,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PickCardUI
   portrait: {fileID: 1914555231}
   nameLabel: {fileID: 0}
+  nameLabelLegacy: {fileID: 114766811}
   atkText: {fileID: 0}
   hpText: {fileID: 0}
   defText: {fileID: 0}
   rangeText: {fileID: 0}
   moveSpeedText: {fileID: 0}
   atkSpeedText: {fileID: 0}
+  atkTextLegacy: {fileID: 564230206}
+  hpTextLegacy: {fileID: 888391424}
+  defTextLegacy: {fileID: 1725976577}
+  rangeTextLegacy: {fileID: 1046446493}
+  moveSpeedTextLegacy: {fileID: 1652487989}
+  atkSpeedTextLegacy: {fileID: 2124778651}
   skillDescButton: {fileID: 0}
   ultDescButton: {fileID: 0}
   tooltipPanel: {fileID: 0}
@@ -16388,6 +16787,65 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1737096660}
   m_CullTransparentMesh: 1
+--- !u!1 &1749834548
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1749834550}
+  - component: {fileID: 1749834549}
+  m_Layer: 0
+  m_Name: EnemyTeamSlot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1749834549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749834548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35d609bc043d90348bfe0e9e90d8cd3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamSlotUI
+  side: 1
+  teamLabel: {fileID: 0}
+  allyColor: {r: 0.4, g: 0.7, b: 1, a: 1}
+  enemyColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  banSlots:
+  - {fileID: 774180102}
+  pickSlots: []
+  pickCards:
+  - {fileID: 1664120526}
+  - {fileID: 1543167201}
+  - {fileID: 680792569}
+  emptySlotSprite: {fileID: 0}
+  emptySlotColor: {r: 1, g: 1, b: 1, a: 0.15}
+  bannedXSprite: {fileID: 0}
+  bannedTint: {r: 1, g: 1, b: 1, a: 1}
+--- !u!4 &1749834550
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749834548}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1059534414}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1751066747
 GameObject:
   m_ObjectHideFlags: 0

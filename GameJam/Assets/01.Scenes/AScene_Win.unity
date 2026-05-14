@@ -838,6 +838,7 @@ GameObject:
   - component: {fileID: 741364628}
   - component: {fileID: 741364630}
   - component: {fileID: 741364629}
+  - component: {fileID: 741364631}
   m_Layer: 5
   m_Name: Firecracker_6
   m_TagString: Untagged
@@ -902,6 +903,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 741364627}
   m_CullTransparentMesh: 1
+--- !u!114 &741364631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 741364627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4414ef04862816e43a6dc8bf7b9d6a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FireworkSpriteAnimator
+  burstInterval: 1.1381855
+  maxScale: 1.6789235
+  fadeRatio: 0.7
+  colors:
+  - {r: 1, g: 0.4, b: 0.6, a: 1}
+  - {r: 0.5, g: 1, b: 0.8, a: 1}
+  - {r: 0.4, g: 0.7, b: 1, a: 1}
+  - {r: 1, g: 0.9, b: 0.3, a: 1}
+  - {r: 0.9, g: 0.5, b: 1, a: 1}
 --- !u!1 &754493938
 GameObject:
   m_ObjectHideFlags: 0
@@ -1287,6 +1309,7 @@ GameObject:
   - component: {fileID: 1005669412}
   - component: {fileID: 1005669414}
   - component: {fileID: 1005669413}
+  - component: {fileID: 1005669415}
   m_Layer: 5
   m_Name: Firecracker_5
   m_TagString: Untagged
@@ -1351,6 +1374,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1005669411}
   m_CullTransparentMesh: 1
+--- !u!114 &1005669415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1005669411}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4414ef04862816e43a6dc8bf7b9d6a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FireworkSpriteAnimator
+  burstInterval: 1.0867479
+  maxScale: 1.4214523
+  fadeRatio: 0.7
+  colors:
+  - {r: 1, g: 0.4, b: 0.6, a: 1}
+  - {r: 0.5, g: 1, b: 0.8, a: 1}
+  - {r: 0.4, g: 0.7, b: 1, a: 1}
+  - {r: 1, g: 0.9, b: 0.3, a: 1}
+  - {r: 0.9, g: 0.5, b: 1, a: 1}
 --- !u!1 &1008843535
 GameObject:
   m_ObjectHideFlags: 0
@@ -1896,6 +1940,7 @@ GameObject:
   - component: {fileID: 1321396606}
   - component: {fileID: 1321396608}
   - component: {fileID: 1321396607}
+  - component: {fileID: 1321396609}
   m_Layer: 5
   m_Name: Firecracker_2
   m_TagString: Untagged
@@ -1960,6 +2005,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1321396605}
   m_CullTransparentMesh: 1
+--- !u!114 &1321396609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1321396605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4414ef04862816e43a6dc8bf7b9d6a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FireworkSpriteAnimator
+  burstInterval: 1.410695
+  maxScale: 1.5460098
+  fadeRatio: 0.7
+  colors:
+  - {r: 1, g: 0.4, b: 0.6, a: 1}
+  - {r: 0.5, g: 1, b: 0.8, a: 1}
+  - {r: 0.4, g: 0.7, b: 1, a: 1}
+  - {r: 1, g: 0.9, b: 0.3, a: 1}
+  - {r: 0.9, g: 0.5, b: 1, a: 1}
 --- !u!1 &1415958720
 GameObject:
   m_ObjectHideFlags: 0
@@ -2050,6 +2116,7 @@ GameObject:
   - component: {fileID: 1614844462}
   - component: {fileID: 1614844464}
   - component: {fileID: 1614844463}
+  - component: {fileID: 1614844465}
   m_Layer: 5
   m_Name: Firecracker_3
   m_TagString: Untagged
@@ -2114,6 +2181,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1614844461}
   m_CullTransparentMesh: 1
+--- !u!114 &1614844465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1614844461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4414ef04862816e43a6dc8bf7b9d6a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FireworkSpriteAnimator
+  burstInterval: 1.1031519
+  maxScale: 1.5170791
+  fadeRatio: 0.7
+  colors:
+  - {r: 1, g: 0.4, b: 0.6, a: 1}
+  - {r: 0.5, g: 1, b: 0.8, a: 1}
+  - {r: 0.4, g: 0.7, b: 1, a: 1}
+  - {r: 1, g: 0.9, b: 0.3, a: 1}
+  - {r: 0.9, g: 0.5, b: 1, a: 1}
 --- !u!1 &1717917764
 GameObject:
   m_ObjectHideFlags: 0
@@ -2125,6 +2213,7 @@ GameObject:
   - component: {fileID: 1717917765}
   - component: {fileID: 1717917767}
   - component: {fileID: 1717917766}
+  - component: {fileID: 1717917768}
   m_Layer: 5
   m_Name: Firecracker_4
   m_TagString: Untagged
@@ -2189,6 +2278,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1717917764}
   m_CullTransparentMesh: 1
+--- !u!114 &1717917768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1717917764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4414ef04862816e43a6dc8bf7b9d6a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FireworkSpriteAnimator
+  burstInterval: 1.5753475
+  maxScale: 1.4378734
+  fadeRatio: 0.7
+  colors:
+  - {r: 1, g: 0.4, b: 0.6, a: 1}
+  - {r: 0.5, g: 1, b: 0.8, a: 1}
+  - {r: 0.4, g: 0.7, b: 1, a: 1}
+  - {r: 1, g: 0.9, b: 0.3, a: 1}
+  - {r: 0.9, g: 0.5, b: 1, a: 1}
 --- !u!1 &1969460035
 GameObject:
   m_ObjectHideFlags: 0
@@ -2350,6 +2460,7 @@ GameObject:
   - component: {fileID: 2137208019}
   - component: {fileID: 2137208021}
   - component: {fileID: 2137208020}
+  - component: {fileID: 2137208022}
   m_Layer: 5
   m_Name: Firecracker_1
   m_TagString: Untagged
@@ -2414,6 +2525,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2137208018}
   m_CullTransparentMesh: 1
+--- !u!114 &2137208022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2137208018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4414ef04862816e43a6dc8bf7b9d6a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FireworkSpriteAnimator
+  burstInterval: 1.0902318
+  maxScale: 1.2166213
+  fadeRatio: 0.7
+  colors:
+  - {r: 1, g: 0.4, b: 0.6, a: 1}
+  - {r: 0.5, g: 1, b: 0.8, a: 1}
+  - {r: 0.4, g: 0.7, b: 1, a: 1}
+  - {r: 1, g: 0.9, b: 0.3, a: 1}
+  - {r: 0.9, g: 0.5, b: 1, a: 1}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

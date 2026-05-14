@@ -2,10 +2,13 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.UI;
 
 public static class TourmentInstaller
 {
     const string TourmentPath = "Assets/01.Scenes/Tourment.unity";
+    const string ShinguLogoPath = "Assets/04.Images/Team logo/Shingu_logo.png";
+    const string YonseiLogoPath = "Assets/04.Images/Team logo/YONSEI.png";
 
     [MenuItem("TFM/Setup Tourment Scene (5s → BanPick)", priority = -43)]
     public static void Setup()
@@ -93,9 +96,78 @@ public static class TourmentInstaller
             }
         }
 
+        // ★ 신구 로고 자동 배치 — "신구대학교" TMP 위치 옆 (대칭으로 YONSEI 가 있는 곳 참고)
+        int logoAdded = AddSchoolLogos(scene);
+
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
-        Debug.Log($"[TFM] Tourment 셋업 완료 — DropAnimator {animated} 개 (상단 {topTexts.Count} + 하단 {bottomChars.Count}), SpumIdlePlayer {idleAdded} 개 부착, 5초 후 → AScene_BanPick");
+        Debug.Log($"[TFM] Tourment 셋업 완료 — DropAnimator {animated} 개 (상단 {topTexts.Count} + 하단 {bottomChars.Count}), SpumIdlePlayer {idleAdded} 개 부착, 로고 {logoAdded} 개 추가, 5초 후 → AScene_BanPick");
+    }
+
+    /// <summary>신구대학교 / 연세대학교 TMP 옆에 로고 Image 자동 생성</summary>
+    static int AddSchoolLogos(UnityEngine.SceneManagement.Scene scene)
+    {
+        var shinguSprite = AssetDatabase.LoadAssetAtPath<Sprite>(ShinguLogoPath);
+        var yonseiSprite = AssetDatabase.LoadAssetAtPath<Sprite>(YonseiLogoPath);
+
+        TMPro.TextMeshProUGUI shinguLabel = null, yonseiLabel = null;
+        foreach (var tmp in Object.FindObjectsByType<TMPro.TextMeshProUGUI>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            if (tmp.text == null) continue;
+            string t = tmp.text.Trim();
+            if (t.Contains("신구대") && shinguLabel == null) shinguLabel = tmp;
+            if (t.Contains("연세대") && yonseiLabel == null) yonseiLabel = tmp;
+        }
+
+        int added = 0;
+
+        // 기존 로고 있으면 skip
+        bool hasShinguLogo = false, hasYonseiLogo = false;
+        foreach (var img in Object.FindObjectsByType<Image>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            if (img.sprite == shinguSprite) hasShinguLogo = true;
+            if (img.sprite == yonseiSprite) hasYonseiLogo = true;
+        }
+
+        if (shinguLabel != null && shinguSprite != null && !hasShinguLogo)
+        {
+            AddLogoNextToLabel(shinguLabel, shinguSprite, "Shingu_Logo_Tourment");
+            added++;
+        }
+        if (yonseiLabel != null && yonseiSprite != null && !hasYonseiLogo)
+        {
+            AddLogoNextToLabel(yonseiLabel, yonseiSprite, "Yonsei_Logo_Tourment");
+            added++;
+        }
+        return added;
+    }
+
+    static void AddLogoNextToLabel(TMPro.TextMeshProUGUI label, Sprite sprite, string goName)
+    {
+        // 라벨의 부모를 parent 로 — 같은 layer 에 sibling 으로 추가
+        var parent = label.transform.parent;
+        if (parent == null) return;
+
+        var go = new GameObject(goName, typeof(RectTransform), typeof(Image));
+        go.transform.SetParent(parent, false);
+        var rt = (RectTransform)go.transform;
+
+        // 라벨의 anchored 정보 복사 + 가로로 살짝 오른쪽 (또는 왼쪽) — user 가 수동 조정
+        var labelRt = label.rectTransform;
+        rt.anchorMin = labelRt.anchorMin;
+        rt.anchorMax = labelRt.anchorMax;
+        rt.pivot = labelRt.pivot;
+        // 라벨 옆에 같은 Y, 옆으로 80px (대략적인 위치 — user 가 조정)
+        var p = labelRt.anchoredPosition;
+        rt.anchoredPosition = new Vector2(p.x + labelRt.sizeDelta.x * 0.5f + 50f, p.y);
+        rt.sizeDelta = new Vector2(80, 80);
+
+        var img = go.GetComponent<Image>();
+        img.sprite = sprite;
+        img.color = Color.white;
+        img.preserveAspect = true;
+        img.raycastTarget = false;
+        Debug.Log($"[Tourment] 로고 '{goName}' 생성 ({sprite.name}) — 라벨 '{label.text.Trim()}' 옆에");
     }
 }
 #endif

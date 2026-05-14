@@ -28,17 +28,16 @@ public static class MainMenuSetup
     [MenuItem("TFM/Add All Scenes To Build Settings", priority = -46)]
     public static void AddScenesToBuild()
     {
-        // 게임 흐름: Lobby(메인) → AScene_Wait(대기) → AScene_BanPick(밴픽) → InGame(전투) + AScene_FightUI(전투 UI 오버레이)
+        // 게임 흐름: Lobby(메인) → AScene_Wait(대기) → AScene_BanPick(밴픽) → InGame(전투) + AScene_FightUI(전투 UI 오버레이) → AScene_Win(시상식)
         string[] scenes = {
             "Assets/01.Scenes/AScene.unity",
             "Assets/01.Scenes/Lobby.unity",
             "Assets/01.Scenes/AScene_Wait.unity",
             "Assets/01.Scenes/AScene_BanPick.unity",
-            "Assets/01.Scenes/BanPick.unity",
             "Assets/01.Scenes/InGame.unity",
             "Assets/01.Scenes/AScene_FightUI.unity",
             "Assets/01.Scenes/Tourment.unity",
-            "Assets/01.Scenes/Base.unity",
+            "Assets/01.Scenes/AScene_Win.unity",
         };
 
         var list = new System.Collections.Generic.List<EditorBuildSettingsScene>();
