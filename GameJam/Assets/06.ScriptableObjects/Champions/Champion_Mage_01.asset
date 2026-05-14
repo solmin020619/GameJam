@@ -19,7 +19,7 @@ MonoBehaviour:
   themeColor: {r: 1, g: 0.3, b: 1, a: 1}
   description: 
   maxHealth: 350
-  attackDamage: 60
+  attackDamage: 100
   attackSpeed: 0.6
   attackRange: 4
   defense: 5
@@ -34,3 +34,6 @@ MonoBehaviour:
   ultimateName: "\uAD11\uC5ED\uD3ED\uBC1C"
   ultimateCooldown: 17
   ultimateIcon: {fileID: 21300000, guid: 38f4b4edc0b8fe14bb6794142a9d6438, type: 3}
+  autoAttackSfx: {fileID: 0}
+  basicSkillSfx: {fileID: 0}
+  ultimateSfx: {fileID: 0}
