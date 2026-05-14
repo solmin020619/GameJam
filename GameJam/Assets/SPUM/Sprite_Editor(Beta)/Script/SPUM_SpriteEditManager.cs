@@ -343,5 +343,5 @@ public class SPUM_SpriteEditManager : MonoBehaviour
 #endif
 
     #endif
-#endif // UNITY_EDITOR
 }
+#endif // UNITY_EDITOR

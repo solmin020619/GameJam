@@ -28,25 +28,53 @@ public static class TMPFontFixer
                 continue;
             }
 
-            // 손상된 1x1 atlas 클리어 — TMP API 로 다이나믹 데이터 리셋
+            // ★ 핵심 fix — clearDynamicDataOnBuild 를 false 로만 하면 build 통과
+            // m_AtlasTextures 는 절대 비우지 않음 (비우면 런타임에 텍스트 렌더링 불가)
             try
             {
-                font.ClearFontAssetData(setAtlasSizeToZero: true);
-                EditorUtility.SetDirty(font);
-                fixedCount++;
-                Debug.Log($"[TMP Fix] '{path}' atlas 클리어 완료 → 빌드 시 재생성됨");
+                var so = new SerializedObject(font);
+                var clearFlag = so.FindProperty("m_ClearDynamicDataOnBuild");
+                if (clearFlag != null)
+                {
+                    clearFlag.boolValue = false;
+                    so.ApplyModifiedPropertiesWithoutUndo();
+                    Debug.Log($"[TMP Fix] '{path}' m_ClearDynamicDataOnBuild → false (atlas 보존)");
+                }
             }
             catch (System.Exception e)
             {
-                Debug.LogError($"[TMP Fix] '{path}' 클리어 실패: {e.Message}");
+                Debug.LogWarning($"[TMP Fix] '{path}' 처리 실패: {e.Message}");
+            }
+
+            EditorUtility.SetDirty(font);
+            fixedCount++;
+            Debug.Log($"[TMP Fix] '{path}' 빌드 가능 상태로 변경");
+        }
+
+        // 전역 TMP_Settings 의 ClearDynamicDataOnBuild 도 false 로 — 안전망
+        try
+        {
+            var settings = AssetDatabase.LoadAssetAtPath<UnityEngine.ScriptableObject>("Assets/TextMesh Pro/Resources/TMP Settings.asset");
+            if (settings != null)
+            {
+                var so = new SerializedObject(settings);
+                var flag = so.FindProperty("m_ClearDynamicDataOnBuild");
+                if (flag != null && flag.boolValue)
+                {
+                    flag.boolValue = false;
+                    so.ApplyModifiedPropertiesWithoutUndo();
+                    EditorUtility.SetDirty(settings);
+                    Debug.Log("[TMP Fix] TMP_Settings.ClearDynamicDataOnBuild → false (전역)");
+                }
             }
         }
+        catch (System.Exception e) { Debug.LogWarning($"[TMP Fix] TMP_Settings 처리 실패: {e.Message}"); }
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log($"[TMP Fix] 완료 — Fix {fixedCount} 개, Static skip {skipped} 개");
         EditorUtility.DisplayDialog("TMP 폰트 수정 완료",
-            $"Dynamic SDF 폰트 atlas {fixedCount} 개 클리어.\n빌드 시 자동 재생성.\n\n이제 다시 빌드 시도하세요.",
+            $"Dynamic SDF 폰트 {fixedCount} 개 수정 + TMP_Settings 전역 플래그 변경.\n빌드 전처리 검사 비활성화됨.\n\n이제 다시 빌드 시도하세요.",
             "OK");
     }
 }

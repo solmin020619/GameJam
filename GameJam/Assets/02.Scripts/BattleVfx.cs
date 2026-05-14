@@ -16,19 +16,12 @@ public static class BattleVfx
     {
         if (_arrowsLoaded) return;
         _arrowsLoaded = true;
-        _arrowWood = UnityEditor_LoadSprite("Assets/04.Images/Effects/Arrows/arrow_wood.png");
-        _arrowIron = UnityEditor_LoadSprite("Assets/04.Images/Effects/Arrows/arrow_iron.png");
-        _arrowFire = UnityEditor_LoadSprite("Assets/04.Images/Effects/Arrows/arrow_fire.png");
-        _arrowMagic = UnityEditor_LoadSprite("Assets/04.Images/Effects/Arrows/arrow_magic.png");
-    }
-
-    static Sprite UnityEditor_LoadSprite(string path)
-    {
-#if UNITY_EDITOR
-        return UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(path);
-#else
-        return Resources.Load<Sprite>(path);
-#endif
+        // Resources/Arrows/ 에서 로드 — Editor 와 빌드 둘 다 동작
+        _arrowWood  = Resources.Load<Sprite>("Arrows/arrow_wood");
+        _arrowIron  = Resources.Load<Sprite>("Arrows/arrow_iron");
+        _arrowFire  = Resources.Load<Sprite>("Arrows/arrow_fire");
+        _arrowMagic = Resources.Load<Sprite>("Arrows/arrow_magic");
+        if (_arrowIron == null) Debug.LogWarning("[BattleVfx] Resources/Arrows/arrow_iron 못 찾음 — 빌드 시 laser line 으로 fallback");
     }
 
     static void LoadCustomVfx()
